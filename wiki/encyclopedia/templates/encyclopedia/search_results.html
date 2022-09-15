@@ -5,14 +5,16 @@
 {% endblock %}
 
 {% block body %}
-    <h1>All Pages</h1>
+    <h1>Page Suggestions:</h1>
 
     <ul>
-        {% for entry in entries %}
-            {% if entry.count(query) != 0 %}
-                <li><a href="{% url 'encyclopedia:entry' entry %}">{{ entry }}</a></li>
-            {% endif %}
-        {% endfor %}
+        {% if entries %}
+            {% for entry in entries %}
+                    <li><a href="{% url 'encyclopedia:entry' entry %}">{{ entry }}</a></li>
+            {% endfor %}
+        {% else %}
+            <p>No results found.</p>
+        {% endif %}
     </ul>
 
 {% endblock %}

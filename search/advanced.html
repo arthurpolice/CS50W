@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Search: Advanced</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div id="header">
+            <nav>
+                <div id="nav-btns">
+                    <a href="images.html" class="nav-btn">Images</a>
+                    <a href="index.html" class="nav-btn">Basic</a>
+                </div>
+            </nav>
+        </div>
+        <div id="smaller-space">
+            <h2>Advanced Search:</h2>
+        </div>
+        <div class="container left-align">            
+            <h3>Find pages with...</h3>
+        </div>
+        <div class="container">
+            <form action="https://google.com/search">
+                <div class="left-align">
+                    <label for="all-words">all of these words:</label>
+                    <input type="text" class="adv-query" name="as_q" id="all-words">
+                </div>
+                <div class="left-align">
+                    <label for="exact-words">these exact words:</label>
+                    <input type="text" class="adv-query" name="as_epq" id="exact-words">
+                </div>
+                <div class="left-align">
+                    <label for="any-words">any of these words: </label>
+                    <input type="text" class="adv-query" name="as_oq" id="any-words">
+                </div>
+                <div class="left-align">
+                    <label for="none-words">none of these words: </label>
+                    <input type="text" class="adv-query" name="as_eq" id="none-words">
+                </div>
+                <div class="container" id="buttons">
+                    <input type="submit" value="Advanced Search" class="button">
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

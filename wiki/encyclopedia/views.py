@@ -7,8 +7,10 @@ from . import util
 
 
 def index(request):
+    entries = util.list_entries()
+    entries.sort()
     return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries()
+        "entries": entries
     })
 
 def entry(request, title):
@@ -34,3 +36,31 @@ def entry(request, title):
 def search(request):
     query = request.GET.get('q')
     return entry(request, query)
+
+def new_page(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        content = request.POST.get("content")
+        new_title = title.casefold()
+        existing_titles = util.list_entries()
+        new_existing_titles = []
+        
+        for item in existing_titles:
+            new_existing_titles += [item.casefold()]
+        if new_title not in new_existing_titles:
+            title = title.capitalize()
+            util.save_entry(title, content)
+        else:
+            return render (request, "encyclopedia/new_page.html", {
+                "error": "Entry already exists.",
+                "link": util.get_entry(title)
+            })
+
+        entry_markdown = util.get_entry(title)
+        if entry_markdown != None:
+           return render(request, "encyclopedia/entry_page.html",  {
+               "title": title,
+               "text": markdown2.markdown(entry_markdown)
+            })
+    else:
+        return render(request, "encyclopedia/new_page.html")

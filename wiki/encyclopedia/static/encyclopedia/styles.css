@@ -1,6 +1,14 @@
 body {
     margin: 0;
     background-color: white;
+    max-width: 99vw;
+}
+
+#new-page-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 code {
@@ -13,12 +21,13 @@ h1 {
 }
 
 textarea {
-    height: 90vh;
-    width: 80%;
+    height: 70vh;
+    width: 70%;
 }
 
 .main {
     padding: 10px;
+    width: 70vw;
 }
 
 .search {
@@ -35,4 +44,22 @@ textarea {
 
 .sidebar h2 {
     margin-top: 5px;
+}
+
+#title-bar {
+    width: 70%;
+    margin-bottom: 3vh;
+    margin-top: 2vh;
+}
+
+#submit-btn {
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+}
+
+#submit-error {
+    height: 5vh;
+    text-align: center;
+    color: red;
+    font-size: 2rem;
 }

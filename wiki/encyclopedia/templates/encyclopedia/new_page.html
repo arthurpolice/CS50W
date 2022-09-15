@@ -1,0 +1,14 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block body %}
+    <div id="submit-error">
+        {{ error }}
+    </div>
+    <form method="post" action="{% url 'encyclopedia:new_page' %}" id="new-page-form">
+        {% csrf_token %}
+        <input name="title" type="text" id="title-bar" placeholder="Title of your entry.">
+        <textarea name="content" id="content-field" rows="8" cols="30" ></textarea>
+        <input type="submit" value="Submit Entry" class="secondary" id="submit-btn">
+    </form>
+
+{% endblock %}

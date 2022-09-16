@@ -40,7 +40,6 @@ textarea {
 }
 
 .main {
-    padding: 10px;
     width: 70vw;
 }
 
@@ -91,5 +90,6 @@ textarea {
 }
 
 #text-proper{
-    padding-left: 10vw;
+    padding-left: 5vw;
+    padding-right: 5vw;
 }

@@ -64,7 +64,24 @@ def new_page(request):
                "text": markdown2.markdown(entry_markdown)
             })
     else:
-        return render(request, "encyclopedia/new_page.html")
+        return render(request, "encyclopedia/new_page.html", {
+            "button": "Submit Entry",
+            "page": "encyclopedia:new_page"
+        })
 
 def edit_page(request):
-    return 0
+    title = request.POST.get("title")
+    content = request.POST.get("content")
+    return render(request, "encyclopedia/edit_page.html", {
+        "title": title,
+        "content": content,
+        "button": "Edit Entry",
+        "page": "encyclopedia:edit"
+    })
+    
+def edit(request):
+    title = request.POST.get("title")
+    content = request.POST.get("content")
+    util.save_entry(title, content)
+    
+    return entry(request, title)

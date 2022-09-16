@@ -7,14 +7,15 @@
 {% block body %}
     <div>
         <div id="btn-container">
-            <button type="submit" class="btn btn-secondary" id="edit-btn">Edit Page</button>
+            <button type="submit" class="btn btn-secondary" id="edit-btn" form="entry-info">Edit Page</button>
         </div>
         <div id="text-proper">
             {{ text|safe }}
         </div>    
     </div>
     <div class="hidden">
-        <form method="post" class="hidden" action="{% url  'encyclopedia:edit_page'%}">
+        <form method="post" id="entry-info" class="hidden" action="{% url  'encyclopedia:edit_page'%}">
+            {% csrf_token %}
             <input class="hidden" name="title" value="{{ title }}">
             <textarea class="hidden" name="content">{{ markdown }}</textarea>
         </form>

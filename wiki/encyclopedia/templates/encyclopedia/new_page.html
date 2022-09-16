@@ -4,11 +4,13 @@
     <div id="submit-error">
         {{ error }}
     </div>
-    <form method="post" action="{% url 'encyclopedia:new_page' %}" id="new-page-form">
+    <form method="post" action="{% url page %}" id="new-page-form">
         {% csrf_token %}
-        <input name="title" type="text" id="title-bar" placeholder="Title of your entry.">
-        <textarea name="content" id="content-field" rows="8" cols="30" ></textarea>
-        <button type="submit" class="btn btn-secondary" id="submit-btn">Submit Entry</button>
+        <input name="title" type="text" id="title-bar" placeholder="Title of your entry." {% block edit %}{% endblock %}>
+        <textarea name="content" id="content-field" rows="8" cols="30" >
+            {% block content %}{% endblock %}
+        </textarea>
+        <button type="submit" class="btn btn-secondary" id="submit-btn">{{ button }}</button>
     </form>
 
 {% endblock %}

@@ -45,6 +45,7 @@ def new_page(request):
     if request.method == "POST":
         title = request.POST.get("title")
         content = request.POST.get("content")
+        old_title = title
         new_title = title.casefold()
         existing_titles = util.list_entries()
         new_existing_titles = []
@@ -52,15 +53,17 @@ def new_page(request):
         for item in existing_titles:
             new_existing_titles += [item.casefold()]
         if new_title not in new_existing_titles:
-            title = title.capitalize()
-            util.save_entry(title, content)
+            title = old_title.capitalize()
+            util.save_entry(old_title, content)
         else:
             return render (request, "encyclopedia/new_page.html", {
                 "error": "Entry already exists.",
-                "link": util.get_entry(title)
+                "link": util.get_entry(old_title),
+                "page": "encyclopedia:new_page",
+                "button": "Submit Entry"
             })
 
-        return HttpResponseRedirect(reverse("encyclopedia:entry", args=[title]))
+        return HttpResponseRedirect(reverse("encyclopedia:entry", args=[old_title]))
     
     else:
         return render(request, "encyclopedia/new_page.html", {
@@ -86,4 +89,5 @@ def edit(request):
     return HttpResponseRedirect(reverse("encyclopedia:entry", args=[title]))
 
 def randomize(request):
-    return entry(request, random.choice(util.list_entries()))
+    title = random.choice(util.list_entries())
+    return HttpResponseRedirect(reverse("encyclopedia:entry", args=[title]))

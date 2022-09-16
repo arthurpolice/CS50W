@@ -1,9 +1,11 @@
 {% extends "encyclopedia/new_page.html" %}
 
+{% block title %}
+Edit Entry: {{ title }}
+{% endblock %}
+
 {% block edit %}
     readonly value="{{ title }}"
 {% endblock %}
 
-{% block content %}
-    {{ content }}
-{% endblock %}
+{% block content %}{{ content }}{% endblock %}

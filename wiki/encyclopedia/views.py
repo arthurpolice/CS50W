@@ -1,6 +1,9 @@
 import markdown2
-from django.shortcuts import render
+import random
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http import HttpResponseRedirect
+
 
 
 from . import util
@@ -57,12 +60,8 @@ def new_page(request):
                 "link": util.get_entry(title)
             })
 
-        entry_markdown = util.get_entry(title)
-        if entry_markdown != None:
-           return render(request, "encyclopedia/entry_page.html",  {
-               "title": title,
-               "text": markdown2.markdown(entry_markdown)
-            })
+        return HttpResponseRedirect(reverse("encyclopedia:entry", args=[title]))
+    
     else:
         return render(request, "encyclopedia/new_page.html", {
             "button": "Submit Entry",
@@ -83,5 +82,8 @@ def edit(request):
     title = request.POST.get("title")
     content = request.POST.get("content")
     util.save_entry(title, content)
-    
-    return entry(request, title)
+    print(title)
+    return HttpResponseRedirect(reverse("encyclopedia:entry", args=[title]))
+
+def randomize(request):
+    return entry(request, random.choice(util.list_entries()))

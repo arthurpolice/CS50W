@@ -5,5 +5,18 @@
 {% endblock %}
 
 {% block body %}
-    {{ text|safe }}
+    <div>
+        <div id="btn-container">
+            <button type="submit" class="btn btn-secondary" id="edit-btn">Edit Page</button>
+        </div>
+        <div id="text-proper">
+            {{ text|safe }}
+        </div>    
+    </div>
+    <div class="hidden">
+        <form method="post" class="hidden" action="{% url  'encyclopedia:edit_page'%}">
+            <input class="hidden" name="title" value="{{ title }}">
+            <textarea class="hidden" name="content">{{ markdown }}</textarea>
+        </form>
+    </div>
 {% endblock %}

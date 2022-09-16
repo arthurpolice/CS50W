@@ -19,7 +19,8 @@ def entry(request, title):
     if entry_markdown != None:
        return render(request, "encyclopedia/entry_page.html",  {
            "title": title,
-           "text": markdown2.markdown(entry_markdown)
+           "text": markdown2.markdown(entry_markdown),
+           "markdown": entry_markdown
         })
     else:
         suggestions = []
@@ -64,3 +65,6 @@ def new_page(request):
             })
     else:
         return render(request, "encyclopedia/new_page.html")
+
+def edit_page(request):
+    return 0

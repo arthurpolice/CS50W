@@ -12,16 +12,16 @@
         <div class="row">
             <div class="sidebar col-lg-2 col-md-3">
                 <h2>Wiki</h2>
-                <form action="{% url 'encyclopedia:search' %}" method="get">
+                <form action="{% url 'encyclopedia:search' %}" method="get" id="sidebar-form">
                     <input class="search" type="text" name="q" placeholder="Search Encyclopedia">
                 </form>
-                <div>
+                <div class="list-item">
                     <a href="{% url 'encyclopedia:index' %}">Home</a>
                 </div>
-                <div>
+                <div class="list-item">
                    <a href="{% url 'encyclopedia:new_page' %}">Create New Page</a>
                 </div>
-                <div>
+                <div class="list-item">
                     Random Page
                 </div>
                 {% block nav %}

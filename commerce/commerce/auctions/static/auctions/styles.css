@@ -1,0 +1,33 @@
+body {
+    padding: 10px;
+}
+
+#listing-form {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    max-height: 1200px;
+    }
+
+.form-control {
+    margin-bottom: 10px;
+    max-width: 1000px;
+}
+
+.form-select {
+    margin-bottom: 10px;
+    width: 185px;
+}
+
+.description {
+    height: 30vh;
+}
+
+.title-field {
+    width: 50vw;
+}
+
+.money-field {
+    width: 150px;
+}
+

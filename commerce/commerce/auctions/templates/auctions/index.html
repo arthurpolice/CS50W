@@ -3,6 +3,21 @@
 {% block body %}
     <h2>Active Listings</h2>
     {% for listing in listings %}
-        
+        <div class="listing-wrapper">
+            <div class="listing-image">
+                {% for row in images %}
+                    {% if row.listing_id == listing.id %}
+                    <img src="{{ row.image_1 }}" class="listing-image">
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="listing-title">
+                <a href="listings/{{ listing.id }}">{{ listing.title }}</a>
+            </div>
+            <div class="listing-pricing">
+                <div class="listing-bid">TODO</div>
+                <div class="listing-buyout">{{ listing.buyout }}</div>
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}

@@ -15,9 +15,9 @@ def index(request):
     list_of_image_dicts = []
     for listing in listings:
         listing_images = listing.images.all()
-        image_dict = {}
-        image_dict['listing_id'] = listing.id
         for image_set in listing_images:
+            image_dict = {}
+            image_dict['listing_id'] = listing.id
             image_dict['image_1'] = image_set.image_1
             image_dict['image_2'] = image_set.image_2
             image_dict['image_3'] = image_set.image_3

@@ -12,8 +12,10 @@
                 <div class="listing-title">
                     <a href="listings/{{ row.id }}">{{ row.title }}</a>
                 </div>
+                <div>
+                    <p>Description: {{ row.description }}</p>
+                </div>
                 <div class="listing-pricing">
-                    
                     <div class="listing-bid">Current bid: ${{ row.highest_bid|floatformat:2|intcomma }}</div>
                     <div class="listing-buyout">Buyout: ${{ row.buyout|floatformat:2|intcomma }}</div>
                 </div>

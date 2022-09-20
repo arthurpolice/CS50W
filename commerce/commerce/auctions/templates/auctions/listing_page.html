@@ -32,9 +32,12 @@
             <div id="listing-page-header">
                 <h2 id="listing-page-title">{{ info.0.title }}</h2>
                 {% if info.0.listing_owner == current_user %}
-                <button class="btn btn-secondary" form="" formaction="{% url 'close_listing' %}">End</button>
+                <form id="listing-closing-form" action="{% url 'close_listing' %}" method="post">
+                    <input name="listing_id" readonly value="{{ info.0.id }}" class="hidden">
+                    <button class="btn btn-secondary" form="listing-closing-form">End</button>
+                    {% csrf_token %}
+                </form>
                 {% endif %}
-
             </div>
             <div>
                 <p>Highest Bid: ${{ info.0.highest_bid|floatformat:2|intcomma }}</p>
@@ -43,18 +46,36 @@
                 {% endif %}
             </div>
             <div id="purchase-form-wrapper">
-                <form id="purchase-form">
+                {% if info.0.listing_status == "Open" %}
+                <form id="purchase-form" method="post">
                     {{ purchase_form }}
+                    <input name="highest_bid" type="number" step="2" class="hidden" value="{{ info.0.highest_bid }}">
+                    <input name="buyout" type="number" step="2" class="hidden" value="{{ info.0.buyout }}">
+                    <input name="listing_id" readonly value="{{ info.0.id }}" class="hidden">
+                    {% csrf_token %}
                 </form>
                 <div id="form-buttons">
                     <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'bid' %}">Bid</button>
                     <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'buy' %}">Buy</button>
+                    <p>{{ error }}</p>
                 </div>
+                {% else %}
+                    {% if info.0.winning_user != None %}
+                        <p>The winner of this auction is: {{ info.0.winning_user }}!</p>
+                    {% else %}
+                        <p>This auction expired with no winners.</p>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
-    <div id="listing-description">
-        <p>{{ info.0.description }}</p>
+    <div id="description-wrapper">
+        <div id="listing-description">
+            <h2>Details</h2>
+            <p>Seller: {{ info.0.listing_owner }}</p>
+            <p>Created in: {{ info.0.listing_day }} at {{ info.0.listing_time }}</p>
+            <p>{{ info.0.description }}</p>
+        </div>
     </div>
     <div id="comments-area">
         <form id="comment-form" method="post" action="{% url 'log_comment' %}">

@@ -2,6 +2,10 @@ body {
     padding: 10px;
 }
 
+.margin-left {
+    margin-left: auto;
+}
+
 .hidden {
     display: none;
 }
@@ -50,8 +54,8 @@ body {
     border-radius: 10px;
     margin-top: 1vh;
     margin-bottom: 1vh;
-    padding-top: 3vh;
-    padding-bottom: 2vh;
+    padding-top: 1.5vh;
+    padding-bottom: 1.5vh;
 }
 
 .listing-image {
@@ -141,7 +145,7 @@ body {
 }
 
 #listing-carousel {
-    width: 50vw;
+    width: 43vw;
 }
 
 #listing-purchase-menu {
@@ -184,4 +188,18 @@ body {
 #listing-page-title {
     margin-right: 2vw;
     margin-bottom: 0;
+}
+
+#listing-description {
+    display: flex;
+    justify-content: center;
+    min-height: 20vh;
+    margin-top: 10vh;
+    width:60vw;
+    flex-direction: column;
+}
+
+#description-wrapper {
+    display: flex;
+    justify-content: center;
 }

@@ -39,19 +39,23 @@ def log_listing(request):
 def get_info(listings):
     list_of_info_dicts = []
     for listing in listings:
-        listing_dict = {}
         listing_images = listing.images.get()
-        listing_dict['listing_owner'] = listing.listing_owner
-        listing_dict['id'] = listing.id
-        listing_dict['title'] = listing.title
-        listing_dict['category'] = listing.category
-        listing_dict['description'] = listing.description
-        listing_dict['buyout'] = listing.buyout
-        listing_dict['image_1'] = listing_images.image_1
-        listing_dict['image_2'] = listing_images.image_2
-        listing_dict['image_3'] = listing_images.image_3
-        listing_dict['image_4'] = listing_images.image_4
-        listing_dict['image_5'] = listing_images.image_5
+        listing_dict = {
+        'listing_owner': listing.listing_owner,
+        'listing_status': listing.listing_status,
+        'listing_day': listing.listing_day,
+        'listing_time': listing.listing_time,
+        'id': listing.id,
+        'title': listing.title,
+        'category': listing.category,
+        'description': listing.description,
+        'buyout': listing.buyout,
+        'image_1': listing_images.image_1,
+        'image_2': listing_images.image_2,
+        'image_3': listing_images.image_3,
+        'image_4': listing_images.image_4,
+        'image_5': listing_images.image_5
+        }
         try:
             listing_bid = listing.bids.order_by('bid')[0]
             bidding_user = listing_bid.bid_user
@@ -91,3 +95,15 @@ categories = [('motors', "Motors"),
               ("others", "Others")
               ]
 
+def bid_purchase_helper(request):
+    listing_id = request.POST.get('listing_id')
+    dict ={
+    "buyout": float(request.POST.get('buyout')),
+    "new_bid": float(request.POST.get('bid_field')),
+    "listing": Listings.objects.get(pk=listing_id),
+    "current_user": request.user,
+    "highest_bid": float(request.POST.get('highest_bid')),
+    "day": datetime.datetime.utcnow().date(),
+    "time": datetime.datetime.now(datetime.timezone.utc)
+    }
+    return dict

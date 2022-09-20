@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import User, Listings, Listing_images, Watch_list, Comments, Bids
 from .forms import ListingForm, PurchaseForm
-from .util import log_listing, get_info, get_comments
+from .util import log_listing, get_info, get_comments, bid_purchase_helper
 
 
 def index(request):
@@ -75,8 +75,7 @@ def register(request):
 def create_listing(request):
     if request.method == "POST":
         log_listing(request)
-        listing_form = ListingForm()
-        HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("index"))
     else:
         listing_form = ListingForm()
         return render(request, "auctions/create.html", {
@@ -89,7 +88,7 @@ def edit_listing(request):
     return 0
 
 
-def listing_page(request, id):
+def listing_page(request, id, error=""):
     current_user = request.user
     listing = Listings.objects.filter(pk=id)
     info = get_info(listing)
@@ -98,7 +97,8 @@ def listing_page(request, id):
         "current_user": current_user,
         "info": info,
         "comments": comments,
-        "purchase_form": PurchaseForm()
+        "purchase_form": PurchaseForm(),
+        "error": error       
     })
 
 
@@ -127,10 +127,29 @@ def log_comment(request):
     return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
 
 def bid(request):
-    return 0
+    listing_id = request.POST.get('listing_id')
+    info = bid_purchase_helper(request)
+    if info['new_bid'] >= info['buyout']:
+        buy(request)
+    elif info['new_bid'] > info['buyout']:
+        new_highest_bid = Bids(listing_bid_id=info['listing'], bid_user=info['current_user'], bid=info['new_bid'], bid_day=info['day'], bid_time=info['time'])
+        new_highest_bid.save()
+        return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
+    else: 
+        error = "Insufficient bid."
+        return listing_page(request, listing_id, error)
 
 def buy(request):
-    return 0
+        info = bid_purchase_helper(request)
+        bid = info['buyout']
+        new_highest_bid = Bids(listing_bid_id=info['listing'], bid_user=info['current_user'], bid=bid, bid_day=info['day'], bid_time=info['time'])
+        new_highest_bid.save()
+        return close_listing(request)
 
 def close_listing(request):
-    return 0
+    listing_id = request.POST.get('listing_id')
+    listing = Listings.objects.get(pk=listing_id)
+    listing.listing_status = "Closed"
+    listing.save()
+    return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
+    

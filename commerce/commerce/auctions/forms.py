@@ -15,5 +15,4 @@ class ListingForm(forms.Form):
     description = forms.CharField(label="Description", max_length=512, widget=forms.TextInput(attrs={'class':'form-control description'}))
 
 class PurchaseForm(forms.Form):
-    quantity_field = forms.IntegerField(label="Quantity", widget=forms.TextInput(attrs={'class':'form-control quantity-field', 'max': 99}))
     bid_field = forms.FloatField(label="Bid", widget=forms.TextInput(attrs={'class':'form-control money-field', 'step': 2}))

@@ -2,6 +2,10 @@ body {
     padding: 10px;
 }
 
+.hidden {
+    display: none;
+}
+
 #listing-form {
     display: flex;
     flex-direction: column;
@@ -28,6 +32,156 @@ body {
 }
 
 .money-field {
-    width: 150px;
+    width: 100px;
 }
 
+.index-page {
+    display: grid;
+
+}
+
+.listing-wrapper {
+    display: flex;
+    height: 25vh;
+    width: 80vw;
+    border: 2px;
+    border-color: grey;
+    border-style: solid;
+    border-radius: 10px;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    padding-top: 3vh;
+    padding-bottom: 2vh;
+}
+
+.listing-image {
+    height: 18vh;
+    max-width: 18vw;
+}
+
+.listing-info {
+    padding-left: 5vw;
+}
+
+.listing-title a {
+    font-size: 2em;
+    color:black;
+    text-decoration: none;
+}
+
+.listing-pricing {
+    margin-top: 5vh;
+    display: inline-flex;
+    width: 20vw;
+    min-width: 200px;
+    justify-content: space-between;
+}
+
+#comment-form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+#comment-input {
+    width: 50vw;
+    min-height: 20vh;
+}
+
+#comment-input-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+#comments {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5vh;
+}
+
+.comment-wrapper {
+    width: 50vw;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 10px;
+    margin-bottom: 3vh;
+}
+
+.comment-time {
+    padding-left: 1vw;
+    font-size: 0.7em;
+    margin-bottom: 2vh;
+    border-bottom: 1px;
+    border-top-style: hidden;
+    border-right-style: hidden;
+    border-left-style: hidden; 
+    border-bottom-style: solid;
+}
+
+.username {
+    padding-left: 0.5vw;
+}
+
+
+.comment-content-wrapper {
+    min-height:8vh;
+    padding-left: 1vw;
+}
+
+#btn-wrapper {
+    display: flex;
+    width: 50vw;
+    justify-content: right;
+}
+
+#listing-top-part {
+    display: flex;
+}
+
+#listing-carousel {
+    width: 50vw;
+}
+
+#listing-purchase-menu {
+    width:33vw;
+}
+
+#listing-carousel img{
+    max-height: 66vh;
+    max-width: 33vw;
+}
+
+.carousel-item.active {
+    display: flex;
+    justify-content: center;
+    background-color: black;
+}
+
+#listing-top-part {
+    display: flex;
+    justify-content: center;
+}
+
+#listing-purchase-menu {
+    padding-left: 50px;
+}
+
+.quantity-field  {
+    width: 50px;
+}
+
+#form-buttons {
+    margin-top: 3vh;
+}
+
+#listing-page-header {
+    display: inline-flex;
+    margin-bottom: 2vh;
+}
+
+#listing-page-title {
+    margin-right: 2vw;
+    margin-bottom: 0;
+}

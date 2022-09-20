@@ -1,0 +1,84 @@
+{% extends 'auctions/layout.html' %}
+{% load humanize %}
+
+{% block body %}
+    <div id="listing-top-part">
+        <div id="listing-carousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img class="d-block w-100" src="{{ info.0.image_1 }}" alt="First slide">
+                </div>
+                <div class="carousel-item">
+                  <img class="d-block w-100" src="{{ info.0.image_2 }}" alt="Second slide">
+                </div>
+                <div class="carousel-item">
+                  <img class="d-block w-100" src="{{ info.0.image_3 }}" alt="Third slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100" src="{{ info.0.image_4 }}" alt="Fourth slide">
+                  </div>
+                  <div class="carousel-item">
+                    <img class="d-block w-100" src="{{ info.0.image_5 }}" alt="Fifth slide">
+                  </div>
+            </div>
+            <a class="carousel-control-prev" href="#listing-caroussel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </a>
+            <a class="carousel-control-next" href="#listing-caroussel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="listing-purchase-menu">
+            <div id="listing-page-header">
+                <h2 id="listing-page-title">{{ info.0.title }}</h2>
+                {% if info.0.listing_owner == current_user %}
+                <button class="btn btn-secondary" form="" formaction="{% url 'close_listing' %}">End</button>
+                {% endif %}
+
+            </div>
+            <div>
+                <p>Highest Bid: ${{ info.0.highest_bid|floatformat:2|intcomma }}</p>
+                {% if info.0.buyout %}
+                <p>Buyout: ${{ info.0.buyout|floatformat:2|intcomma }}</p>
+                {% endif %}
+            </div>
+            <div id="purchase-form-wrapper">
+                <form id="purchase-form">
+                    {{ purchase_form }}
+                </form>
+                <div id="form-buttons">
+                    <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'bid' %}">Bid</button>
+                    <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'buy' %}">Buy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="listing-description">
+        <p>{{ info.0.description }}</p>
+    </div>
+    <div id="comments-area">
+        <form id="comment-form" method="post" action="{% url 'log_comment' %}">
+            <div id="comment-input-wrapper">
+                <textarea name="comment_content" id="comment-input"></textarea>
+            </div>
+            <input name="listing_id" class="hidden" value="{{ info.0.id }}" readonly>
+            <div id="btn-wrapper">
+                <button type="submit" class="btn btn-secondary">Comment</button>
+            </div>
+            {% csrf_token %}
+        </form>
+        <div id="comments">
+            {% for comment in comments %}
+                <div class="comment-wrapper">
+                    <div class="user-info-comments">
+                        <h5 class="username">{{ comment.author }}</h5>
+                        <h6 class="comment-time">{{ comment.comment_day }} - {{ comment.comment_time }}</h6>
+                    </div>
+                    <div class="comment-content-wrapper">
+                        <p>{{ comment.comment }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

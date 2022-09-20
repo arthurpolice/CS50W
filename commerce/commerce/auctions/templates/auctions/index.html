@@ -1,23 +1,24 @@
 {% extends "auctions/layout.html" %}
-
+{% load humanize %}
 {% block body %}
     <h2>Active Listings</h2>
-    {% for listing in listings %}
+    <div class="index-page">
+    {% for row in info %}
         <div class="listing-wrapper">
             <div class="listing-image">
-                {% for row in images %}
-                    {% if row.listing_id == listing.id %}
-                    <img src="{{ row.image_1 }}" class="listing-image">
-                    {% endif %}
-                {% endfor %}
+                   <a href="listings/{{ row.id }}"><img src="{{ row.image_1 }}" class="listing-image"></a>
             </div>
-            <div class="listing-title">
-                <a href="listings/{{ listing.id }}">{{ listing.title }}</a>
-            </div>
-            <div class="listing-pricing">
-                <div class="listing-bid">TODO</div>
-                <div class="listing-buyout">{{ listing.buyout }}</div>
+            <div class="listing-info">
+                <div class="listing-title">
+                    <a href="listings/{{ row.id }}">{{ row.title }}</a>
+                </div>
+                <div class="listing-pricing">
+                    
+                    <div class="listing-bid">Current bid: ${{ row.highest_bid|floatformat:2|intcomma }}</div>
+                    <div class="listing-buyout">Buyout: ${{ row.buyout|floatformat:2|intcomma }}</div>
+                </div>
             </div>
         </div>
     {% endfor %}
+    </div>
 {% endblock %}

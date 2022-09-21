@@ -7,15 +7,15 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import User, Listings, Listing_images, Watch_list, Comments, Bids
 from .forms import ListingForm, PurchaseForm
-from .util import log_listing, get_info, get_comments, bid_purchase_helper
+from .util import log_listing, get_info, get_comments, bid_purchase_helper, watchlist_helper, categories
 
 
 def index(request):
     listings = Listings.objects.filter(listing_status="Open")
-    # Make this a function in util
     list_of_info_dicts = get_info(listings)
     return render(request, "auctions/index.html", {
-        "info": list_of_info_dicts
+        "info": list_of_info_dicts,
+        "header": "Active Listings"
     })
 
 
@@ -83,11 +83,6 @@ def create_listing(request):
         })
 
 
-@login_required
-def edit_listing(request):
-    return 0
-
-
 def listing_page(request, id, error=""):
     current_user = request.user
     listing = Listings.objects.filter(pk=id)
@@ -98,33 +93,59 @@ def listing_page(request, id, error=""):
         "info": info,
         "comments": comments,
         "purchase_form": PurchaseForm(),
-        "error": error       
+        "error": error
     })
 
 
 @login_required
+def save_to_watchlist(request):
+    dict = watchlist_helper(request)
+    watchlist_entry = Watch_list(listing_watchlist=dict['listing'], watchlist_user=dict['current_user'])
+    watchlist_entry.save()
+    return HttpResponseRedirect(reverse("index"))
+    
+
+@login_required
 def display_watchlist(request):
-    return 0
+    listings = Listings.watchlist_occurrences
+    list_of_info_dicts = get_info(listings)
+    return render(request, "auctions/index.html", {
+        "info": list_of_info_dicts,
+        "header": "Active Listings"
+    })
 
 
-def display_categories(request):
-    return 0
+def get_categories(request):
+       return render(request, "auctions/categories.html", {
+        "categories": categories
+   })
 
+
+def display_category(request, category):
+    listings = Listings.objects.filter(listing_status="Open", category=category)
+    list_of_info_dicts = get_info(listings)
+    return render(request, "auctions/index.html", {
+        "info": list_of_info_dicts,
+        "header": "Category Listings"
+    })
 
 def search(request):
     return 0
 
-def log_comment(request):  
+
+def log_comment(request):
     current_user = request.user
     comment_content = request.POST['comment_content']
     listing_id = request.POST['listing_id']
     listing = Listings.objects.get(pk=listing_id)
     comment_day = datetime.datetime.utcnow().date()
     comment_time = datetime.datetime.now(datetime.timezone.utc)
-    comment = Comments(listing_comment=listing, comment_user=current_user, comment_content=comment_content, comment_day=comment_day, comment_time=comment_time)
+    comment = Comments(listing_comment=listing, comment_user=current_user,
+                       comment_content=comment_content, comment_day=comment_day, comment_time=comment_time)
     comment.save()
-    
+
     return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
+
 
 def bid(request):
     listing_id = request.POST.get('listing_id')
@@ -132,19 +153,23 @@ def bid(request):
     if info['new_bid'] >= info['buyout']:
         buy(request)
     elif info['new_bid'] > info['buyout']:
-        new_highest_bid = Bids(listing_bid_id=info['listing'], bid_user=info['current_user'], bid=info['new_bid'], bid_day=info['day'], bid_time=info['time'])
+        new_highest_bid = Bids(listing_bid_id=info['listing'], bid_user=info['current_user'],
+                               bid=info['new_bid'], bid_day=info['day'], bid_time=info['time'])
         new_highest_bid.save()
         return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
-    else: 
+    else:
         error = "Insufficient bid."
         return listing_page(request, listing_id, error)
 
+
 def buy(request):
-        info = bid_purchase_helper(request)
-        bid = info['buyout']
-        new_highest_bid = Bids(listing_bid_id=info['listing'], bid_user=info['current_user'], bid=bid, bid_day=info['day'], bid_time=info['time'])
-        new_highest_bid.save()
-        return close_listing(request)
+    info = bid_purchase_helper(request)
+    bid = info['buyout']
+    new_highest_bid = Bids(
+        listing_bid_id=info['listing'], bid_user=info['current_user'], bid=bid, bid_day=info['day'], bid_time=info['time'])
+    new_highest_bid.save()
+    return close_listing(request)
+
 
 def close_listing(request):
     listing_id = request.POST.get('listing_id')
@@ -152,4 +177,3 @@ def close_listing(request):
     listing.listing_status = "Closed"
     listing.save()
     return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
-    

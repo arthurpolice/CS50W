@@ -6,7 +6,6 @@ class ListingForm(forms.Form):
     categories = forms.ChoiceField(choices = categories, widget=forms.Select(attrs={'class':'form-select'}))
     buyout = forms.FloatField(label='Buyout', required=False, widget=forms.TextInput(attrs={'class':'form-control money-field', 'step': 2}))
     start_bid = forms.FloatField(label='Minimum Bid', widget=forms.TextInput(attrs={'class':'form-control money-field', 'step': 2}))
-    quantity_field = forms.IntegerField(label="Quantity", widget=forms.TextInput(attrs={'class':'form-control money-field'}))
     image_1 = forms.CharField(label='URL to First Image', max_length=256,  required=False, widget=forms.TextInput(attrs={'class':'form-control image-field'}))
     image_2 = forms.CharField(label='URL to Second Image', max_length=256,  required=False, widget=forms.TextInput(attrs={'class':'form-control image-field'}))
     image_3 = forms.CharField(label='URL to Third Image', max_length=256,  required=False, widget=forms.TextInput(attrs={'class':'form-control image-field'}))

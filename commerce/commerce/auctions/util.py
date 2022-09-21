@@ -58,11 +58,12 @@ def get_info(listings):
         }
         try:
             listing_bid = listing.bids.order_by('bid')[0]
+            bid = listing_bid.bid
             bidding_user = listing_bid.bid_user
         except IndexError:
-            listing_bid = listing.start_bid
+            bid = listing.start_bid
             bidding_user = None
-        listing_dict['highest_bid'] = listing_bid
+        listing_dict['highest_bid'] = bid
         listing_dict['winning_user'] = bidding_user
         list_of_info_dicts += [listing_dict]
     return list_of_info_dicts
@@ -103,6 +104,16 @@ def bid_purchase_helper(request):
     "listing": Listings.objects.get(pk=listing_id),
     "current_user": request.user,
     "highest_bid": float(request.POST.get('highest_bid')),
+    "day": datetime.datetime.utcnow().date(),
+    "time": datetime.datetime.now(datetime.timezone.utc)
+    }
+    return dict
+
+def watchlist_helper(request):
+    listing_id = request.POST.get('listing_id')
+    dict ={
+    "listing": Listings.objects.get(pk=listing_id),
+    "current_user": request.user,
     "day": datetime.datetime.utcnow().date(),
     "time": datetime.datetime.now(datetime.timezone.utc)
     }

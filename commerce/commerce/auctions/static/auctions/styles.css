@@ -59,8 +59,7 @@ body {
 }
 
 .listing-image {
-    height: 18vh;
-    max-width: 18vw;
+    max-height: 22vh;
 }
 
 .listing-info {
@@ -202,4 +201,18 @@ body {
 #description-wrapper {
     display: flex;
     justify-content: center;
+}
+
+ul {
+    list-style: none;
+}
+
+.category {
+    font-size: 2rem;
+    text-decoration: none;
+}
+
+.category-item {
+    margin-top: 2vh;
+    margin-bottom: 2vh;
 }

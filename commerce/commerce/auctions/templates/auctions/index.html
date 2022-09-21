@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 {% load humanize %}
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2>{{ header }}</h2>
     <div class="index-page">
     {% for row in info %}
         <div class="listing-wrapper">
@@ -10,7 +10,7 @@
             </div>
             <div class="listing-info">
                 <div class="listing-title">
-                    <a href="listings/{{ row.id }}">{{ row.title }}</a>
+                    <a href="{% url 'listing_page' row.id %}">{{ row.title }}</a>
                 </div>
                 <div>
                     <p>Description: {{ row.description }}</p>

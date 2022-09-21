@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import User, Listings, Listing_images, Watch_list, Comments, Bids
+from .models import User, Listings, ListingImages, Watchlist, Comments, Bids
 
 
 def log_listing(request):
@@ -29,9 +29,9 @@ def log_listing(request):
                        listing_time=time, listing_owner=current_user)
     listing.save()
 
-    listing_images = Listing_images(listing_images_id=listing, image_1=image_1, image_2=image_2,
+    listingImages = ListingImages(listingImages_id=listing, image_1=image_1, image_2=image_2,
                                     image_3=image_3, image_4=image_4, image_5=image_5)
-    listing_images.save()
+    listingImages.save()
 
     return 0
 
@@ -39,7 +39,7 @@ def log_listing(request):
 def get_info(listings):
     list_of_info_dicts = []
     for listing in listings:
-        listing_images = listing.images.get()
+        listingImages = listing.images.get()
         listing_dict = {
         'listing_owner': listing.listing_owner,
         'listing_status': listing.listing_status,
@@ -50,11 +50,11 @@ def get_info(listings):
         'category': listing.category,
         'description': listing.description,
         'buyout': listing.buyout,
-        'image_1': listing_images.image_1,
-        'image_2': listing_images.image_2,
-        'image_3': listing_images.image_3,
-        'image_4': listing_images.image_4,
-        'image_5': listing_images.image_5
+        'image_1': listingImages.image_1,
+        'image_2': listingImages.image_2,
+        'image_3': listingImages.image_3,
+        'image_4': listingImages.image_4,
+        'image_5': listingImages.image_5
         }
         try:
             listing_bid = listing.bids.order_by('bid')[0]

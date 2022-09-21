@@ -23,7 +23,7 @@ class Listings(models.Model):
         return f"{self.title} ({self.listing_status})"
 
 
-class Listing_images(models.Model):
+class ListingImages(models.Model):
     listing_images_id = models.ForeignKey(
         Listings, on_delete=models.CASCADE, related_name="images")
     image_1 = models.CharField(max_length=512)
@@ -53,7 +53,7 @@ class Comments(models.Model):
     comment_content = models.CharField(max_length=256)
 
 
-class Watch_list(models.Model):
+class Watchlist(models.Model):
     listing_watchlist = models.ForeignKey(
         Listings, on_delete=models.CASCADE, related_name="watchlist_occurrences")
     watchlist_user = models.ForeignKey(

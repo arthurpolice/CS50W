@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import User, Listings, Listing_images, Watch_list, Comments, Bids
+from .models import User, Listings, ListingImages, Watchlist, Comments, Bids
 from .forms import ListingForm, PurchaseForm
 from .util import log_listing, get_info, get_comments, bid_purchase_helper, watchlist_helper, categories
 
@@ -100,18 +100,21 @@ def listing_page(request, id, error=""):
 @login_required
 def save_to_watchlist(request):
     dict = watchlist_helper(request)
-    watchlist_entry = Watch_list(listing_watchlist=dict['listing'], watchlist_user=dict['current_user'])
+    watchlist_entry = Watchlist(listing_watchlist=dict['listing'], watchlist_user=dict['current_user'])
     watchlist_entry.save()
     return HttpResponseRedirect(reverse("index"))
     
 
 @login_required
 def display_watchlist(request):
-    listings = Listings.watchlist_occurrences
+    watchlist = Watchlist.objects.filter(watchlist_user = request.user)
+    listings = []
+    for entry in watchlist:
+        listings = Listings.objects.filter(pk=entry.listing_watchlist.id)
     list_of_info_dicts = get_info(listings)
     return render(request, "auctions/index.html", {
         "info": list_of_info_dicts,
-        "header": "Active Listings"
+        "header": "Watchlist"
     })
 
 

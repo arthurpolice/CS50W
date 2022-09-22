@@ -89,7 +89,6 @@ def listing_page(request, id, error=""):
     info = get_info(listing)
     comments = get_comments(listing)
     watchlist_check = watchlist_checker(request, id)
-    print(watchlist_check)
     return render(request, "auctions/listing_page.html", {
         "current_user": current_user,
         "info": info,
@@ -144,7 +143,14 @@ def display_category(request, category):
     })
 
 def search(request):
-    return 0
+    query = request.POST['query']
+    listings = Listing.objects.filter(status="Open", title__iregex=query)
+    print(listings)
+    list_of_info_dicts = get_info(listings)
+    return render(request, "auctions/index.html", {
+        "info": list_of_info_dicts,
+        "header": "Search Results"
+    })
 
 
 def log_comment(request):
@@ -164,7 +170,7 @@ def log_comment(request):
 def bid(request):
     listing_id = request.POST.get('listing_id')
     info = bid_purchase_helper(request)
-    if info['new_bid'] >= info['buyout']:
+    if info['buyout'] != None and info['new_bid'] >= info['buyout']:
         return buy(request)
     elif info['new_bid'] > info['highest_bid']:
         new_highest_bid = Bid(listing=info['listing'], user=info['current_user'],

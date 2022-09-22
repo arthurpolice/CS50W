@@ -41,16 +41,16 @@
                 <form id="listing-closing-form" method="post">
                     <input name="listing_id" readonly value="{{ info.0.id }}" class="hidden">
                     {% if watchlist_check == False %}
-                        <button class="btn btn-secondary" form="listing-closing-form" formaction="{% url 'save_watchlist' %}">Save</button>
+                        <button class="btn btn-secondary" form="listing-closing-form" formaction="{% url 'save_watchlist' %}">Watch</button>
                     {% else %}
-                        <button class="btn btn-secondary" form="listing-closing-form" formaction="{% url 'remove_watchlist' %}">Unsave</button>
+                        <button class="btn btn-secondary" form="listing-closing-form" formaction="{% url 'remove_watchlist' %}">Unwatch</button>
                     {% endif %}
                     {% csrf_token %}
                 </form>
                 {% endif %}
             </div>
             <div>
-                <p>Highest Bid: ${{ info.0.highest_bid|floatformat:2|intcomma }} by {{ info.0.winning_user }}</p>
+                <p>Highest Bid: ${{ info.0.highest_bid|floatformat:2|intcomma }} {% if info.0.winning_user %} by {{ info.0.winning_user }} {% endif %}</p>
                 {% if info.0.buyout %}
                 <p>Buyout: ${{ info.0.buyout|floatformat:2|intcomma }}</p>
                 {% endif %}
@@ -66,7 +66,9 @@
                 </form>
                 <div id="form-buttons">
                     <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'bid' %}">Bid</button>
+                    {% if info.0.buyout %}
                     <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'buy' %}">Buy</button>
+                    {% endif %}
                     <p>{{ error }}</p>
                 </div>
                 {% else %}
@@ -88,6 +90,7 @@
         </div>
     </div>
     <div id="comments-area">
+        {% if request.user.is_authenticated %}
         <form id="comment-form" method="post" action="{% url 'log_comment' %}">
             <div id="comment-input-wrapper">
                 <textarea name="comment_content" id="comment-input"></textarea>
@@ -98,10 +101,11 @@
             </div>
             {% csrf_token %}
         </form>
+        {% endif %}
         <div id="comments">
             {% for comment in comments %}
-                <div class="comment-wrapper">
-                    <div class="user-info-comments">
+                <div class="comment-wrapper card bg-light">
+                    <div class="user-info-comments card-header">
                         <h5 class="username">{{ comment.author }}</h5>
                         <h6 class="comment-time">{{ comment.comment_day }} - {{ comment.comment_time }}</h6>
                     </div>

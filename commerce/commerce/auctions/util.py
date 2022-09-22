@@ -23,7 +23,11 @@ def log_listing(request):
     image_5 = request.POST.get('image_5')
     day = datetime.datetime.utcnow().date()
     time = datetime.datetime.now(datetime.timezone.utc)
-
+    try:
+        float(buyout)
+    except:
+        buyout = None
+    
     listing = Listing(title=title, category=category, description=description,
                        buyout=buyout, start_bid=starting_bid, day=day,
                        time=time, owner=current_user)
@@ -98,9 +102,13 @@ categories = [('motors', "Motors"),
 
 def bid_purchase_helper(request):
     listing_id = request.POST.get('listing_id')
+    try:
+        buyout = float(request.POST.get('buyout'))
+    except:
+        buyout = None
     dict ={
-    "buyout": float(request.POST.get('buyout')),
-    "new_bid": float(request.POST.get('bid_field')),
+    "buyout": buyout,
+    "new_bid": float(request.POST.get('bid_field').replace(",","")),
     "listing": Listing.objects.get(pk=listing_id),
     "current_user": request.user,
     "highest_bid": float(request.POST.get('highest_bid')),

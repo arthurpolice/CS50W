@@ -18,7 +18,9 @@
                     </div>
                     <div class="listing-pricing">
                         <div class="listing-bid index-prices">Current bid: ${{ row.highest_bid|floatformat:2|intcomma }} by {{ info.0.winning_user }}</div>
+                        {% if row.buyout %}
                         <div class="listing-buyout index-prices">Buyout: ${{ row.buyout|floatformat:2|intcomma }}</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

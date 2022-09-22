@@ -10,6 +10,10 @@ body {
     display: none;
 }
 
+#search-bar {
+    margin-left: 10vw;
+}
+
 .index-prices {
     font-size: 1.5rem;
 }
@@ -17,9 +21,15 @@ body {
 #listing-form {
     display: flex;
     flex-direction: column;
-    height: 90vh;
-    max-height: 1200px;
+    height: 100vh;
+    max-width: 1000px;
     }
+
+@media screen and (min-width: 1000px) {
+    #listing-form {
+        padding-left: 10vw;
+    }
+}
 
 .form-control {
     margin-bottom: 10px;
@@ -33,10 +43,7 @@ body {
 
 .description {
     height: 30vh;
-}
-
-.title-field {
-    width: 50vw;
+    max-height: 300px;
 }
 
 .money-field {
@@ -51,7 +58,7 @@ body {
 .card {
     max-width: 900px;
     margin-top: 5vh;
-    box-shadow: 14px 14px 0 -4px rgba(0, 0, 0, 0.3), 14px 14px 0 0 rgba(0, 0, 0, 0.7);
+    box-shadow: 10px 10px 0 -4px rgba(0, 0, 0, 0.1), 10px 10px 0 0 rgba(0, 0, 0, 0.7);
 }
 
 .card-title {
@@ -146,12 +153,6 @@ body {
 .comment-time {
     padding-left: 1vw;
     font-size: 0.7em;
-    margin-bottom: 2vh;
-    border-bottom: 1px;
-    border-top-style: hidden;
-    border-right-style: hidden;
-    border-left-style: hidden; 
-    border-bottom-style: solid;
 }
 
 .username {
@@ -162,6 +163,7 @@ body {
 .comment-content-wrapper {
     min-height:8vh;
     padding-left: 1vw;
+    margin-top: 2vh;
 }
 
 #btn-wrapper {
@@ -244,6 +246,10 @@ ul {
 }
 
 .category-item {
-    margin-top: 2vh;
-    margin-bottom: 2vh;
+    margin-top: 3vh;
+    margin-bottom: 3vh;
+}
+
+.btn {
+    max-width: 100px;
 }

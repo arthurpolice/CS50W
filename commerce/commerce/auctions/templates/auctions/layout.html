@@ -23,17 +23,24 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
             </li>
+            {% if request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'create_listing' %}">Sell</a>
             </li>
+            {% endif %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'categories' %}">Categories</a>
             </li>
+            {% if request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
             </li>
+            {% endif %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'search' %}">Search</a>
+                <form id="search" method="post" action="{% url 'search' %}">
+                    <input name="query" type="text" placeholder="Search" class="form-control" id="search-bar">
+                    {% csrf_token %}
+                </form>
             </li>
             {% if user.is_authenticated %}
                 <li class="nav-item margin-left">

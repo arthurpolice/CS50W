@@ -8,12 +8,12 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import User, Listing, ListingImage, Watchlist, ListingComment, Bid
 
-
+# Function to extract information from the /create page and send it to the database.
 def log_listing(request):
     current_user = request.user
     title = request.POST.get('title')
     starting_bid = request.POST.get('start_bid')
-    buyout = request.POST.get('buyout')
+    buyout = request.POST.get('buyout').replace(",","")
     description = request.POST.get('description')
     category = request.POST.get('categories')
     image_1 = request.POST.get('image_1')
@@ -23,8 +23,11 @@ def log_listing(request):
     image_5 = request.POST.get('image_5')
     day = datetime.datetime.utcnow().date()
     time = datetime.datetime.now(datetime.timezone.utc)
+    # This try/except makes sure the function doesn't try to log a "" str in the buyout field, which raises an error.
     try:
         float(buyout)
+    # If there is no numeric input from the buyout field, the function logs a None, which is accepted in the database
+    # as the listing having no buyout, only bids.
     except:
         buyout = None
     
@@ -39,7 +42,8 @@ def log_listing(request):
 
     return 0
 
-
+# This function grabs information from the database about the listings contained in a QuerySet that is passed in.
+# It then returns said information in a dictionary for the templates to use.
 def get_info(listings):
     list_of_info_dicts = []
     for listing in listings:
@@ -60,6 +64,7 @@ def get_info(listings):
         'image_4': listingImages.image_4,
         'image_5': listingImages.image_5
         }
+        # This try/except tries to grab the highest bid from the Bid table and returns the listing owner's starting bid if no bids exist.
         try:
             listing_bid = listing.bids.order_by('-bid')[0]
             bid = listing_bid.bid
@@ -72,10 +77,11 @@ def get_info(listings):
         list_of_info_dicts += [listing_dict]
     return list_of_info_dicts
 
-
+# This function gets comments from the database for the listing page. Returns a list of dictionaries with each comment being one.
 def get_comments(listings):
     for listing in listings:
         list_of_comments = []
+        # Setting the query in such a way that the most recent comment is on top.
         comments = listing.comments.all().order_by('-day', '-time')
         for comment in comments:
             author_id = comment.user
@@ -88,7 +94,7 @@ def get_comments(listings):
             }]
     return list_of_comments
 
-
+# Tuples for the value of the options in the select field of /create + the displayed name.
 categories = [('motors', "Motors"),
               ("clothing", "Clothing"),
               ("electronics", "Electronics"),
@@ -100,6 +106,7 @@ categories = [('motors', "Motors"),
               ("others", "Others")
               ]
 
+# This function returns a dictionary with the information needed to log a bid/purchase to the database.
 def bid_purchase_helper(request):
     listing_id = request.POST.get('listing_id')
     try:
@@ -117,7 +124,7 @@ def bid_purchase_helper(request):
     }
     return dict
 
-
+# This function returns a dictionary with the information needed to log a watchlist entry to the database.
 def watchlist_helper(request):
     listing_id = request.POST.get('listing_id')
     dict ={
@@ -129,6 +136,7 @@ def watchlist_helper(request):
     }
     return dict
 
+# This function controls whether the listing is in the current user's watchlist or not, then changes the Watch/Unwatch button.
 def watchlist_checker(request, id):
     listing = Listing.objects.get(pk=id)
     try:

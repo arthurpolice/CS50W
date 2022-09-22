@@ -76,6 +76,7 @@ def create_listing(request):
     if request.method == "POST":
         log_listing(request)
         return HttpResponseRedirect(reverse("index"))
+    # If method is GET, we render the form model in forms.py for creating a listing.
     else:
         listing_form = ListingForm()
         return render(request, "auctions/create.html", {
@@ -133,7 +134,7 @@ def get_categories(request):
         "categories": categories
    })
 
-
+# This fetches all the listings of a given category and sends them to the same html as the index page.
 def display_category(request, category):
     listings = Listing.objects.filter(status="Open", category=category)
     list_of_info_dicts = get_info(listings)
@@ -166,22 +167,25 @@ def log_comment(request):
 
     return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
 
-
+# This function analyzes the bid input from the user and judges whether that is
 def bid(request):
     listing_id = request.POST.get('listing_id')
     info = bid_purchase_helper(request)
+    # above or equal to the buyout price, in which case it automatically buys the item for the buyout price,
     if info['buyout'] != None and info['new_bid'] >= info['buyout']:
         return buy(request)
+    # higher than the previous bid, in which case it logs the bid,
     elif info['new_bid'] > info['highest_bid']:
         new_highest_bid = Bid(listing=info['listing'], user=info['current_user'],
                                bid=info['new_bid'], day=info['day'], time=info['time'])
         new_highest_bid.save()
         return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
+    # or lower than the previous bid, in which case it throws an error at the user.
     else:
         error = "Insufficient bid."
         return listing_page(request, listing_id, error)
 
-
+# This function is called if someone presses the buy button or bids enough to cover the buyout.
 def buy(request):
     info = bid_purchase_helper(request)
     bid = info['buyout']
@@ -190,7 +194,8 @@ def buy(request):
     new_highest_bid.save()
     return close_listing(request)
 
-
+# This function happens if called by the listing owner when pressing end, or automatically by the buy function.
+# Simply changes the listing status to "Closed" in the database.
 def close_listing(request):
     listing_id = request.POST.get('listing_id')
     listing = Listing.objects.get(pk=listing_id)

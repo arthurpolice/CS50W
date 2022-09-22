@@ -41,6 +41,9 @@ class Bid(models.Model):
     bid = models.FloatField()
     day = models.DateField()
     time = models.TimeField()
+    
+    def __str__(self):
+        return f"{self.bid} by {self.user} on {self.listing}"
 
 
 class ListingComment(models.Model):
@@ -51,7 +54,9 @@ class ListingComment(models.Model):
     day = models.DateField()
     time = models.TimeField()
     content = models.CharField(max_length=256)
-
+    
+    def __str__(self):
+        return f"{self.user} on {self.listing}"
 
 class Watchlist(models.Model):
     listing = models.ManyToManyField(Listing)

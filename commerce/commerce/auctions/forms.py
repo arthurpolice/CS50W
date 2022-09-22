@@ -15,3 +15,4 @@ class ListingForm(forms.Form):
 
 class PurchaseForm(forms.Form):
     bid_field = forms.FloatField(label="Bid", widget=forms.TextInput(attrs={'class':'form-control money-field', 'step': 2}))
+    buy_field = forms.FloatField(label="Bid", widget=forms.TextInput(attrs={'class':'form-control money-field hidden', 'step': 2}))

@@ -57,8 +57,14 @@
             </div>
             <div id="purchase-form-wrapper">
                 {% if info.0.listing_status == "Open" %}
+                <form id="buy-form" class="hidden" method="post">
+                    <input name="highest_bid" type="number" step="2" class="hidden" value="{{ info.0.highest_bid }}">
+                    <input name="buyout" type="number" step="2" class="hidden" value="{{ info.0.buyout }}">
+                    <input name="listing_id" readonly value="{{ info.0.id }}" class="hidden">
+                    {% csrf_token %}
+                </form>
                 <form id="purchase-form" method="post">
-                    {{ purchase_form }}
+                    {{ purchase_form.bid_field }}
                     <input name="highest_bid" type="number" step="2" class="hidden" value="{{ info.0.highest_bid }}">
                     <input name="buyout" type="number" step="2" class="hidden" value="{{ info.0.buyout }}">
                     <input name="listing_id" readonly value="{{ info.0.id }}" class="hidden">
@@ -67,7 +73,7 @@
                 <div id="form-buttons">
                     <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'bid' %}">Bid</button>
                     {% if info.0.buyout %}
-                    <button type="submit" class="btn btn-secondary" form="purchase-form" formaction="{% url 'buy' %}">Buy</button>
+                    <button type="submit" class="btn btn-secondary" form="buy-form" formaction="{% url 'buy' %}">Buy</button>
                     {% endif %}
                     <p>{{ error }}</p>
                 </div>

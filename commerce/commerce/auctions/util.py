@@ -113,9 +113,13 @@ def bid_purchase_helper(request):
         buyout = float(request.POST.get('buyout'))
     except:
         buyout = None
+    try:
+        new_bid = float(request.POST.get('bid_field').replace(",",""))
+    except:
+        new_bid = None
     dict ={
     "buyout": buyout,
-    "new_bid": float(request.POST.get('bid_field').replace(",","")),
+    "new_bid": new_bid,
     "listing": Listing.objects.get(pk=listing_id),
     "current_user": request.user,
     "highest_bid": float(request.POST.get('highest_bid')),

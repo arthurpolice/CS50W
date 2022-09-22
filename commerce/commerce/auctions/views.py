@@ -102,12 +102,16 @@ def listing_page(request, id, error=""):
 
 @login_required
 def save_to_watchlist(request):
+    if request.user.is_authenticated == False:
+        return HttpResponseRedirect(reverse("login"))
     dict = watchlist_helper(request)
     Watchlist.make_watchlist(dict['current_user'], dict['listing'])
     return HttpResponseRedirect(reverse('listing_page', args=[dict['listing_id']]))
 
 @login_required
 def remove_from_watchlist(request):
+    if request.user.is_authenticated == False:
+        return HttpResponseRedirect(reverse("login"))
     id = request.POST.get('listing_id')
     listing = Listing.objects.get(pk=id)
     Watchlist.objects.get(user=request.user, listing=listing).delete()
@@ -115,6 +119,8 @@ def remove_from_watchlist(request):
 
 @login_required
 def display_watchlist(request):
+    if request.user.is_authenticated == False:
+        return HttpResponseRedirect(reverse("login"))
     try:
         watchlist = Watchlist.objects.get(user = request.user)
         listings = watchlist.listing.all()
@@ -155,6 +161,8 @@ def search(request):
 
 
 def log_comment(request):
+    if request.user.is_authenticated == False:
+        return HttpResponseRedirect(reverse("login"))
     current_user = request.user
     content = request.POST['comment_content']
     listing_id = request.POST['listing_id']
@@ -169,6 +177,8 @@ def log_comment(request):
 
 # This function analyzes the bid input from the user and judges whether that is
 def bid(request):
+    if request.user.is_authenticated == False:
+        return HttpResponseRedirect(reverse("login"))
     listing_id = request.POST.get('listing_id')
     info = bid_purchase_helper(request)
     # above or equal to the buyout price, in which case it automatically buys the item for the buyout price,
@@ -187,6 +197,8 @@ def bid(request):
 
 # This function is called if someone presses the buy button or bids enough to cover the buyout.
 def buy(request):
+    if request.user.is_authenticated == False:
+        return HttpResponseRedirect(reverse("login"))
     info = bid_purchase_helper(request)
     bid = info['buyout']
     new_highest_bid = Bid(

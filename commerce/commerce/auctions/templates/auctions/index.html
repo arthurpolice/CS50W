@@ -4,20 +4,22 @@
     <h2>{{ header }}</h2>
     <div class="index-page">
     {% for row in info %}
-        <div class="listing-wrapper">
-            <div class="listing-image">
-                   <a href="listings/{{ row.id }}"><img src="{{ row.image_1 }}" class="listing-image"></a>
+        <div class="card bg-light">
+            <div class="listing-title card-header">
+                <a class="card-title" href="{% url 'listing_page' row.id %}">{{ row.title }}</a>
             </div>
-            <div class="listing-info">
-                <div class="listing-title">
-                    <a href="{% url 'listing_page' row.id %}">{{ row.title }}</a>
+            <div class="card-body listing-wrapper">
+                <div class="listing-image">
+                       <a href="listings/{{ row.id }}"><img src="{{ row.image_1 }}" class="image-index"></a>
                 </div>
-                <div>
-                    <p>Description: {{ row.description }}</p>
-                </div>
-                <div class="listing-pricing">
-                    <div class="listing-bid">Current bid: ${{ row.highest_bid|floatformat:2|intcomma }}</div>
-                    <div class="listing-buyout">Buyout: ${{ row.buyout|floatformat:2|intcomma }}</div>
+                <div class="listing-info">
+                    <div>
+                        <p>Description: {{ row.description }}</p>
+                    </div>
+                    <div class="listing-pricing">
+                        <div class="listing-bid index-prices">Current bid: ${{ row.highest_bid|floatformat:2|intcomma }} by {{ info.0.winning_user }}</div>
+                        <div class="listing-buyout index-prices">Buyout: ${{ row.buyout|floatformat:2|intcomma }}</div>
+                    </div>
                 </div>
             </div>
         </div>

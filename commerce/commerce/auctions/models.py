@@ -6,26 +6,26 @@ class User(AbstractUser):
     pass
 
 
-class Listings(models.Model):
+class Listing(models.Model):
     title = models.CharField(max_length=64)
     category = models.CharField(max_length=64)
     description = models.CharField(max_length=512, blank=True)
     quantity = models.IntegerField(max_length=2, default=1)
     buyout = models.FloatField(null=True)
     start_bid = models.FloatField()
-    listing_day = models.DateField()
-    listing_time = models.TimeField()
-    listing_status = models.CharField(max_length=6, default="Open")
-    listing_owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="listing_owner")
+    day = models.DateField(null=True)
+    time = models.TimeField()
+    status = models.CharField(max_length=6, default="Open")
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.title} ({self.listing_status})"
+        return f"{self.title} ({self.status})"
 
 
-class ListingImages(models.Model):
-    listing_images_id = models.ForeignKey(
-        Listings, on_delete=models.CASCADE, related_name="images")
+class ListingImage(models.Model):
+    listing = models.ForeignKey(
+        Listing, on_delete=models.CASCADE, related_name="images")
     image_1 = models.CharField(max_length=512)
     image_2 = models.CharField(max_length=512)
     image_3 = models.CharField(max_length=512)
@@ -33,28 +33,34 @@ class ListingImages(models.Model):
     image_5 = models.CharField(max_length=512)
 
 
-class Bids(models.Model):
-    listing_bid_id = models.ForeignKey(
-        Listings, on_delete=models.CASCADE, related_name="bids")
-    bid_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="bidding_users")
+class Bid(models.Model):
+    listing = models.ForeignKey(
+        Listing, on_delete=models.CASCADE, related_name="bids")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE)
     bid = models.FloatField()
-    bid_day = models.DateField()
-    bid_time = models.TimeField()
+    day = models.DateField()
+    time = models.TimeField()
 
 
-class Comments(models.Model):
-    listing_comment = models.ForeignKey(
-        Listings, on_delete=models.CASCADE, related_name="comments")
-    comment_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="commenting_users")
-    comment_day = models.DateField()
-    comment_time = models.TimeField()
-    comment_content = models.CharField(max_length=256)
+class ListingComment(models.Model):
+    listing = models.ForeignKey(
+        Listing, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE)
+    day = models.DateField()
+    time = models.TimeField()
+    content = models.CharField(max_length=256)
 
 
 class Watchlist(models.Model):
-    listing_watchlist = models.ForeignKey(
-        Listings, on_delete=models.CASCADE, related_name="watchlist_occurrences")
-    watchlist_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="watchlist_users")
+    listing = models.ManyToManyField(Listing)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="owner")
+    
+    @classmethod
+    def make_watchlist(cls, current_user, new_listing):
+        watchlist, created = cls.objects.get_or_create(
+            user = current_user
+        )
+        watchlist.listing.add(new_listing)

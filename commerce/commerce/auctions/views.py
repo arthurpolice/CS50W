@@ -5,13 +5,13 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .models import User, Listings, ListingImages, Watchlist, Comments, Bids
+from .models import User, Listing, ListingImage, Watchlist, ListingComment, Bid
 from .forms import ListingForm, PurchaseForm
-from .util import log_listing, get_info, get_comments, bid_purchase_helper, watchlist_helper, categories
+from .util import log_listing, get_info, get_comments, bid_purchase_helper, watchlist_helper, categories, watchlist_checker
 
 
 def index(request):
-    listings = Listings.objects.filter(listing_status="Open")
+    listings = Listing.objects.filter(status="Open")
     list_of_info_dicts = get_info(listings)
     return render(request, "auctions/index.html", {
         "info": list_of_info_dicts,
@@ -85,35 +85,46 @@ def create_listing(request):
 
 def listing_page(request, id, error=""):
     current_user = request.user
-    listing = Listings.objects.filter(pk=id)
+    listing = Listing.objects.filter(pk=id)
     info = get_info(listing)
     comments = get_comments(listing)
+    watchlist_check = watchlist_checker(request, id)
+    print(watchlist_check)
     return render(request, "auctions/listing_page.html", {
         "current_user": current_user,
         "info": info,
         "comments": comments,
         "purchase_form": PurchaseForm(),
-        "error": error
+        "error": error,
+        "watchlist_check": watchlist_check
     })
 
 
 @login_required
 def save_to_watchlist(request):
     dict = watchlist_helper(request)
-    watchlist_entry = Watchlist(listing_watchlist=dict['listing'], watchlist_user=dict['current_user'])
-    watchlist_entry.save()
-    return HttpResponseRedirect(reverse("index"))
-    
+    Watchlist.make_watchlist(dict['current_user'], dict['listing'])
+    return HttpResponseRedirect(reverse('listing_page', args=[dict['listing_id']]))
+
+@login_required
+def remove_from_watchlist(request):
+    id = request.POST.get('listing_id')
+    listing = Listing.objects.get(pk=id)
+    Watchlist.objects.get(user=request.user, listing=listing).delete()
+    return HttpResponseRedirect(reverse('listing_page', args=[id]))
 
 @login_required
 def display_watchlist(request):
-    watchlist = Watchlist.objects.filter(watchlist_user = request.user)
-    listings = []
-    for entry in watchlist:
-        listings = Listings.objects.filter(pk=entry.listing_watchlist.id)
-    list_of_info_dicts = get_info(listings)
-    return render(request, "auctions/index.html", {
-        "info": list_of_info_dicts,
+    try:
+        watchlist = Watchlist.objects.get(user = request.user)
+        listings = watchlist.listing.all()
+        list_of_info_dicts = get_info(listings)
+        return render(request, "auctions/index.html", {
+            "info": list_of_info_dicts,
+            "header": "Watchlist"
+        })
+    except:
+        return render(request, "auctions/index.html", {
         "header": "Watchlist"
     })
 
@@ -125,7 +136,7 @@ def get_categories(request):
 
 
 def display_category(request, category):
-    listings = Listings.objects.filter(listing_status="Open", category=category)
+    listings = Listing.objects.filter(status="Open", category=category)
     list_of_info_dicts = get_info(listings)
     return render(request, "auctions/index.html", {
         "info": list_of_info_dicts,
@@ -138,13 +149,13 @@ def search(request):
 
 def log_comment(request):
     current_user = request.user
-    comment_content = request.POST['comment_content']
+    content = request.POST['comment_content']
     listing_id = request.POST['listing_id']
-    listing = Listings.objects.get(pk=listing_id)
-    comment_day = datetime.datetime.utcnow().date()
-    comment_time = datetime.datetime.now(datetime.timezone.utc)
-    comment = Comments(listing_comment=listing, comment_user=current_user,
-                       comment_content=comment_content, comment_day=comment_day, comment_time=comment_time)
+    listing = Listing.objects.get(pk=listing_id)
+    day = datetime.datetime.utcnow().date()
+    time = datetime.datetime.now(datetime.timezone.utc)
+    comment = ListingComment(listing=listing, user=current_user,
+                       content=content, day=day, time=time)
     comment.save()
 
     return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
@@ -154,10 +165,10 @@ def bid(request):
     listing_id = request.POST.get('listing_id')
     info = bid_purchase_helper(request)
     if info['new_bid'] >= info['buyout']:
-        buy(request)
-    elif info['new_bid'] > info['buyout']:
-        new_highest_bid = Bids(listing_bid_id=info['listing'], bid_user=info['current_user'],
-                               bid=info['new_bid'], bid_day=info['day'], bid_time=info['time'])
+        return buy(request)
+    elif info['new_bid'] > info['highest_bid']:
+        new_highest_bid = Bid(listing=info['listing'], user=info['current_user'],
+                               bid=info['new_bid'], day=info['day'], time=info['time'])
         new_highest_bid.save()
         return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))
     else:
@@ -168,15 +179,15 @@ def bid(request):
 def buy(request):
     info = bid_purchase_helper(request)
     bid = info['buyout']
-    new_highest_bid = Bids(
-        listing_bid_id=info['listing'], bid_user=info['current_user'], bid=bid, bid_day=info['day'], bid_time=info['time'])
+    new_highest_bid = Bid(
+        listing=info['listing'], user=info['current_user'], bid=bid, day=info['day'], time=info['time'])
     new_highest_bid.save()
     return close_listing(request)
 
 
 def close_listing(request):
     listing_id = request.POST.get('listing_id')
-    listing = Listings.objects.get(pk=listing_id)
-    listing.listing_status = "Closed"
+    listing = Listing.objects.get(pk=listing_id)
+    listing.status = "Closed"
     listing.save()
     return HttpResponseRedirect(reverse('listing_page', args=[listing_id]))

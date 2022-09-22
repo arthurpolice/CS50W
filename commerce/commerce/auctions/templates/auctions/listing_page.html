@@ -38,15 +38,19 @@
                     {% csrf_token %}
                 </form>
                 {% else %}
-                <form id="listing-closing-form" action="{% url 'save_watchlist' %}" method="post">
+                <form id="listing-closing-form" method="post">
                     <input name="listing_id" readonly value="{{ info.0.id }}" class="hidden">
-                    <button class="btn btn-secondary" form="listing-closing-form">Save</button>
+                    {% if watchlist_check == False %}
+                        <button class="btn btn-secondary" form="listing-closing-form" formaction="{% url 'save_watchlist' %}">Save</button>
+                    {% else %}
+                        <button class="btn btn-secondary" form="listing-closing-form" formaction="{% url 'remove_watchlist' %}">Unsave</button>
+                    {% endif %}
                     {% csrf_token %}
                 </form>
                 {% endif %}
             </div>
             <div>
-                <p>Highest Bid: ${{ info.0.highest_bid|floatformat:2|intcomma }}</p>
+                <p>Highest Bid: ${{ info.0.highest_bid|floatformat:2|intcomma }} by {{ info.0.winning_user }}</p>
                 {% if info.0.buyout %}
                 <p>Buyout: ${{ info.0.buyout|floatformat:2|intcomma }}</p>
                 {% endif %}

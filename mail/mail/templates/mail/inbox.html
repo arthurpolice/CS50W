@@ -11,33 +11,7 @@
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
     <hr>
 
-    <div id="emails-view">    
-        <script type="text/babel">
-            console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-            function render_mailbox() {
-                let emailList = [];
-                fetch('emails/inbox')
-                .then(response => response.json())
-                .then(emails => {
-                    console.log(emails);
-                    emails.forEach((email, index) => {
-                    emailList.push( 
-                    <div className="mail" key={index}>
-                        <h5 className="sender">{ email['sender'] }</h5>
-                        <p className="subject">{ email['subject'] }</p>
-                        <p className="timestamp">{ email['timestamp'] }</p>
-                    </div>)
-                    })
-                })
-                function Mailbox() {
-                    return (
-                        { emailList }
-                    )
-                }
-            }
-            ReactDOM.render(<Mailbox />, document.querySelector("#emails-view"));
-        </script>
-    </div>
+    <div id="emails-view"></div>
 
     <div id="compose-view">
         <h3>New Email</h3>
@@ -53,6 +27,22 @@
             </div>
             <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
             <input type="submit" id="submit-btn" class="btn btn-primary"/>
+        </form>
+    </div>
+    <div id="display-view">
+        <button id="archive-btn" class="btn btn-secondary"></button>
+        <form id="compose-form">
+            <input name="display-id" class="hidden" readonly>
+            <div class="form-group">
+                From: <input id="sender" class="display-item" readonly>
+            </div>
+            <div class="form-group">
+                To: <input id="display-recipients" class="display-item" readonly>
+            </div>
+            <div class="form-group">
+                <input class="display-item" id="display-subject" placeholder="Subject" readonly>
+            </div>
+            <textarea class="display-item" id="display-body" placeholder="Body" readonly></textarea>
         </form>
     </div>
 {% endblock %}

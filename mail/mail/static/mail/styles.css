@@ -1,3 +1,39 @@
 textarea {
     min-height: 400px;
 }
+
+.hidden {
+    display: none;
+}
+
+.mail-wrapper {
+
+    display: flex;
+    justify-content: space-between;
+    border: 1px;
+    border-style: solid;
+    align-items: center;
+    padding: 10px;
+}
+
+.read {
+    background-color: rgba(182, 179, 179, 0.938);
+}
+
+.mail-wrapper>p {
+    margin: 0;
+}
+
+.display-item {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #16181a;
+    background-color: #fff;
+    background-clip: padding-box;
+    border-style: none;
+}

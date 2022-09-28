@@ -17,7 +17,7 @@
         <h3>New Email</h3>
         <form id="compose-form">
             <div class="form-group">
-                From: <input disabled class="form-control" value="{{ request.user.email }}">
+                From: <input id="compose-sender" disabled class="form-control" value="{{ request.user.email }}">
             </div>
             <div class="form-group">
                 To: <input id="compose-recipients" class="form-control">
@@ -44,6 +44,7 @@
             </div>
             <textarea class="display-item" id="display-body" placeholder="Body" readonly></textarea>
         </form>
+        <button id="reply" class="btn btn-secondary"><img id="reply-icon" src='{% static "mail/reply_icon.png" %}'></button>
     </div>
 {% endblock %}
 

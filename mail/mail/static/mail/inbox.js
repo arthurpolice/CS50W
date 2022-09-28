@@ -15,18 +15,23 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', () => compose_email());
 
   // By default, load the inbox
   load_mailbox('inbox');
 });
 
-function compose_email() {
+function compose_email(email='', subject='', body='') {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#display-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+
+  // Grab info, if it's a reply, leave empty otherwise
+  document.querySelector('#compose-recipients').value = email;
+  document.querySelector('#compose-subject').value = subject;
+  document.querySelector('#compose-body').value = body;
 
   // Submit information as json when the user clicks the button
   document.querySelector('#compose-form').onsubmit = (event) => {
@@ -100,7 +105,7 @@ function render_emails(mailbox) {
 // The parameters are passed in to determine if it's a case of archiving or unarchiving the email.
 // This is used by the display_content function.
 function archive_handler(id, string, boolean) {
-  archive_button = document.querySelector('#archive-btn');
+  let archive_button = document.querySelector('#archive-btn');
   archive_button.replaceWith(archive_button.cloneNode(true));
   archive_button = document.querySelector('#archive-btn');
   archive_button.innerHTML = string;
@@ -131,12 +136,16 @@ function display_content(event) {
     document.querySelector('#display-subject').value = email['subject'];
     document.querySelector('#display-body').value = email['body'];
     document.querySelector('#display-recipients').value = email['recipients'].join(', ');
+    timestamp = email['timestamp'];
+    // Make the archive button
     if (email['archived'] === false){
       archive_handler(mail_id, "Archive", true)
     }
     else {
       archive_handler(mail_id, "Unarchive", false)
     }
+    // Make the reply button
+    reply(email['sender'], email['subject'], email['body'], timestamp);
   })
   fetch(`emails/${mail_id}`, {
     method: 'PUT',
@@ -162,4 +171,17 @@ function load_mailbox(mailbox) {
   // Add the current state to the history
   history.pushState({mailbox: mailbox}, "", `${mailbox}`);
   render_emails(mailbox);
+}
+
+function reply(sender, subject, body, timestamp) {
+  let reply_btn = document.querySelector('#reply');
+  reply_btn.replaceWith(reply_btn.cloneNode(true));
+  reply_btn = document.querySelector('#reply');
+  reply_btn.addEventListener('click', (event) => {
+    let current_user = document.querySelector('#compose-sender').value
+    subject = `Re: ${subject}`;
+    body = `On ${timestamp}, ${sender} wrote:\n\n ${body} \n\n ----------------------------------\n\n ${current_user}'s reply:`;
+    compose_email(sender, subject, body);
+    event.preventDefault();  
+  })
 }

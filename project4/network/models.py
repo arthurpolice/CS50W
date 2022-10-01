@@ -10,15 +10,13 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     content = models.CharField(max_length=255)
     image_url = models.CharField(null=True, max_length=255)
-    day = models.DateField()
-    time = models.TimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     content = models.CharField(max_length=255)
     image_url = models.CharField(null=True, max_length=255)
-    day = models.DateField()
-    time = models.TimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 class ReplySection(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="replies")
@@ -34,6 +32,7 @@ class ReplySection(models.Model):
 class Follower(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "followers")
     follower = models.ManyToManyField(User, related_name="following")
+    timestamp = models.DateTimeField(auto_now_add=True)
     
     @classmethod
     def make_follower_list(cls, user, new_follower):
@@ -45,6 +44,7 @@ class Follower(models.Model):
 class PostLike(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
     like = models.ManyToManyField(User, related_name="liked_post")
+    timestamp = models.DateTimeField(auto_now_add=True)
     
     @classmethod
     def make_like_list_post(cls, post, new_like):
@@ -56,6 +56,7 @@ class PostLike(models.Model):
 class CommentLike(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="likes")
     like = models.ManyToManyField(User, related_name="liked_comment")
+    timestamp = models.DateTimeField(auto_now_add=True)
     
     @classmethod
     def make_like_list_post(cls, comment, new_like):

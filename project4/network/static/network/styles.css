@@ -1,0 +1,39 @@
+.body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.view {
+  width: 66vw;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#input-area {
+  margin-top: 2vh;
+}
+
+#post-input {
+  width: 100%;
+  min-height: 150px;
+}
+
+#image-input {
+  width: 100%;
+  margin-top: 1vh;
+}
+
+.input-area-item {
+  display: flex;
+  width: 100%;
+  justify-content: right;
+}
+
+.hidden {
+  display: none;
+}

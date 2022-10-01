@@ -1,5 +1,31 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
-    TODO
+    <div id="feed-view" class="view">
+        <div id="input-area" class="container">
+            <div class="input-area-item">
+                {% csrf_token %}
+                <textarea id="post-input" placeholder="What's in your mind?"></textarea>
+            </div>
+            <div class="input-area-item hidden">
+                <input type="text" id="image-input" placeholder="Your image URL">
+            </div>
+            <div class="input-area-item">
+                <button class="btn btn-secondary" id="post-btn">Post</button>
+            </div>
+            <div id="feed" class="container"></div>
+        </div>
+    </div>
+    <div id="profile-view" class="view">
+        <div id="profile-info"></div>
+        <div id="profile-posts"></div>
+    </div>
+    <div id="follower-list-view" class="view">
+        <div id="follower-list"></div>
+    </div>
+    <div id="settings-view" class="view">
+        <div id="settings"></div>
+    </div>
+    <script src="{% static 'network/network.js' %}"></script>   
 {% endblock %}

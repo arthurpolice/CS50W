@@ -84,12 +84,30 @@ def log_post(request):
     post.save()
     return JsonResponse({"message": "Post logged successfully."}, status=201)
 
-def get_posts(request):
+def homepage(request):
+    # Not sure about this syntax
+    followed_users = User.following.filter(user=request.user)
+    posts = Post.objects.filter(user__in=followed_users)
+    # Take these posts and send them to js to make the HTML
+
+def profile_page(request, username):
+    list_of_posts = []
+    requested_profile = User.objects.get(username=username)
+    posts = Post.objects.filter(user=requested_profile)
+    # Figure out how to limit how many we go through and then start from that number again, it's in the classes
+    for post in posts:
+        dict = {
+            "user": post.user,
+            "content": post.content,
+            "image": post.image_url,
+            "timestamp": post.timestamp
+        }
+        
+def follow(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
     data = json.loads(request.body)
-    if request.user == data.user:
-        # Not sure about this syntax
-        followed_users = User.following.filter(user=data.user)
-        posts = Post.objects.filter(user__in=followed_users)
-        # Take these posts and send them to js to make the HTML
-    else:
-        posts = Post.objects.filter(user=data.user)
+    current_user = request.user
+    followed_user = data.user
+    Follower.add_follower(followed_user, current_user)
+    return JsonResponse({"message": "Follow successful."}, status=201)

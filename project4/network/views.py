@@ -102,6 +102,8 @@ def profile_page(request, username):
             "image": post.image_url,
             "timestamp": post.timestamp
         }
+        list_of_posts += [dict]
+    
         
 def follow(request):
     if request.method != "POST":

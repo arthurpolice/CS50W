@@ -83,3 +83,13 @@ def log_post(request):
     
     post.save()
     return JsonResponse({"message": "Post logged successfully."}, status=201)
+
+def get_posts(request):
+    data = json.loads(request.body)
+    if request.user == data.user:
+        # Not sure about this syntax
+        followed_users = User.following.filter(user=data.user)
+        posts = Post.objects.filter(user__in=followed_users)
+        # Take these posts and send them to js to make the HTML
+    else:
+        posts = Post.objects.filter(user=data.user)

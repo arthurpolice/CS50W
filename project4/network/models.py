@@ -23,7 +23,7 @@ class ReplySection(models.Model):
     comments = models.ManyToManyField(Comment, related_name="parent_post")
     
     @classmethod
-    def make_reply_section(cls, post, new_comment):
+    def add_comment(cls, post, new_comment):
         reply_section, created = cls.objects.get_or_create(
             post = post
         )
@@ -35,7 +35,7 @@ class Follower(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     
     @classmethod
-    def make_follower_list(cls, user, new_follower):
+    def add_follower(cls, user, new_follower):
         follower_list, created = cls.objects.get_or_create(
             user = user
         )
@@ -47,7 +47,7 @@ class PostLike(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     
     @classmethod
-    def make_like_list_post(cls, post, new_like):
+    def add_like_post(cls, post, new_like):
         like_list, created = cls.objects.get_or_create(
             post = post
         )
@@ -59,7 +59,7 @@ class CommentLike(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     
     @classmethod
-    def make_like_list_post(cls, comment, new_like):
+    def add_like_comment(cls, comment, new_like):
         like_list, created = cls.objects.get_or_create(
             comment = comment
         )

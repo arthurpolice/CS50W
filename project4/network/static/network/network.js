@@ -19,6 +19,64 @@ function homepage() {
     })
 }
 
+function profile_page(username) {
+  document.querySelector("#profile-view").style.display = "block"
+  document.querySelector("#post-view").style.display = "none"
+  document.querySelector("#settings-view").style.display = "none"
+  document.querySelector("#follower-list-view").style.display = "none"
+  document.querySelector("#homepage-view").style.display = "none"
+  document.querySelector("#post-list-view").style.display = "block"
+
+  fetch(`user_info/${username}`)
+  .then((user) => user.json())
+  .then((user) => {
+    display_avatar(user)
+    document.querySelector('#username').innerHTML = user['username']
+    document.querySelector('#join-date').innerHTML = user['timestamp']
+  })
+
+  make_follow_button()
+  make_post_section(username)
+}
+
+function make_post_section(username) {
+  fetch(`/profile_page/${username}`)
+  .then((pages) => pages.json())
+  .then((pages) => {
+    display_posts(pages)
+    make_page_bar(pages)
+  })
+}
+
+function make_follow_button(){
+  follow_button = document.querySelector('#follow-button')
+  follow_button.replaceWith(follow_button.cloneNode(true))
+  follow_button = document.querySelector('#follow-button')
+
+  follow_button.addEventListener('click', () => {
+    fetch("/follow", {
+      method: "POST",
+      body: JSON.stringify({
+        username: document.querySelector('#username').innerHTML
+      })
+    })
+    .then(console.log(response))
+  })
+}
+
+function display_avatar(user) {
+  avatar_wrapper = document.querySelector('#avatar-wrapper')
+  avatar = document.createElement('img')
+  avatar.classList.add('avatar')
+  if(Boolean(new URL(user['avatar']) === true)) {
+    avatar.src = user['avatar']
+  }
+  else {
+    avatar.src = "https://cdn3.vectorstock.com/i/thumb-large/11/72/outline-profil-user-or-avatar-icon-isolated-vector-35681172.jpg"
+  }
+  avatar_wrapper.appendChild(avatar)
+}
+
 function make_page_bar(pages) {
   document.querySelectorAll('.page-item').remove()
   page_navbar = document.querySelector(".pagination")
@@ -87,11 +145,11 @@ function display_posts(pages, i = 0) {
 }
 
 function log_post() {
-  let post_btn = document.querySelector("#post-btn")
-  let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
-  let content = document.querySelector("#post-input")
-  let image_url = document.querySelector("#image-input")
-  let image_btn = document.querySelector("#image-btn")
+  post_btn = document.querySelector("#post-btn")
+  csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+  content = document.querySelector("#post-input")
+  image_url = document.querySelector("#image-input")
+  image_btn = document.querySelector("#image-btn")
   display_url_input(image_btn)
   move_post_btn(image_btn, post_btn)
 
@@ -116,7 +174,7 @@ function log_post() {
 }
 
 function display_url_input(image_btn) {
-  let image_url_div = document.querySelector("#image-input-div")
+  image_url_div = document.querySelector("#image-input-div")
   image_btn.addEventListener("click", () => {
     if (image_url_div.classList.contains("hidden-image-input")) {
       image_url_div.style.animationPlayState = "running"

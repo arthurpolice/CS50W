@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower
+from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower, Avatar
 
 
 def index(request):
@@ -91,18 +91,21 @@ def homepage(request):
     return paginator
 
 def profile_page(request, username):
-    list_of_posts = []
     requested_profile = User.objects.get(username=username)
     posts = Post.objects.filter(user=requested_profile)
-    # Figure out how to limit how many we go through and then start from that number again, it's in the classes
-    for post in posts:
-        dict = {
-            "user": post.user,
-            "content": post.content,
-            "image": post.image_url,
-            "timestamp": post.timestamp
-        }
-        list_of_posts += [dict]
+    paginator = Paginator(posts, 20)
+    return paginator
+
+def user_info(request, username):
+    requested_profile = User.objects.get(username=username)
+    avatar = Avatar.objects.get(user = requested_profile)
+    
+    user_dict = {
+        "username": requested_profile.username,
+        "join_date": requested_profile.timestamp,
+        "avatar": avatar
+    }
+    return user_dict
     
         
 def follow(request):
@@ -110,6 +113,6 @@ def follow(request):
         return JsonResponse({"error": "POST request required."}, status=400)
     data = json.loads(request.body)
     current_user = request.user
-    followed_user = data.user
+    followed_user = User.objects.get(username = data.username)
     Follower.add_follower(followed_user, current_user)
     return JsonResponse({"message": "Follow successful."}, status=201)

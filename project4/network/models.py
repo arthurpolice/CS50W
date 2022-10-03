@@ -6,6 +6,10 @@ from django.forms import CharField
 class User(AbstractUser):
     pass
 
+class Avatar(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="avatar")
+    image_url = models.CharField(null=True, max_length=255)
+
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     content = models.CharField(max_length=255)

@@ -10,10 +10,10 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("logpost", views.log_post, name="log_post"),
     path("homepage", views.homepage, name="homepage"),
-    #route to get posts (for user's feed or someone else's page)
+    path("profile/<str:username>", views.profile_page, name="profile_page"),
+    path("user/<str:username>", views.user_info, name="user_info"),
     #route to get specific post
     #route to like
     #route to comment
-    #route to follow
     path("follow", views.follow, name="follow")
 ]

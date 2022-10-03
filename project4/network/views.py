@@ -2,12 +2,11 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower
-
-from .models import User
 
 
 def index(request):
@@ -88,7 +87,8 @@ def homepage(request):
     # Not sure about this syntax
     followed_users = User.following.filter(user=request.user)
     posts = Post.objects.filter(user__in=followed_users)
-    # Take these posts and send them to js to make the HTML
+    paginator = Paginator(posts, 20)
+    return paginator
 
 def profile_page(request, username):
     list_of_posts = []

@@ -15,12 +15,28 @@ class Post(models.Model):
     content = models.CharField(max_length=255)
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def serialize(self):
+        return {
+            "user": self.user.username,
+            "content": self.content,
+            "image_url": self.image_url,
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p")
+        }
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     content = models.CharField(max_length=255)
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def serialize(self):
+        return {
+            "user": self.user.username,
+            "content": self.content,
+            "image_url": self.image_url,
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p")
+        }
 
 class ReplySection(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="replies")

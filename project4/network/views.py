@@ -83,29 +83,51 @@ def log_post(request):
     post.save()
     return JsonResponse({"message": "Post logged successfully."}, status=201)
 
-def homepage(request):
-    # Not sure about this syntax
-    followed_users = User.following.filter(user=request.user)
-    posts = Post.objects.filter(user__in=followed_users)
-    paginator = Paginator(posts, 20)
-    return paginator
 
-def profile_page(request, username):
+def homepage(request, page_num):
+    # Not sure about this syntax
+    user = User.objects.get(pk=request.user.id)
+    followed_users = user.following.all().values('user')
+    print(followed_users)
+    users = User.objects.filter(id__in=followed_users)
+    posts = Post.objects.filter(user__in = users)
+    posts = posts.order_by("-timestamp")
+    paginator = Paginator(posts, 20)
+    page_contents = paginator.page(page_num)
+    list_of_posts = [post.serialize() for post in page_contents]
+    return JsonResponse({"posts": list_of_posts,
+                         "pages": paginator.num_pages,
+                         "source": "homepage"
+                         })
+
+
+def profile_page(request, username, page_num):
     requested_profile = User.objects.get(username=username)
     posts = Post.objects.filter(user=requested_profile)
+    posts = posts.order_by("-timestamp")
     paginator = Paginator(posts, 20)
-    return paginator
+    page_contents = paginator.page(page_num)
+    list_of_posts = [post.serialize() for post in page_contents]
+    return JsonResponse({"posts": list_of_posts,
+                         "pages": paginator.num_pages,
+                         "source": "profile_page",
+                         "user": username
+                         })
+
 
 def user_info(request, username):
     requested_profile = User.objects.get(username=username)
-    avatar = Avatar.objects.get(user = requested_profile)
+    try:
+        avatar = Avatar.objects.get(user = requested_profile)
+    except:
+        avatar = None
     
     user_dict = {
         "username": requested_profile.username,
-        "join_date": requested_profile.timestamp,
+        "join_date": requested_profile.date_joined,
         "avatar": avatar
     }
-    return user_dict
+    return JsonResponse(user_dict)
     
         
 def follow(request):
@@ -113,6 +135,6 @@ def follow(request):
         return JsonResponse({"error": "POST request required."}, status=400)
     data = json.loads(request.body)
     current_user = request.user
-    followed_user = User.objects.get(username = data.username)
+    followed_user = User.objects.get(username = data['username'])
     Follower.add_follower(followed_user, current_user)
     return JsonResponse({"message": "Follow successful."}, status=201)

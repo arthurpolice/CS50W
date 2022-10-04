@@ -9,8 +9,8 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path("logpost", views.log_post, name="log_post"),
-    path("homepage", views.homepage, name="homepage"),
-    path("profile/<str:username>", views.profile_page, name="profile_page"),
+    path("homepage/<int:page_num>", views.homepage, name="homepage"),
+    path("profile/<str:username>/<int:page_num>", views.profile_page, name="profile_page"),
     path("user/<str:username>", views.user_info, name="user_info"),
     #route to get specific post
     #route to like

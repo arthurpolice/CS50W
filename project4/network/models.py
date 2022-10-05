@@ -17,11 +17,17 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def serialize(self):
+        try:
+            avatar = Avatar.objects.get(user=self.user)
+            avatar = avatar.image_url
+        except:
+            avatar = None
         return {
             "user": self.user.username,
             "content": self.content,
             "image_url": self.image_url,
-            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p")
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+            "avatar": avatar
         }
 
 class Comment(models.Model):

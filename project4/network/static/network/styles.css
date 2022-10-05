@@ -135,11 +135,65 @@
   background-color: rgba(179, 204, 255);
 }
 
+.outline {
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  border-top: 0px;
+}
+
+.separator {
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.post-wrapper {
+  display: flex;
+}
+
+.avatar {
+  height: 72px;
+  width: 72px;
+  border-radius: 100%;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.avatar-small {
+  height: 36px;
+  width: 36px;
+  border-radius: 100%;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+#profile-header {
+  display: flex;
+}
+
+#profile-buttons {
+  margin-top: 50px;
+  margin-left: auto;
+  width: 100px;
+}
+
+.username {
+  font-size: 15px;
+}
+
+.username:hover {
+  text-decoration: underline;
+}
+
 .hidden-image-input {
   animation-name: show;
   animation-duration: 1s;
   animation-fill-mode: forwards;
   animation-play-state: paused;
+  pointer-events:none;
 }
 
 .unhidden-image-input {

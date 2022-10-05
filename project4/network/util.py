@@ -6,6 +6,6 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower
+from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower, Avatar
 
     

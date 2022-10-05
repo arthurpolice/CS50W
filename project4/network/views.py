@@ -83,7 +83,7 @@ def log_post(request):
     post.save()
     return JsonResponse({"message": "Post logged successfully."}, status=201)
 
-
+# TODO: make behavior for people who are not signed in
 def homepage(request, page_num):
     # Not sure about this syntax
     user = User.objects.get(pk=request.user.id)
@@ -119,17 +119,18 @@ def user_info(request, username):
     requested_profile = User.objects.get(username=username)
     try:
         avatar = Avatar.objects.get(user = requested_profile)
+        avatar = avatar.image_url
     except:
         avatar = None
     
     user_dict = {
         "username": requested_profile.username,
-        "join_date": requested_profile.date_joined,
+        "join_date": requested_profile.date_joined.strftime("%B %Y"),
         "avatar": avatar
     }
     return JsonResponse(user_dict)
     
-        
+@login_required
 def follow(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)

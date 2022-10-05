@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block body %}
-    <div id="homepage-view" class="header">
+<div id="middle-section" class="outline">
+    <div id="homepage-view" class="view header">
         <div id="input-area" class="container">
             <div class="input-area-item">
                 {% csrf_token %}
@@ -17,12 +18,14 @@
             </div>
         </div>
     </div>
-    <div id="profile-view" class="header">
+    <div id="profile-view" class="view header">
         <div id="profile-info">
             <div id="profile-header">
                 <span id="avatar-wrapper"></span>
-                <span id="username-wrapper"><p id="username"></p></span>
-                <span id="join-date"></span>
+                <div id="header-info">
+                    <span id="username-wrapper"><p id="username"></p></span>
+                    <span id="join-date"></span>
+                </div>
             </div>
             <div id="profile-buttons">
                 <button class="btn btn-primary" id="follow-button">Follow</button>
@@ -46,5 +49,6 @@
     <div id="settings-view" class="view">
         <div id="settings"></div>
     </div>
-    <script src="{% static 'network/network.js' %}"></script>   
+    <script src="{% static 'network/network.js' %}"></script>
+</div>   
 {% endblock %}

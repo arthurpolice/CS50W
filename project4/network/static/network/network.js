@@ -14,35 +14,20 @@ function homepage(page) {
   document.querySelector("#user-list-view").style.display = "none"
   document.querySelector("#homepage-view").style.display = "block"
   document.querySelector("#post-list-view").style.display = "block"
+  csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+
   log_post()
-  fetch(`/homepage/${page}`)
+
+  fetch(`${location.host}/homepage/${page}`, {
+    method: "POST",
+    headers: { "X-CSRFToken": csrftoken },
+    mode: "same-origin"
+  })
     .then((posts) => posts.json())
     .then((posts) => {
-      console.log(posts)
       display_posts(posts['posts'])
       make_page_bar(posts)
     })
-}
-
-
-function profile_page(username) {
-  document.querySelector("#profile-view").style.display = "block"
-  document.querySelector("#post-view").style.display = "none"
-  document.querySelector("#settings-view").style.display = "none"
-  document.querySelector("#user-list-view").style.display = "none"
-  document.querySelector("#homepage-view").style.display = "none"
-  document.querySelector("#post-list-view").style.display = "block"
-
-  fetch(`user/${username}`)
-  .then((user) => user.json())
-  .then((user) => {
-    display_avatar(user)
-    document.querySelector('#username').innerHTML = user['username']
-    document.querySelector('#join-date').innerHTML = `Joined ${user['join_date']}`
-  })
-
-  make_follow_button(username)
-  get_posts(username, 1)
 }
 
 
@@ -73,12 +58,38 @@ function log_post() {
   })
 }
 
+function profile_page(username) {
+  document.querySelector("#profile-view").style.display = "block"
+  document.querySelector("#post-view").style.display = "none"
+  document.querySelector("#settings-view").style.display = "none"
+  document.querySelector("#user-list-view").style.display = "none"
+  document.querySelector("#homepage-view").style.display = "none"
+  document.querySelector("#post-list-view").style.display = "block"
+  csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+
+  fetch(`/user/${username}`)
+  .then((user) => user.json())
+  .then((user) => {
+    display_avatar(user)
+    document.querySelector('#username').innerHTML = user['username']
+    document.querySelector('#join-date').innerHTML = `Joined ${user['join_date']}`
+    make_follow_button(username, user['follow_status'])
+    get_posts(username, 1)
+  })
+}
+
+
 function get_posts(username, page) {
-  fetch(`/profile/${username}/${page}`)
+  csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+  fetch(`/profile/${username}/${page}`, {
+    method: "POST",
+    headers: { "X-CSRFToken": csrftoken },
+    mode: "same-origin"
+  })
   .then((posts) => posts.json())
   .then((posts) => {
     display_posts(posts['posts'])
-    make_page_bar(posts['pages'])
+    make_page_bar(posts)
   })
 }
 
@@ -97,25 +108,54 @@ function search_user() {
 
 // Frontend Creation Section
 
-function make_follow_button(username){
+function make_follow_button(username, follow_status){
   follow_button = document.querySelector('#follow-button')
   follow_button.replaceWith(follow_button.cloneNode(true))
   follow_button = document.querySelector('#follow-button')
+  change_follow_button(follow_button, follow_status)
+
+
   csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
   if (username === document.querySelector('#current-user')){
     follow_button.classList.add('hidden')
   }
-
+  else if (follow_status === true) {
+    follow_button.classList.add('already-followed')
+    follow_button.innerHTML = "Unfollow"
+  }
   follow_button.addEventListener('click', () => {
-    fetch("/follow", {
+    fetch(`/follow/${username}`, {
       method: "POST",
-      body: JSON.stringify({
-        username: document.querySelector('#username').innerHTML
-      }),
       headers: { "X-CSRFToken": csrftoken },
       mode: "same-origin",
     })
   })
+}
+
+function change_follow_button(follow_button, follow_status) {
+  if (follow_status === true) {
+    follow_button.classList.add('already-followed')
+    follow_button.innerHTML = "Unfollow"
+    follow_button.addEventListener('click', () => unfollow(follow_button))
+  }
+  else {
+    follow_button.classList.remove('already-followed')
+    follow_button.innerHTML = "Follow"
+    follow_status === true
+    follow_button.addEventListener('click', () => follow(follow_button))
+  }
+}
+
+function unfollow(follow_button) {
+  follow_status = false
+  follow_button.removeEventListener('click', () => unfollow(follow_button, follow_status))
+  change_follow_button(follow_button, follow_status)
+}
+
+function follow(follow_button) {
+  follow_status = true
+  follow_button.removeEventListener('click', () => follow(follow_button, follow_status))
+  change_follow_button(follow_button, follow_status)
 }
 
 function display_avatar(user) {
@@ -130,12 +170,13 @@ function display_avatar(user) {
   avatar_wrapper.appendChild(avatar)
 }
 
+
 function make_page_bar(posts) {
   preexisting_buttons = document.querySelectorAll('.page-item')
   preexisting_buttons.forEach((button) => button.remove())
   page_navbar = document.querySelector(".pagination")
   number_of_pages = posts['pages']
-  for (var i = 0; i > number_of_pages; i++) {
+  for (var i = 0; i < number_of_pages; i++) {
     var li = document.createElement("li")
     var a = document.createElement("a")
     li.classList.add("page-item")
@@ -160,7 +201,6 @@ function display_posts(posts) {
   separators = document.querySelectorAll('.separator')
   separators.forEach((separator) => separator.remove())
   posts.forEach((post) => {
-    console.log(post)
 
     separator = document.createElement("div")
     separator.classList.add("separator")
@@ -185,7 +225,6 @@ function display_posts(posts) {
     username.classList.add("username")
     username.innerHTML = post["user"]
     username.addEventListener('click', () => profile_page(post['user']))
-    console.log(post['user'])
 
     post_time = document.createElement("p")
     post_time.classList.add("post-timestamp")

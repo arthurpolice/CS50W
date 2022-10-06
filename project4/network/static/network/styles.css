@@ -188,6 +188,15 @@
   text-decoration: underline;
 }
 
+.pagination {
+  justify-content: center;
+}
+
+.already-followed {
+  background-color: white;
+  color:blue;
+}
+
 .hidden-image-input {
   animation-name: show;
   animation-duration: 1s;

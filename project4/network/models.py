@@ -67,6 +67,13 @@ class Follower(models.Model):
         )
         follower_list.follower.add(new_follower)
         
+    @classmethod
+    def remove_follower(cls, user, follower):
+        follower_list, created = cls.objects.get_or_create(
+            user = user
+        )
+        follower_list.follower.remove(follower)
+        
 class PostLike(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
     like = models.ManyToManyField(User, related_name="liked_post")

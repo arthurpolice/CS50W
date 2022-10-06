@@ -84,7 +84,7 @@ def log_post(request):
     return JsonResponse({"message": "Post logged successfully."}, status=201)
 
 # TODO: make behavior for people who are not signed in
-def homepage(request, page_num):
+def homepage(request, page_num=1):
     # Not sure about this syntax
     user = User.objects.get(pk=request.user.id)
     followed_users = user.following.all().values('user')
@@ -101,22 +101,31 @@ def homepage(request, page_num):
                          })
 
 
-def profile_page(request, username, page_num):
-    requested_profile = User.objects.get(username=username)
-    posts = Post.objects.filter(user=requested_profile)
-    posts = posts.order_by("-timestamp")
-    paginator = Paginator(posts, 20)
-    page_contents = paginator.page(page_num)
-    list_of_posts = [post.serialize() for post in page_contents]
-    return JsonResponse({"posts": list_of_posts,
-                         "pages": paginator.num_pages,
-                         "source": "profile_page",
-                         "user": username
-                         })
+def profile_page(request, username, page_num=1):
+    if request.method == "POST":
+        requested_profile = User.objects.get(username=username)
+        posts = Post.objects.filter(user=requested_profile)
+        posts = posts.order_by("-timestamp")
+        paginator = Paginator(posts, 20)
+        page_contents = paginator.page(page_num)
+        list_of_posts = [post.serialize() for post in page_contents]
+        print(paginator.num_pages)
+        return JsonResponse({"posts": list_of_posts,
+                             "pages": paginator.num_pages,
+                             "source": "profile_page",
+                             "user": username
+                             })
+    else:
+        return render(request, "network/index.html")
 
 
 def user_info(request, username):
     requested_profile = User.objects.get(username=username)
+    if requested_profile.followers.get(follower = request.user):
+        follow_status = True
+    else:
+        follow_status = False
+    
     try:
         avatar = Avatar.objects.get(user = requested_profile)
         avatar = avatar.image_url
@@ -126,16 +135,20 @@ def user_info(request, username):
     user_dict = {
         "username": requested_profile.username,
         "join_date": requested_profile.date_joined.strftime("%B %Y"),
-        "avatar": avatar
+        "avatar": avatar,
+        "follow_status": follow_status
     }
     return JsonResponse(user_dict)
     
 @login_required
-def follow(request):
+def follow(request, username):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
-    data = json.loads(request.body)
     current_user = request.user
-    followed_user = User.objects.get(username = data['username'])
+    followed_user = User.objects.get(username = username)
+    if followed_user == current_user:
+        return JsonResponse({"error": "You cannot follow yourself"}, status=201)
+    if followed_user.followers.get(follower = current_user):
+        Follower.remove_follower(followed_user, current_user)
     Follower.add_follower(followed_user, current_user)
     return JsonResponse({"message": "Follow successful."}, status=201)

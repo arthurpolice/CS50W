@@ -1,4 +1,5 @@
 import json
+import validators
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -75,7 +76,9 @@ def log_post(request):
     user = request.user
     content = data.get("content", "")
     image_url = data.get("picture", "")
-    
+    if validators.url(image_url) == False:
+        image_url = None
+       
     post = Post(
         user=user,
         content=content,
@@ -94,7 +97,7 @@ def homepage(request, page_num=1):
     users = User.objects.filter(id__in=followed_users)
     posts = Post.objects.filter(user__in = users)
     posts = posts.order_by("-timestamp")
-    paginator = Paginator(posts, 20)
+    paginator = Paginator(posts, 10)
     page_contents = paginator.page(page_num)
     list_of_posts = [post.serialize() for post in page_contents]
     return JsonResponse({"posts": list_of_posts,
@@ -108,7 +111,7 @@ def profile_page(request, username, page_num=1):
         requested_profile = User.objects.get(username=username)
         posts = Post.objects.filter(user=requested_profile)
         posts = posts.order_by("-timestamp")
-        paginator = Paginator(posts, 20)
+        paginator = Paginator(posts, 10)
         page_contents = paginator.page(page_num)
         list_of_posts = [post.serialize() for post in page_contents]
         print(paginator.num_pages)
@@ -126,7 +129,9 @@ def profile_page(request, username, page_num=1):
 
 def user_info(request, username):
     requested_profile = User.objects.get(username=username)
-    if requested_profile.followers.get(follower = request.user):
+    if requested_profile == request.user:
+        follow_status = False
+    elif requested_profile.followers.get(follower = request.user):
         follow_status = True
     else:
         follow_status = False

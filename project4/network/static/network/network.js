@@ -27,20 +27,19 @@ function homepage(page) {
 function log_post() {
   post_btn = document.querySelector("#post-btn")
   csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
-  image_url = document.querySelector("#image-input")
   image_btn = document.querySelector("#image-btn")
   
-  display_url_input(image_btn)
-  move_post_btn(image_btn, post_btn)
+  display_url_input(image_btn, post_btn)
 
   post_btn.addEventListener("click", () => {
     content = document.querySelector("#post-input")
+    image_url = document.querySelector("#image-input")
     if (((content.value != "") && (content.value != null)) || ((image_url.value != "") && (image_url.value != null))) {
       fetch("/logpost", {
         method: "POST",
         body: JSON.stringify({
           content: content.value,
-          image_url: image_url.value,
+          picture: image_url.value,
         }),
         headers: { "X-CSRFToken": csrftoken },
         mode: "same-origin",
@@ -109,7 +108,7 @@ function make_follow_button(username, follow_status){
 
 
   csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
-  if (username === document.querySelector('#current-user')){
+  if (username === document.querySelector('#current-user').value){
     follow_button.classList.add('hidden')
   }
   else if (follow_status === true) {
@@ -236,7 +235,8 @@ function display_posts(posts) {
 
     image_div = document.createElement("div")
     image_div.classList.add("post-image-wrapper")
-    if (post['image_url' != null]){
+
+    if (post['image_url'] != null && post['image_url'] != ""){
  
       image = document.createElement('img')
       image.classList.add('post-image')
@@ -272,8 +272,7 @@ function display_posts(posts) {
 
 // Embelishments Section
 
-function move_post_btn(image_btn, post_btn) {
-  image_btn.addEventListener("click", () => {
+function move_post_btn(post_btn) {
     if (post_btn.classList.contains("move-down")) {
       post_btn.style.animationPlayState = "running"
       post_btn.addEventListener("animationend", () => {
@@ -289,14 +288,16 @@ function move_post_btn(image_btn, post_btn) {
         post_btn.style.animationPlayState = "paused"
       })
     }
-  })
-}
+  }
 
-function display_url_input(image_btn) {
+function display_url_input(image_btn, post_btn) {
   image_url_div = document.querySelector("#image-input-div")
   image_btn.addEventListener("click", () => {
+    image_btn.disabled = true
+    setTimeout(() => image_btn.disabled = false, 1000)
     if (image_url_div.classList.contains("hidden-image-input")) {
       image_url_div.style.animationPlayState = "running"
+      move_post_btn(post_btn)
       image_url_div.addEventListener("animationend", () => {
         image_url_div.classList.remove("hidden-image-input")
         image_url_div.classList.add("unhidden-image-input")
@@ -304,6 +305,7 @@ function display_url_input(image_btn) {
       })
     } else {
       image_url_div.style.animationPlayState = "running"
+      move_post_btn(post_btn)
       image_url_div.addEventListener("animationend", () => {
         image_url_div.classList.add("hidden-image-input")
         image_url_div.classList.remove("unhidden-image-input")

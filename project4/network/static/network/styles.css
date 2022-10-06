@@ -83,6 +83,7 @@
 #post-input {
   width: 100%;
   min-height: 150px;
+  padding-right: 50px;
 }
 
 #image-input {
@@ -195,6 +196,23 @@
 .already-followed {
   background-color: white;
   color:blue;
+}
+
+.post-div {
+  max-width: 500px;
+}
+
+.post-image {
+  max-width: 500px;
+  max-height: 800px;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: black;
+  border-width: 1px;
+}
+
+.content {
+  text-align: justify;
 }
 
 .hidden-image-input {

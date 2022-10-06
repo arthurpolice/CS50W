@@ -50,5 +50,14 @@
         <div id="settings"></div>
     </div>
     <script src="{% static 'network/network.js' %}"></script>
+    {% if called_page == "profile" %}
+        <script>
+            profile_page('{{ username }}');
+        </script>
+    {% elif called_page == "home" %}
+        <script>
+            homepage(1)
+        </script>
+    {% endif %}
 </div>   
 {% endblock %}

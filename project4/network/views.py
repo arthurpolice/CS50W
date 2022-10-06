@@ -10,7 +10,9 @@ from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Fo
 
 
 def index(request):
-    return render(request, "network/index.html")
+    return render(request, "network/index.html", {
+        "called_page": "home"
+    })
 
 
 def login_view(request):
@@ -116,7 +118,10 @@ def profile_page(request, username, page_num=1):
                              "user": username
                              })
     else:
-        return render(request, "network/index.html")
+        return render(request, "network/index.html", {
+            "called_page": "profile",
+            "username": username
+        })
 
 
 def user_info(request, username):

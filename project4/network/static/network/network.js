@@ -1,10 +1,3 @@
-// Set up the default view
-document.addEventListener("DOMContentLoaded", () => {
-  homepage(1)
-})
-
-
-
 // Backend Communication Section
 
 function homepage(page) {
@@ -18,7 +11,7 @@ function homepage(page) {
 
   log_post()
 
-  fetch(`${location.host}/homepage/${page}`, {
+  fetch(`/homepage/${page}`, {
     method: "POST",
     headers: { "X-CSRFToken": csrftoken },
     mode: "same-origin"

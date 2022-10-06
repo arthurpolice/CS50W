@@ -16,18 +16,25 @@ class Post(models.Model):
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-    def serialize(self):
+    def serialize(self, user):
         try:
             avatar = Avatar.objects.get(user=self.user)
             avatar = avatar.image_url
         except:
             avatar = None
+        try:
+            self.likes.get(like = user)
+            like_status = True
+        except:
+            like_status = False
         return {
+            "id": self.pk,
             "user": self.user.username,
             "content": self.content,
             "image_url": self.image_url,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
-            "avatar": avatar
+            "avatar": avatar,
+            "like_status": like_status
         }
 
 class Comment(models.Model):
@@ -36,12 +43,19 @@ class Comment(models.Model):
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def serialize(self):
+    def serialize(self, user):
+        try:
+            self.likes.get(like = user)
+            like_status = True
+        except:
+            like_status = False
         return {
+            "id": self.pk,
             "user": self.user.username,
             "content": self.content,
             "image_url": self.image_url,
-            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p")
+            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+            "like_status": like_status
         }
 
 class ReplySection(models.Model):
@@ -86,6 +100,13 @@ class PostLike(models.Model):
         )
         like_list.like.add(new_like)
         
+    @classmethod
+    def remove_like_post(cls, post, new_like):
+        like_list, created = cls.objects.get_or_create(
+            post = post
+        )
+        like_list.like.remove(new_like)
+        
 class CommentLike(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="likes")
     like = models.ManyToManyField(User, related_name="liked_comment")
@@ -97,3 +118,10 @@ class CommentLike(models.Model):
             comment = comment
         )
         like_list.like.add(new_like)
+        
+    @classmethod
+    def remove_like_comment(cls, comment, new_like):
+        like_list, created = cls.objects.get_or_create(
+            comment = comment
+        )
+        like_list.like.remove(new_like)

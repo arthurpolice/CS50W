@@ -68,6 +68,7 @@
 
 .view {
   width: 50vw;
+  max-width: 650px;
 }
 
 .container {
@@ -153,6 +154,8 @@
 
 .post-wrapper {
   display: flex;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .avatar {
@@ -198,11 +201,8 @@
   color:blue;
 }
 
-.post-div {
-  max-width: 500px;
-}
-
 .post-image {
+  width: 40vw;
   max-width: 500px;
   max-height: 800px;
   border-radius: 10px;
@@ -212,7 +212,45 @@
 }
 
 .content {
+  width: 40vw;
+  max-width: 500px;
   text-align: justify;
+}
+
+.svg-heart {
+  height:20px;
+  width: 20px;
+}
+
+.red-heart {
+  color: red;
+}
+
+.white-heart {
+  color: white;
+}
+
+.like-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  box-shadow: none;
+  border-width: 1px;
+  height: 30px;
+  width: 30px;
+  padding: 0;
+  padding-top:2px;
+}
+
+.already-liked {
+  background-color: red;
+  border-color: red;
+} 
+
+.not-liked {
+  background-color: white;
+  border-color: white;
 }
 
 .hidden-image-input {

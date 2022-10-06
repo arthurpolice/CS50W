@@ -210,6 +210,9 @@ function display_posts(posts) {
     avatar_div = document.createElement("div")
     avatar_div.classList.add("avatar-div")
 
+    like_div = document.createElement("div")
+    like_div.classList.add("like-div")
+
     avatar = document.createElement("img")
     avatar.classList.add("avatar-small")
     check_avatar(avatar, post['avatar'])
@@ -245,6 +248,38 @@ function display_posts(posts) {
       image_div.appendChild(image)
     }
 
+    post_id = document.createElement('input')
+    post_id.value = post['id']
+    post_id.classList.add('hidden')
+
+    svg_heart = document.querySelector(".svg-heart")
+
+    like_btn = document.createElement("button")
+    like_btn.classList.add("like-btn")
+    like_btn.appendChild(svg_heart.cloneNode(true))
+    if (post['like_status'] === true) {
+      like_btn.classList.add('already-liked')
+      like_btn.querySelector('svg').classList.add('white-heart')
+    }
+    else {
+      like_btn.classList.add('not-liked')
+      like_btn.querySelector('svg').classList.add('red-heart')
+    }
+    like_btn.addEventListener('click', (ev) => {
+      csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+      parent = ev.currentTarget.parentNode
+      post_id = parent.querySelector('input').value
+      fetch(`/like/post/${post_id}`, {
+        method: "POST",
+        headers: { "X-CSRFToken": csrftoken },
+        mode: "same-origin"
+      })
+      color_like_btn(ev.target)
+    })
+
+    like_div.appendChild(post_id)
+    like_div.appendChild(like_btn)
+
     avatar_div.appendChild(avatar)
 
     header_div.appendChild(username)
@@ -252,10 +287,10 @@ function display_posts(posts) {
 
     content_div.appendChild(content)
 
-
     post_div.appendChild(header_div)
     post_div.appendChild(content_div)
     post_div.appendChild(image_div)
+    post_div.appendChild(like_div)
 
     wrapper.appendChild(avatar_div)
     wrapper.appendChild(post_div)
@@ -328,5 +363,27 @@ function check_avatar(avatar_element, avatar_url){
   }
   else {
     avatar_element.src = "https://cdn3.vectorstock.com/i/thumb-large/11/72/outline-profil-user-or-avatar-icon-isolated-vector-35681172.jpg"
+  }
+}
+
+function color_like_btn(like_btn) {
+  if (like_btn.classList.contains("already-liked")) {
+    like_btn.style.animationPlayState = "running"
+    like_btn.addEventListener("animationend", () => {
+      like_btn.classList.remove("already-liked")
+      like_btn.classList.add("not-liked")
+      like_btn.style.animationPlayState = "paused"
+      like_btn.querySelector('svg').classList.remove('white-heart')
+      like_btn.querySelector('svg').classList.add('red-heart')
+    })
+  } else {
+    like_btn.style.animationPlayState = "running"
+    like_btn.addEventListener("animationend", () => {
+      like_btn.classList.remove("not-liked")
+      like_btn.classList.add("already-liked")
+      like_btn.style.animationPlayState = "paused"
+      like_btn.querySelector('svg').classList.add('white-heart')
+      like_btn.querySelector('svg').classList.remove('red-heart')
+    })
   }
 }

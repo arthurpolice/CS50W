@@ -7,6 +7,8 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+
+from .util import follow_status_check, get_avatar, like_handler_post, like_handler_comment
 from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower, Avatar
 
 
@@ -99,7 +101,7 @@ def homepage(request, page_num=1):
     posts = posts.order_by("-timestamp")
     paginator = Paginator(posts, 10)
     page_contents = paginator.page(page_num)
-    list_of_posts = [post.serialize() for post in page_contents]
+    list_of_posts = [post.serialize(request.user) for post in page_contents]
     return JsonResponse({"posts": list_of_posts,
                          "pages": paginator.num_pages,
                          "source": "homepage"
@@ -129,18 +131,8 @@ def profile_page(request, username, page_num=1):
 
 def user_info(request, username):
     requested_profile = User.objects.get(username=username)
-    if requested_profile == request.user:
-        follow_status = False
-    elif requested_profile.followers.get(follower = request.user):
-        follow_status = True
-    else:
-        follow_status = False
-    
-    try:
-        avatar = Avatar.objects.get(user = requested_profile)
-        avatar = avatar.image_url
-    except:
-        avatar = None
+    follow_status = follow_status_check(request, requested_profile)
+    avatar = get_avatar(requested_profile)
     
     user_dict = {
         "username": requested_profile.username,
@@ -156,9 +148,27 @@ def follow(request, username):
         return JsonResponse({"error": "POST request required."}, status=400)
     current_user = request.user
     followed_user = User.objects.get(username = username)
+    
     if followed_user == current_user:
         return JsonResponse({"error": "You cannot follow yourself"}, status=201)
+    
     if followed_user.followers.get(follower = current_user):
         Follower.remove_follower(followed_user, current_user)
-    Follower.add_follower(followed_user, current_user)
-    return JsonResponse({"message": "Follow successful."}, status=201)
+        return JsonResponse({"message": "User unfollowed."}, status=201)
+    else:
+        Follower.add_follower(followed_user, current_user)
+        return JsonResponse({"message": "Follow successful."}, status=201)
+
+@login_required
+def like(request, content_type, id):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    current_user = request.user
+    if content_type == "post":
+        liked_object = Post.objects.get(pk=id)
+        like_handler_post(current_user, liked_object)
+    elif content_type == "comment":
+        liked_object = Comment.objects.get(pk=id)
+        like_handler_comment(current_user, liked_object)
+    return JsonResponse({"message": "Like action successful."}, status=201)

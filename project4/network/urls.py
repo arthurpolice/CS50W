@@ -14,7 +14,7 @@ urlpatterns = [
     path("profile/<str:username>/<int:page_num>", views.profile_page, name="profile_page"),
     path("user/<str:username>", views.user_info, name="user_info"),
     #route to get specific post
-    #route to like
+    path("like/<str:content_type>/<int:id>", views.like, name="like"),
     #route to comment
     path("follow/<str:username>", views.follow, name="follow")
 ]

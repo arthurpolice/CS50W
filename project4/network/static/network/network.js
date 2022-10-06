@@ -165,6 +165,7 @@ function display_avatar(user) {
 
 
 function make_page_bar(posts) {
+  console.log(posts['source'])
   preexisting_buttons = document.querySelectorAll('.page-item')
   preexisting_buttons.forEach((button) => button.remove())
   page_navbar = document.querySelector(".pagination")
@@ -178,10 +179,13 @@ function make_page_bar(posts) {
     a.innerHTML = page_number
     li.appendChild(a)
     if (posts['source'] === "homepage"){
-      li.addEventListener('click', () => homepage(page_number))
+      li.addEventListener('click', (ev) => homepage(ev.target.innerHTML))
     }
     else if (posts['source'] === "profile_page") {
-      li.addEventListener('click', () => get_posts(posts['user'], page_number))
+      li.addEventListener('click', (ev) => {
+        get_posts(posts['user'], ev.target.innerHTML
+        )}
+      )
     }
     li.addEventListener('click', () => display_posts(posts['posts']))
     page_navbar.insertBefore(li, page_navbar.children[i + 1])

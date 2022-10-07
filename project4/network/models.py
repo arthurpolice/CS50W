@@ -27,6 +27,10 @@ class Post(models.Model):
             like_status = True
         except:
             like_status = False
+        try:
+            likes_amount = self.likes.all().count()
+        except:
+            likes_amount = 0
         return {
             "id": self.pk,
             "user": self.user.username,
@@ -34,7 +38,8 @@ class Post(models.Model):
             "image_url": self.image_url,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             "avatar": avatar,
-            "like_status": like_status
+            "like_status": like_status,
+            "likes_amount": likes_amount
         }
 
 class Comment(models.Model):
@@ -49,13 +54,18 @@ class Comment(models.Model):
             like_status = True
         except:
             like_status = False
+        try:
+            likes_amount = self.likes.all().count()
+        except:
+            likes_amount = 0
         return {
             "id": self.pk,
             "user": self.user.username,
             "content": self.content,
             "image_url": self.image_url,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
-            "like_status": like_status
+            "like_status": like_status,
+            "likes_amount": likes_amount
         }
 
 class ReplySection(models.Model):

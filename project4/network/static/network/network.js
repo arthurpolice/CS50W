@@ -204,96 +204,8 @@ function display_posts(posts) {
     wrapper = document.createElement("div")
     wrapper.classList.add("post-wrapper")
 
-    post_div = document.createElement("div")
-    post_div.classList.add("post-div")
-
-    avatar_div = document.createElement("div")
-    avatar_div.classList.add("avatar-div")
-
-    like_div = document.createElement("div")
-    like_div.classList.add("like-div")
-
-    avatar = document.createElement("img")
-    avatar.classList.add("avatar-small")
-    check_avatar(avatar, post['avatar'])
-
-    header_div = document.createElement("div")
-    header_div.classList.add("post-header")
-
-    username = document.createElement("a")
-    username.classList.add("username")
-    username.innerHTML = post["user"]
-    username.addEventListener('click', () => profile_page(post['user']))
-
-    post_time = document.createElement("p")
-    post_time.classList.add("post-timestamp")
-    post_time.innerHTML = post["timestamp"]
-
-    content_div = document.createElement("div")
-    content_div.classList.add("post-content")
-
-    content = document.createElement("p")
-    content.classList.add("content")
-    content.innerHTML = post['content']
-
-    image_div = document.createElement("div")
-    image_div.classList.add("post-image-wrapper")
-
-    if (post['image_url'] != null && post['image_url'] != ""){
- 
-      image = document.createElement('img')
-      image.classList.add('post-image')
-      image.src = post['image_url']
-
-      image_div.appendChild(image)
-    }
-
-    post_id = document.createElement('input')
-    post_id.value = post['id']
-    post_id.classList.add('hidden')
-
-    svg_heart = document.querySelector(".svg-heart")
-
-    like_btn = document.createElement("button")
-    like_btn.classList.add("like-btn")
-    like_btn.appendChild(svg_heart.cloneNode(true))
-    if (post['like_status'] === true) {
-      like_btn.classList.add('already-liked')
-      like_btn.querySelector('svg').classList.add('red-heart')
-    }
-    else {
-      like_btn.classList.add('not-liked')
-      like_btn.querySelector('svg').classList.add('white-heart')
-    }
-    like_btn.addEventListener('click', (ev) => {
-      ev.currentTarget.disabled = true
-      csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
-      parent = ev.currentTarget.parentNode
-      post_id = parent.querySelector('input').value
-      fetch(`/like/post/${post_id}`, {
-        method: "POST",
-        headers: { "X-CSRFToken": csrftoken },
-        mode: "same-origin"
-      })
-      icon = ev.currentTarget.querySelector('.svg-heart')
-      console.log(icon)
-      color_like_btn(ev.currentTarget, icon)
-    })
-
-    like_div.appendChild(post_id)
-    like_div.appendChild(like_btn)
-
-    avatar_div.appendChild(avatar)
-
-    header_div.appendChild(username)
-    header_div.appendChild(post_time)
-
-    content_div.appendChild(content)
-
-    post_div.appendChild(header_div)
-    post_div.appendChild(content_div)
-    post_div.appendChild(image_div)
-    post_div.appendChild(like_div)
+    avatar_div = make_post_avatar(post)
+    post_div = make_post(post)
 
     wrapper.appendChild(avatar_div)
     wrapper.appendChild(post_div)
@@ -303,10 +215,134 @@ function display_posts(posts) {
   })
 }
 
+function make_post(post) { 
+  post_div = document.createElement("div")
+  post_div.classList.add("post-div")
+
+  header_div = make_post_header(post)
+
+  content_div = make_post_content(post)
+
+  like_div = make_post_like_div(post)
+
+  image_div = make_post_image_div(post)
+
+  post_div.appendChild(header_div)
+  post_div.appendChild(content_div)
+  post_div.appendChild(image_div)
+  post_div.appendChild(like_div)
+
+  return post_div
+}
+
+function make_post_avatar(post) {
+  avatar_div = document.createElement("div")
+  avatar_div.classList.add("avatar-div")
+  avatar = document.createElement("img")
+  avatar.classList.add("avatar-small")
+  check_avatar(avatar, post['avatar'])
+  avatar_div.appendChild(avatar)
+
+  return avatar_div
+}
+
+function make_post_header(post) {
+  header_div = document.createElement("div")
+  header_div.classList.add("post-header")
+
+  username = document.createElement("a")
+  username.classList.add("username")
+  username.innerHTML = post["user"]
+  username.addEventListener('click', () => profile_page(post['user']))
+
+  post_time = document.createElement("p")
+  post_time.classList.add("post-timestamp")
+  post_time.innerHTML = post["timestamp"]
+
+  header_div.appendChild(username)
+  header_div.appendChild(post_time)
+
+  return header_div
+}
 
 
+function make_post_content(post) {
+  content_div = document.createElement("div")
+  content_div.classList.add("post-content")
 
+  content = document.createElement("p")
+  content.classList.add("content")
+  content.innerHTML = post['content']
 
+  content_div.appendChild(content)
+
+  return content_div
+}
+
+function make_post_image_div(post) { 
+  image_div = document.createElement("div")
+  image_div.classList.add("post-image-wrapper")
+
+  if (post['image_url'] != null && post['image_url'] != ""){
+
+    image = document.createElement('img')
+    image.classList.add('post-image')
+    image.src = post['image_url']
+
+    image_div.appendChild(image)
+  }
+  return image_div
+}
+
+function make_post_like_div(post) {
+  like_div = document.createElement("div")
+  like_div.classList.add("like-div")
+  
+  post_id = document.createElement('input')
+  post_id.value = post['id']
+  post_id.classList.add('hidden')
+
+  svg_heart = document.querySelector(".svg-heart")
+
+  like_btn = make_post_like_btn(post)
+
+  like_div.appendChild(post_id)
+  like_div.appendChild(like_btn)
+
+  return like_div
+}
+
+function make_post_like_btn(post) {
+  like_btn = document.createElement("button")
+  like_btn.classList.add("like-btn")
+  like_btn.appendChild(svg_heart.cloneNode(true))
+  like_status_checker(like_btn, post)
+  like_btn.addEventListener('click', (ev) => {
+    ev.currentTarget.disabled = true
+    csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+    parent = ev.currentTarget.parentNode
+    post_id = parent.querySelector('input').value
+    fetch(`/like/post/${post_id}`, {
+      method: "POST",
+      headers: { "X-CSRFToken": csrftoken },
+      mode: "same-origin"
+    })
+    icon = ev.currentTarget.querySelector('.svg-heart')
+    color_like_btn(ev.currentTarget, icon)
+  })
+  return like_btn
+}
+
+function like_status_checker(like_btn, post) {
+  if (post['like_status'] === true) {
+    like_btn.classList.add('already-liked')
+    like_btn.querySelector('svg').classList.add('red-heart')
+  }
+  else {
+    like_btn.classList.add('not-liked')
+    like_btn.querySelector('svg').classList.add('white-heart')
+  }
+}
 
 // Embelishments Section
 

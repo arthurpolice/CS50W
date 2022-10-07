@@ -115,7 +115,7 @@ def profile_page(request, username, page_num=1):
         posts = posts.order_by("-timestamp")
         paginator = Paginator(posts, 10)
         page_contents = paginator.page(page_num)
-        list_of_posts = [post.serialize() for post in page_contents]
+        list_of_posts = [post.serialize(request.user) for post in page_contents]
         print(paginator.num_pages)
         return JsonResponse({"posts": list_of_posts,
                              "pages": paginator.num_pages,

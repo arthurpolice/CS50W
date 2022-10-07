@@ -274,6 +274,11 @@
   animation-play-state: paused;
 }
 
+.like-div {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
 .like-btn {
   display: flex;
   justify-content: center;

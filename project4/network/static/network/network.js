@@ -259,13 +259,14 @@ function display_posts(posts) {
     like_btn.appendChild(svg_heart.cloneNode(true))
     if (post['like_status'] === true) {
       like_btn.classList.add('already-liked')
-      like_btn.querySelector('svg').classList.add('white-heart')
+      like_btn.querySelector('svg').classList.add('red-heart')
     }
     else {
       like_btn.classList.add('not-liked')
-      like_btn.querySelector('svg').classList.add('red-heart')
+      like_btn.querySelector('svg').classList.add('white-heart')
     }
     like_btn.addEventListener('click', (ev) => {
+      ev.currentTarget.disabled = true
       csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
       parent = ev.currentTarget.parentNode
       post_id = parent.querySelector('input').value
@@ -274,7 +275,9 @@ function display_posts(posts) {
         headers: { "X-CSRFToken": csrftoken },
         mode: "same-origin"
       })
-      color_like_btn(ev.target)
+      icon = ev.currentTarget.querySelector('.svg-heart')
+      console.log(icon)
+      color_like_btn(ev.currentTarget, icon)
     })
 
     like_div.appendChild(post_id)
@@ -366,24 +369,30 @@ function check_avatar(avatar_element, avatar_url){
   }
 }
 
-function color_like_btn(like_btn) {
+function color_like_btn(like_btn, icon) {
   if (like_btn.classList.contains("already-liked")) {
     like_btn.style.animationPlayState = "running"
+    icon.style.animationPlayState = "running"
     like_btn.addEventListener("animationend", () => {
       like_btn.classList.remove("already-liked")
       like_btn.classList.add("not-liked")
       like_btn.style.animationPlayState = "paused"
-      like_btn.querySelector('svg').classList.remove('white-heart')
-      like_btn.querySelector('svg').classList.add('red-heart')
+      icon.style.animationPlayState = "paused"
+      icon.classList.remove('red-heart')
+      icon.classList.add('white-heart')
+      like_btn.disabled = false
     })
   } else {
+    icon.style.animationPlayState = "running"
     like_btn.style.animationPlayState = "running"
     like_btn.addEventListener("animationend", () => {
       like_btn.classList.remove("not-liked")
       like_btn.classList.add("already-liked")
       like_btn.style.animationPlayState = "paused"
-      like_btn.querySelector('svg').classList.add('white-heart')
-      like_btn.querySelector('svg').classList.remove('red-heart')
+      icon.style.animationPlayState = "paused"
+      icon.classList.add('red-heart')
+      icon.classList.remove('white-heart')
+      like_btn.disabled = false
     })
   }
 }

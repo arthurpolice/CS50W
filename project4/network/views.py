@@ -13,10 +13,14 @@ from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Fo
 
 
 def index(request):
-    return render(request, "network/index.html", {
-        "called_page": "home"
-    })
-
+    if request.user.is_authenticated:
+        return render(request, "network/index.html", {
+            "called_page": "home"
+        })
+    else:
+        return render(request, "network/index.html", {
+            "called_page": "all_posts"
+        })
 
 def login_view(request):
     if request.method == "POST":
@@ -90,23 +94,42 @@ def log_post(request):
     post.save()
     return JsonResponse({"message": "Post logged successfully."}, status=201)
 
-# TODO: make behavior for people who are not signed in
 def homepage(request, page_num=1):
-    # Not sure about this syntax
-    user = User.objects.get(pk=request.user.id)
-    followed_users = user.following.all().values('user')
-    print(followed_users)
-    users = User.objects.filter(id__in=followed_users)
-    posts = Post.objects.filter(user__in = users)
-    posts = posts.order_by("-timestamp")
-    paginator = Paginator(posts, 10)
-    page_contents = paginator.page(page_num)
-    list_of_posts = [post.serialize(request.user) for post in page_contents]
-    return JsonResponse({"posts": list_of_posts,
-                         "pages": paginator.num_pages,
-                         "source": "homepage"
-                         })
+    if request.method == "POST":
+        user = User.objects.get(pk=request.user.id)
+        followed_users = user.following.all().values('user')
+        print(followed_users)
+        users = User.objects.filter(id__in=followed_users)
+        posts = Post.objects.filter(user__in = users)
+        posts = posts.order_by("-timestamp")
+        paginator = Paginator(posts, 10)
+        page_contents = paginator.page(page_num)
+        list_of_posts = [post.serialize(request.user) for post in page_contents]
+        return JsonResponse({"posts": list_of_posts,
+                             "pages": paginator.num_pages,
+                             "source": "homepage"
+                            })
+    else:
+        return render(request, "network/index.html", {
+            "called_page": "homepage"
+        })
 
+
+def all_posts(request, page_num=1):
+    if request.method == "POST":
+        posts = Post.objects.all()
+        posts = posts.order_by("-timestamp")
+        paginator = Paginator(posts, 10)
+        page_contents = paginator.page(page_num)
+        list_of_posts = [post.serialize(request.user) for post in page_contents]
+        return JsonResponse({"posts": list_of_posts,
+                             "pages": paginator.num_pages,
+                             "source": "all_posts"
+                            })
+    else:
+        return render(request, "network/index.html", {
+            "called_page": "all_posts"
+        })
 
 def profile_page(request, username, page_num=1):
     if request.method == "POST":

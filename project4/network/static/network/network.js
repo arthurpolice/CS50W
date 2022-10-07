@@ -1,17 +1,34 @@
+// Set up navbar and post input UI.
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.querySelector('#log').innerHTML === "Log Out") {
+    log_post()
+    document.querySelector('#current-user-profile').addEventListener('click', () => profile_page(document.querySelector('#current-user').value))
+    document.querySelector('#homepage').addEventListener('click', () => get_feed("homepage"))
+  }
+  document.querySelector('#network-button').addEventListener('click', () => get_feed("homepage"))
+  document.querySelector('#all-posts').addEventListener('click', () => get_feed("all_posts"))
+})
+
+
 // Backend Communication Section
 
-function homepage(page) {
+function get_feed(mode, page=1) {
   document.querySelector("#profile-view").style.display = "none"
   document.querySelector("#post-view").style.display = "none"
   document.querySelector("#settings-view").style.display = "none"
   document.querySelector("#user-list-view").style.display = "none"
-  document.querySelector("#homepage-view").style.display = "block"
   document.querySelector("#post-list-view").style.display = "block"
+  if (mode === "homepage") {
+    document.querySelector("#post-input-view").style.display = "block"
+  }
+  else {
+    document.querySelector("#post-input-view").style.display = "none"
+  }
+
   csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
 
-  log_post()
-
-  fetch(`/homepage/${page}`, {
+  fetch(`/${mode}/${page}`, {
     method: "POST",
     headers: { "X-CSRFToken": csrftoken },
     mode: "same-origin"
@@ -50,13 +67,20 @@ function log_post() {
   })
 }
 
+
 function profile_page(username) {
   document.querySelector("#profile-view").style.display = "block"
   document.querySelector("#post-view").style.display = "none"
   document.querySelector("#settings-view").style.display = "none"
   document.querySelector("#user-list-view").style.display = "none"
-  document.querySelector("#homepage-view").style.display = "none"
   document.querySelector("#post-list-view").style.display = "block"
+  if (username === document.querySelector('#current-user').value) {
+    document.querySelector("#post-input-view").style.display = "block"
+  }
+  else {
+    document.querySelector("#post-input-view").style.display = "none"
+  }
+
   csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
 
   fetch(`/user/${username}`)
@@ -69,7 +93,6 @@ function profile_page(username) {
     get_posts(username, 1)
   })
 }
-
 
 function get_posts(username, page) {
   csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
@@ -90,7 +113,7 @@ function search_user() {
   document.querySelector("#post-view").style.display = "none"
   document.querySelector("#settings-view").style.display = "none"
   document.querySelector("#user-list-view").style.display = "block"
-  document.querySelector("#homepage-view").style.display = "none"
+  document.querySelector("#post-input-view").style.display = "none"
   document.querySelector("#post-list-view").style.display = "none"
 }
 
@@ -164,7 +187,6 @@ function display_avatar(user) {
 
 
 function make_page_bar(posts) {
-  console.log(posts['source'])
   preexisting_buttons = document.querySelectorAll('.page-item')
   preexisting_buttons.forEach((button) => button.remove())
   page_navbar = document.querySelector(".pagination")
@@ -177,14 +199,13 @@ function make_page_bar(posts) {
     page_number = i + 1
     a.innerHTML = page_number
     li.appendChild(a)
-    if (posts['source'] === "homepage"){
-      li.addEventListener('click', (ev) => homepage(ev.target.innerHTML))
+    if (posts['source'] === "homepage" || posts['source'] === "all_posts"){
+      li.addEventListener('click', (ev) => get_feed(posts['source'], ev.target.innerHTML))
     }
     else if (posts['source'] === "profile_page") {
       li.addEventListener('click', (ev) => {
-        get_posts(posts['user'], ev.target.innerHTML
-        )}
-      )
+        get_posts(posts['user'], ev.target.innerHTML)
+      })
     }
     li.addEventListener('click', () => display_posts(posts['posts']))
     page_navbar.insertBefore(li, page_navbar.children[i + 1])
@@ -343,6 +364,9 @@ function like_status_checker(like_btn, post) {
     like_btn.querySelector('svg').classList.add('white-heart')
   }
 }
+
+
+
 
 // Embelishments Section
 

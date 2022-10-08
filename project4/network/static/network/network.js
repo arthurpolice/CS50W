@@ -326,9 +326,11 @@ function make_post_like_div(post) {
   svg_heart = document.querySelector(".svg-heart")
 
   like_btn = make_post_like_btn(post)
+  like_counter = make_post_like_counter(post)
 
   like_div.appendChild(post_id)
   like_div.appendChild(like_btn)
+  like_div.appendChild(like_counter)
 
   return like_div
 }
@@ -349,9 +351,17 @@ function make_post_like_btn(post) {
       mode: "same-origin"
     })
     icon = ev.currentTarget.querySelector('.svg-heart')
-    color_like_btn(ev.currentTarget, icon)
+    like_btn_press(ev.currentTarget, icon)
   })
   return like_btn
+}
+
+function make_post_like_counter(post) {
+  like_counter = document.createElement('span')
+  like_counter.classList.add('like-counter')
+  like_counter.innerHTML = post['likes_amount']
+
+  return like_counter
 }
 
 function like_status_checker(like_btn, post) {
@@ -429,10 +439,11 @@ function check_avatar(avatar_element, avatar_url){
   }
 }
 
-function color_like_btn(like_btn, icon) {
+function like_btn_press(like_btn, icon) {
   if (like_btn.classList.contains("already-liked")) {
     like_btn.style.animationPlayState = "running"
     icon.style.animationPlayState = "running"
+    change_like_counter(like_btn, -1)
     like_btn.addEventListener("animationend", () => {
       like_btn.classList.remove("already-liked")
       like_btn.classList.add("not-liked")
@@ -445,6 +456,7 @@ function color_like_btn(like_btn, icon) {
   } else {
     icon.style.animationPlayState = "running"
     like_btn.style.animationPlayState = "running"
+    change_like_counter(like_btn, 1)
     like_btn.addEventListener("animationend", () => {
       like_btn.classList.remove("not-liked")
       like_btn.classList.add("already-liked")
@@ -455,4 +467,9 @@ function color_like_btn(like_btn, icon) {
       like_btn.disabled = false
     })
   }
+}
+
+function change_like_counter(like_btn, amount) {
+  like_counter = like_btn.parentNode.querySelector('.like-counter')
+  like_counter.innerHTML = parseInt(like_counter.innerHTML) + parseInt(amount)
 }

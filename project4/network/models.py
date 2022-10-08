@@ -28,7 +28,9 @@ class Post(models.Model):
         except:
             like_status = False
         try:
-            likes_amount = self.likes.all().count()
+            likes_object = self.likes.get(post = self)
+            likes = likes_object.like.all()
+            likes_amount = likes.count()
         except:
             likes_amount = 0
         return {
@@ -55,7 +57,9 @@ class Comment(models.Model):
         except:
             like_status = False
         try:
-            likes_amount = self.likes.all().count()
+            likes_object = self.likes.get(comment = self)
+            likes = likes_object.like.all()
+            likes_amount = likes.count()
         except:
             likes_amount = 0
         return {
@@ -109,12 +113,14 @@ class PostLike(models.Model):
             post = post
         )
         like_list.like.add(new_like)
+
         
     @classmethod
     def remove_like_post(cls, post, new_like):
         like_list, created = cls.objects.get_or_create(
             post = post
         )
+        print(like_list)
         like_list.like.remove(new_like)
         
 class CommentLike(models.Model):

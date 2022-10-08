@@ -98,7 +98,6 @@ def homepage(request, page_num=1):
     if request.method == "POST":
         user = User.objects.get(pk=request.user.id)
         followed_users = user.following.all().values('user')
-        print(followed_users)
         users = User.objects.filter(id__in=followed_users)
         posts = Post.objects.filter(user__in = users)
         posts = posts.order_by("-timestamp")
@@ -139,7 +138,6 @@ def profile_page(request, username, page_num=1):
         paginator = Paginator(posts, 10)
         page_contents = paginator.page(page_num)
         list_of_posts = [post.serialize(request.user) for post in page_contents]
-        print(paginator.num_pages)
         return JsonResponse({"posts": list_of_posts,
                              "pages": paginator.num_pages,
                              "source": "profile_page",

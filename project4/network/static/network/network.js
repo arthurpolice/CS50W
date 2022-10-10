@@ -303,7 +303,7 @@ function make_options_btn() {
   options_div.classList.add('dropdown-menu')
 
   btn = document.createElement('button')
-  btn.classList.add('btn', 'btn-secondary', 'dropdown-toggle')
+  btn.classList.add('btn', 'btn-light', 'dropdown-toggle', 'options-btn')
   btn.setAttribute('data-toggle', "dropdown")
   btn.setAttribute('type', 'button')
   btn.setAttribute('aria-expanded', 'false')

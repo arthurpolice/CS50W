@@ -105,6 +105,7 @@
 .view {
   width: 50vw;
   max-width: 650px;
+  min-width: 420px;
 }
 
 .container {
@@ -192,6 +193,7 @@
   display: flex;
   padding-left: 10px;
   padding-right: 10px;
+  min-width: 420px;
 }
 
 .avatar {
@@ -239,6 +241,7 @@
 
 .post-image {
   width: 40vw;
+  min-width: 320px;
   max-width: 500px;
   max-height: 800px;
   border-radius: 10px;
@@ -249,6 +252,7 @@
 
 .content {
   width: 40vw;
+  min-width: 320px;
   max-width: 500px;
   text-align: justify;
 }
@@ -310,6 +314,11 @@
   animation-duration: 1s;
   animation-fill-mode: forwards;
   animation-play-state: paused;
+}
+
+.options-btn {
+  margin-left: 90%;
+  margin-top: -80px; 
 }
 
 .hidden-image-input {

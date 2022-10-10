@@ -96,6 +96,13 @@
   }
 }
 
+textarea {
+  resize: none;
+  border-radius: 10px;
+  border-style: hidden;
+  scrollbar-width: thin;
+}
+
 .body {
   display: flex;
   align-items: center;
@@ -104,7 +111,7 @@
 
 .view {
   width: 50vw;
-  max-width: 650px;
+  max-width: 630px;
   min-width: 420px;
 }
 
@@ -239,6 +246,10 @@
   color:blue;
 }
 
+.post-image-wrapper {
+  margin-top: 10px;
+}
+
 .post-image {
   width: 40vw;
   min-width: 320px;
@@ -279,6 +290,8 @@
 }
 
 .like-div {
+  display: inline-flex;
+  align-items: center;
   margin-top: 10px;
   margin-bottom: 5px;
 }
@@ -294,10 +307,13 @@
   width: 35px;
   padding: 0;
   padding-top:2px;
+  margin-right: 10px;
 }
+
 .like-btn:focus {
   outline: none;
 }
+
 .already-liked {
   background-color: white;
   border-color: white;
@@ -319,6 +335,7 @@
 .options-btn {
   margin-left: 90%;
   margin-top: -80px; 
+  background-color: transparent;
 }
 
 .hidden-image-input {

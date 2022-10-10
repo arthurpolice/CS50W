@@ -76,23 +76,32 @@ def register(request):
 @login_required
 def log_post(request):
     
-    if request.method != "POST":
-        return JsonResponse({"error": "POST request required."}, status=400)
+    if request.method != "POST" and request.method != "PUT":
+        return JsonResponse({"error": "POST or PUT request required."}, status=400)
     data = json.loads(request.body)
     user = request.user
     content = data.get("content", "")
     image_url = data.get("picture", "")
     if validators.url(image_url) == False:
         image_url = None
-       
-    post = Post(
-        user=user,
-        content=content,
-        image_url=image_url
-    )
-    
-    post.save()
-    return JsonResponse({"message": "Post logged successfully."}, status=201)
+
+    if request.method == "POST":
+        post = Post(
+            user=user,
+            content=content,
+            image_url=image_url
+        )
+        
+        post.save()
+        return JsonResponse({"message": "Post logged successfully."}, status=201)
+    elif request.method == "PUT":
+        id = data.get("id")
+        post = Post.objects.get(pk=id)
+        post.content = content
+        post.image_url = image_url
+        
+        post.save()
+        return JsonResponse({"message": "Post edited successfully."}, status=201)
 
 def homepage(request, page_num=1):
     if request.method == "POST":

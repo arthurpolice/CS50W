@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelector('#log').innerHTML === "Log Out") {
-    log_post()
+    post_input_interface()
     document.querySelector('#current-user-profile').addEventListener('click', () => profile_page(document.querySelector('#current-user').value))
     document.querySelector('#homepage').addEventListener('click', () => get_feed("homepage"))
   }
@@ -40,33 +40,27 @@ function get_feed(mode, page=1) {
     })
 }
 
-
-function log_post() {
-  post_btn = document.querySelector("#post-btn")
-  csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
-  image_btn = document.querySelector("#image-btn")
-  
-  display_url_input(image_btn, post_btn)
-
-  post_btn.addEventListener("click", () => {
-    content = document.querySelector("#post-input")
-    image_url = document.querySelector("#image-input")
-    if (((content.value != "") && (content.value != null)) || ((image_url.value != "") && (image_url.value != null))) {
-      fetch("/logpost", {
-        method: "POST",
-        body: JSON.stringify({
-          content: content.value,
-          picture: image_url.value,
-        }),
-        headers: { "X-CSRFToken": csrftoken },
-        mode: "same-origin",
-      })
-      content.value =""
-      image_url.value =""
-    }
-  })
+function log_post(parent_node, method) {
+  content = parent_node.querySelector("#post-input")
+  image_url = parent_node.querySelector("#image-input")
+  if (method === "PUT") {
+    id = parent_node.querySelector('.post-id').value
+  }
+  if (((content.value != "") && (content.value != null)) || ((image_url.value != "") && (image_url.value != null))) {
+    fetch("/logpost", {
+      method: method,
+      body: JSON.stringify({
+        content: content.value,
+        picture: image_url.value,
+        id: id
+      }),
+      headers: { "X-CSRFToken": csrftoken },
+      mode: "same-origin",
+    })
+    content.value =""
+    image_url.value =""
+  }
 }
-
 
 function profile_page(username) {
   document.querySelector("#profile-view").style.display = "block"
@@ -122,6 +116,18 @@ function search_user() {
 
 
 // Frontend Creation Section
+
+function post_input_interface() {
+  post_btn = document.querySelector("#post-btn")
+  input_area = document.querySelector('#input-area')
+  csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+  image_btn = document.querySelector("#image-btn")
+  
+  display_url_input(image_btn, post_btn)
+
+  post_btn.addEventListener('click', () => log_post(input_area, "POST"))
+}
+
 
 function make_follow_button(username, follow_status){
   follow_button = document.querySelector('#follow-button')
@@ -280,10 +286,39 @@ function make_post_header(post) {
   post_time.classList.add("post-timestamp")
   post_time.innerHTML = post["timestamp"]
 
+  options = make_options_btn()
+
   header_div.appendChild(username)
   header_div.appendChild(post_time)
+  header_div.appendChild(options)
 
   return header_div
+}
+
+function make_options_btn() {
+  btn_div = document.createElement('div')
+  btn_div.classList.add('dropdown')
+
+  options_div = document.createElement('div')
+  options_div.classList.add('dropdown-menu')
+
+  btn = document.createElement('button')
+  btn.classList.add('btn', 'btn-secondary', 'dropdown-toggle')
+  btn.setAttribute('data-toggle', "dropdown")
+  btn.setAttribute('type', 'button')
+  btn.setAttribute('aria-expanded', 'false')
+  btn.innerHTML = "..."
+
+  edit_option = document.createElement('a')
+  edit_option.classList.add('dropdown-item')
+  edit_option.innerHTML = "Edit Post"
+  edit_option.addEventListener('click', (ev) => make_edit_interface(ev.currentTarget))
+
+  btn_div.appendChild(btn)
+  options_div.appendChild(edit_option)
+  btn_div.appendChild(options_div)
+
+  return btn_div
 }
 
 
@@ -321,7 +356,7 @@ function make_post_like_div(post) {
   
   post_id = document.createElement('input')
   post_id.value = post['id']
-  post_id.classList.add('hidden')
+  post_id.classList.add('hidden', 'post-id')
 
   svg_heart = document.querySelector(".svg-heart")
 
@@ -375,7 +410,40 @@ function like_status_checker(like_btn, post) {
   }
 }
 
+function make_edit_interface(edit_btn) {
+  menu = edit_btn.parentNode
+  menu_div = menu.parentNode
+  header_div = menu_div.parentNode
+  wrapper = header_div.parentNode
 
+  content_div = wrapper.querySelector('.post-content')
+  content = content_div.querySelector('.content').innerHTML
+  image_div = wrapper.querySelector('.post-image-wrapper')
+  try {
+    image_url = image_div.querySelector('img').src
+  }
+  catch {
+    image_url = ""
+  }
+
+  input_area = document.querySelector("#input-area")
+
+  content_div.replaceWith(input_area.cloneNode(true))
+  wrapper.querySelector('#post-input').innerHTML = content
+  wrapper.querySelector('#image-input').value = image_url
+
+  image_btn = wrapper.querySelector("#image-btn")
+  post_btn = wrapper.querySelector("#post-btn")
+  post_btn.replaceWith(post_btn.cloneNode(true))
+  edit_btn = wrapper.querySelector("#post-btn")
+  edit_btn.innerHTML = "Edit"
+
+  display_url_input(image_btn, edit_btn)
+  edit_btn.addEventListener('click', (ev) => {
+    wrapper = ev.currentTarget.parentNode.parentNode.parentNode
+    log_post(wrapper, "PUT")
+  })
+}
 
 
 // Embelishments Section
@@ -399,7 +467,9 @@ function move_post_btn(post_btn) {
   }
 
 function display_url_input(image_btn, post_btn) {
-  image_url_div = document.querySelector("#image-input-div")
+  button_div = image_btn.parentNode
+  input_div = button_div.parentNode
+  image_url_div = input_div.querySelector("#image-input-div")
   image_btn.addEventListener("click", () => {
     image_btn.disabled = true
     setTimeout(() => image_btn.disabled = false, 1000)

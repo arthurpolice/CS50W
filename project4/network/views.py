@@ -163,12 +163,15 @@ def user_info(request, username):
     requested_profile = User.objects.get(username=username)
     follow_status = follow_status_check(request, requested_profile)
     avatar = get_avatar(requested_profile)
+    follower_object = requested_profile.followers.get(user=requested_profile)
+    follower_amount = follower_object.follower.all().count()
     
     user_dict = {
         "username": requested_profile.username,
         "join_date": requested_profile.date_joined.strftime("%B %Y"),
         "avatar": avatar,
-        "follow_status": follow_status
+        "follow_status": follow_status,
+        "follower_amount": follower_amount
     }
     return JsonResponse(user_dict)
     

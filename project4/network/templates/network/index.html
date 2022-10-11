@@ -10,6 +10,7 @@
                 <div id="header-info">
                     <span id="username-wrapper"><p id="username"></p></span>
                     <span id="join-date"></span>
+                    <span id="followers"></span>
                 </div>
             </div>
             <div id="profile-buttons">
@@ -58,15 +59,15 @@
 <script src="{% static 'network/network.js' %}"></script>
 {% if called_page == "profile" %}
     <script>
-        profile_page('{{ username }}');
+        profilePage('{{ username }}');
     </script>
 {% elif called_page == "home" %}
     <script>
-        get_feed("homepage")
+        getFeed("homepage")
     </script>
 {% elif called_page == "all_posts" %}
     <script>
-        get_feed("all_posts")
+        getFeed("all_posts")
     </script>
 {% endif %}
 {% endblock %}

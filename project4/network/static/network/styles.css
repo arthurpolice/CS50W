@@ -96,6 +96,15 @@
   }
 }
 
+#header-info {
+  display: flex;
+  flex-direction: column;
+}
+
+#join-date {
+  margin-bottom: 10px;
+}
+
 textarea {
   resize: none;
   border-radius: 10px;
@@ -224,7 +233,6 @@ textarea {
 }
 
 #profile-buttons {
-  margin-top: 50px;
   margin-left: auto;
   width: 100px;
 }
@@ -355,4 +363,8 @@ textarea {
 
 .hidden {
   display: none;
+}
+
+a:not([href]):hover {
+  cursor:pointer;
 }

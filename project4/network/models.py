@@ -41,7 +41,8 @@ class Post(models.Model):
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             "avatar": avatar,
             "like_status": like_status,
-            "likes_amount": likes_amount
+            "likes_amount": likes_amount,
+            "current_user": user.username
         }
 
 class Comment(models.Model):
@@ -69,7 +70,8 @@ class Comment(models.Model):
             "image_url": self.image_url,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             "like_status": like_status,
-            "likes_amount": likes_amount
+            "likes_amount": likes_amount,
+            "current_user": user.username
         }
 
 class ReplySection(models.Model):

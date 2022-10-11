@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .util import follow_status_check, get_avatar, like_handler_post, like_handler_comment
+from .util import follow_status_check, get_avatar, get_comments, like_handler_post, like_handler_comment
 from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower, Avatar
 
 
@@ -197,10 +197,11 @@ def follow(request, username):
     if followed_user == current_user:
         return JsonResponse({"error": "You cannot follow yourself"}, status=201)
 
-    if followed_user.followers.get(follower=current_user):
-        Follower.remove_follower(followed_user, current_user)
-        return JsonResponse({"message": "User unfollowed."}, status=201)
-    else:
+    try:
+        if followed_user.followers.get(follower=current_user):
+            Follower.remove_follower(followed_user, current_user)
+            return JsonResponse({"message": "User unfollowed."}, status=201)
+    except:
         Follower.add_follower(followed_user, current_user)
         return JsonResponse({"message": "Follow successful."}, status=201)
 
@@ -218,3 +219,21 @@ def like(request, content_type, id):
         liked_object = Comment.objects.get(pk=id)
         like_handler_comment(current_user, liked_object)
     return JsonResponse({"message": "Like action successful."}, status=201)
+
+def single_post(request, id):
+    if request.method == "POST":
+        post = Post.objects.get(pk=id)
+        post_info = post.serialize(request.user)
+        
+        #may need a try/except somewhere
+        try:
+            comments = get_comments(request, post)
+        except:
+            comments = ""
+        
+        return JsonResponse({
+            "post": post_info,
+            "comments": comments,
+            "current_user": request.user.username
+        })
+

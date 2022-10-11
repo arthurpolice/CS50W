@@ -191,14 +191,14 @@ textarea {
 }
 
 .outline {
-  border-color: black;
+  border-color: rgba(0, 0, 0, 0.5);
   border-width: 1px;
   border-style: solid;
   border-top: 0px;
 }
 
 .separator {
-  border-color: black;
+  border-color: rgba(0, 0, 0, 0.5);
   border-width: 1px;
   border-style: solid;
   margin-top: 5px;
@@ -258,6 +258,12 @@ textarea {
   margin-top: 10px;
 }
 
+.post-header {
+  width: 40vw;
+  min-width: 320px;
+  max-width: 500px;
+}
+
 .post-image {
   width: 40vw;
   min-width: 320px;
@@ -265,7 +271,7 @@ textarea {
   max-height: 800px;
   border-radius: 10px;
   border-style: solid;
-  border-color: black;
+  border-color: rgba(0, 0, 0, 0.5);
   border-width: 1px;
 }
 
@@ -344,6 +350,15 @@ textarea {
   margin-left: 90%;
   margin-top: -80px; 
   background-color: transparent;
+}
+
+.inactive-btn {
+  color: lightgray !important;
+  pointer-events: none;
+}
+
+.inactive-btn:hover {
+  cursor: default !important;
 }
 
 .hidden-image-input {

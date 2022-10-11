@@ -28,6 +28,7 @@ function getFeed(mode, page = 1) {
   document.querySelector('#settings-view').style.display = 'none'
   document.querySelector('#user-list-view').style.display = 'none'
   document.querySelector('#post-list-view').style.display = 'block'
+
   if (mode === 'homepage') {
     document.querySelector('#post-input-view').style.display = 'block'
   } else {
@@ -46,6 +47,8 @@ function getFeed(mode, page = 1) {
       displayPosts(posts['posts'])
       makePageBar(posts)
     })
+    currentPage = document.querySelector('#current-page')
+    currentPage.innerHTML = page
 }
 
 function logPost(parentNode, method) {
@@ -87,22 +90,23 @@ function profilePage(username) {
   } else {
     document.querySelector('#post-input-view').style.display = 'none'
   }
+  userInfo(username)
+  getPosts(username, 1)
+}
 
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-
+function userInfo(username) {
   fetch(`/user/${username}`)
-    .then((user) => user.json())
-    .then((user) => {
-      displayAvatar(user)
-      document.querySelector('#username').innerHTML = user['username']
-      document.querySelector(
-        '#join-date'
-      ).innerHTML = `Joined ${user['join_date']}`
-      document.querySelector('#followers').innerHTML = `${user['follower_amount']} Followers`
-      document.querySelector('#following').innerHTML = `${user['followed_amount']} Following`
-      makeFollowButton(username, user['follow_status'])
-      getPosts(username, 1)
-    })
+  .then((user) => user.json())
+  .then((user) => {
+    displayAvatar(user)
+    document.querySelector('#username').innerHTML = user['username']
+    document.querySelector(
+      '#join-date'
+    ).innerHTML = `Joined ${user['join_date']}`
+    document.querySelector('#followers').innerHTML = `${user['follower_amount']} Followers`
+    document.querySelector('#following').innerHTML = `${user['followed_amount']} Following`
+    makeFollowButton(username, user['follow_status'])
+  })
 }
 
 function getPosts(username, page) {
@@ -117,6 +121,30 @@ function getPosts(username, page) {
       displayPosts(posts['posts'])
       makePageBar(posts)
     })
+}
+
+function getSinglePost(id) {
+  document.querySelector('#profile-view').style.display = 'block'
+  document.querySelector('#post-view').style.display = 'none'
+  document.querySelector('#settings-view').style.display = 'none'
+  document.querySelector('#user-list-view').style.display = 'none'
+  document.querySelector('#post-list-view').style.display = 'block'
+  document.querySelector('#post-input-view').style.display = 'none'
+
+  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+  fetch(`post/${id}`, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrftoken },
+    mode: 'same-origin'
+  })
+  .then((response) => response.json())
+  .then((response) => {
+    displayPosts(response['post'])
+    userInfo(response['post']['user'])
+    preexistingButtons = document.querySelector('.pagination').remove()
+    // Make displayComments function
+  })
 }
 
 function searchUser() {
@@ -144,6 +172,7 @@ function postInputInterface() {
 function makeFollowButton(username, followStatus) {
   let followButton = document.querySelector('#follow-button')
   let newFollowButton = followButton.cloneNode(true)
+  newFollowButton.classList.remove('hidden')
   followButton.replaceWith(newFollowButton)
   changeFollowButton(newFollowButton, followStatus)
 
@@ -206,28 +235,29 @@ function displayAvatar(user) {
 }
 
 function makePageBar(posts) {
-  preexistingButtons = document.querySelectorAll('.page-item')
+  preexistingButtons = document.querySelectorAll('.page-number')
   preexistingButtons.forEach((button) => button.remove())
   pageNavbar = document.querySelector('.pagination')
   numberOfPages = posts['pages']
   for (var i = 0; i < numberOfPages; i++) {
     var li = document.createElement('li')
     var a = document.createElement('a')
-    li.classList.add('page-item')
+    li.classList.add('page-item', 'page-number')
     a.classList.add('page-link')
     pageNumber = i + 1
     a.innerHTML = pageNumber
     li.appendChild(a)
     if (posts['source'] === 'homepage' || posts['source'] === 'all_posts') {
-      li.addEventListener('click', (ev) =>
+      li.addEventListener('click', (ev) => {
         getFeed(posts['source'], ev.target.innerHTML)
-      )
+        document.querySelector('#current-page').innerHTML = ev.target.innerHTML
+      })
     } else if (posts['source'] === 'profile_page') {
       li.addEventListener('click', (ev) => {
         getPosts(posts['user'], ev.target.innerHTML)
+        document.querySelector('#current-page').innerHTML = ev.target.innerHTML
       })
     }
-    li.addEventListener('click', () => displayPosts(posts['posts']))
     pageNavbar.insertBefore(li, pageNavbar.children[i + 1])
   }
 }
@@ -237,22 +267,29 @@ function displayPosts(posts) {
   postWrappers.forEach((postWrapper) => postWrapper.remove())
   separators = document.querySelectorAll('.separator')
   separators.forEach((separator) => separator.remove())
-  posts.forEach((post) => {
-    separator = document.createElement('div')
-    separator.classList.add('separator')
+  try {
+  posts.forEach((post) => makePostWrapper(post))
+  }
+  catch {
+    makePostWrapper(posts)
+  }
+}
 
-    wrapper = document.createElement('div')
-    wrapper.classList.add('post-wrapper')
+function makePostWrapper(post) {
+  separator = document.createElement('div')
+  separator.classList.add('separator')
 
-    avatarDiv = makePostAvatar(post)
-    postDiv = makePost(post)
+  wrapper = document.createElement('div')
+  wrapper.classList.add('post-wrapper')
 
-    wrapper.appendChild(avatarDiv)
-    wrapper.appendChild(postDiv)
+  avatarDiv = makePostAvatar(post)
+  postDiv = makePost(post)
 
-    document.querySelector('#posts').appendChild(separator)
-    document.querySelector('#posts').appendChild(wrapper)
-  })
+  wrapper.appendChild(avatarDiv)
+  wrapper.appendChild(postDiv)
+
+  document.querySelector('#posts').appendChild(separator)
+  document.querySelector('#posts').appendChild(wrapper)
 }
 
 function makePost(post) {
@@ -322,16 +359,15 @@ function makeOptionsBtn(post) {
   btn.setAttribute('type', 'button')
   btn.setAttribute('aria-expanded', 'false')
   btn.innerHTML = '...'
+  editOption = document.createElement('a')
+  editOption.classList.add('dropdown-item', 'edit-btn', 'inactive-btn')
+  editOption.innerHTML = 'Edit Post'
   if (post['user'] === post['current_user']) {
-    editOption = document.createElement('a')
-    editOption.classList.add('dropdown-item', 'edit-btn')
-    editOption.innerHTML = 'Edit Post'
+    editOption.classList.remove('inactive-btn')
     editOption.addEventListener('click', (ev) =>
-      makeEditInterface(ev.currentTarget)
-    )
+    makeEditInterface(ev.currentTarget)
+  )}
   optionsDiv.appendChild(editOption)
- }
-
   btnDiv.appendChild(btn)
   btnDiv.appendChild(optionsDiv)
 
@@ -451,12 +487,16 @@ function makeEditAreaPost(contentDiv, wrapper, inputArea) {
   newPostInput = wrapper.querySelector('#post-input')
   newPostInput.innerHTML = content
   wrapper.querySelector('#image-input').value = imageUrl
+  wrapper.querySelector('#image-input-div').classList.remove('unhidden-image-input')
+  wrapper.querySelector('#image-input-div').classList.add('hidden-image-input')
 
   imageBtn = wrapper.querySelector('#image-btn')
   postBtn = wrapper.querySelector('#post-btn')
   postBtn.replaceWith(postBtn.cloneNode(true))
   editBtn = wrapper.querySelector('#post-btn')
   editBtn.innerHTML = 'Edit'
+  editBtn.classList.remove('move-up')
+  editBtn.classList.add('move-down')
 
   displayUrlInput(imageBtn, editBtn)
   editBtn.addEventListener('click', (ev) => {
@@ -524,10 +564,10 @@ function movePostBtn(postBtn) {
 }
 
 function displayUrlInput(imageBtn, postBtn) {
-  buttonDiv = imageBtn.parentNode
-  inputDiv = buttonDiv.parentNode
-  imageUrlDiv = inputDiv.querySelector('#image-input-div')
-  imageBtn.addEventListener('click', () => {
+  imageBtn.addEventListener('click', (ev) => {
+    buttonDiv = ev.currentTarget.parentNode
+    inputDiv = buttonDiv.parentNode
+    imageUrlDiv = inputDiv.querySelector('#image-input-div')
     imageBtn.disabled = true
     setTimeout(() => (imageBtn.disabled = false), 1000)
     if (imageUrlDiv.classList.contains('hidden-image-input')) {

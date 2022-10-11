@@ -44,3 +44,10 @@ def like_handler_comment(current_user, liked_object):
         CommentLike.remove_like_comment(liked_object, current_user)
     except:
         CommentLike.add_like_comment(liked_object, current_user)
+
+def get_comments(request, post):
+    comments = post.replies.all().values('comments')
+    comments_list = [comment.serialize(request.user) for comment in comments]
+    
+    return comments_list
+    

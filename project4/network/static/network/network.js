@@ -54,6 +54,9 @@ function logPost(parentNode, method) {
   if (method === 'PUT') {
     id = parentNode.querySelector('.post-id').value
   }
+  else {
+    id = null
+  }
   if (
     (content.value != '' && content.value != null) ||
     (imageUrl.value != '' && imageUrl.value != null)
@@ -96,6 +99,7 @@ function profilePage(username) {
         '#join-date'
       ).innerHTML = `Joined ${user['join_date']}`
       document.querySelector('#followers').innerHTML = `${user['follower_amount']} Followers`
+      document.querySelector('#following').innerHTML = `${user['followed_amount']} Following`
       makeFollowButton(username, user['follow_status'])
       getPosts(username, 1)
     })

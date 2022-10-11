@@ -22,6 +22,7 @@ def index(request):
             "called_page": "all_posts"
         })
 
+
 def login_view(request):
     if request.method == "POST":
 
@@ -73,9 +74,9 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+
 @login_required
 def log_post(request):
-    
     if request.method != "POST" and request.method != "PUT":
         return JsonResponse({"error": "POST or PUT request required."}, status=400)
     data = json.loads(request.body)
@@ -91,7 +92,7 @@ def log_post(request):
             content=content,
             image_url=image_url
         )
-        
+
         post.save()
         return JsonResponse({"message": "Post logged successfully."}, status=201)
     elif request.method == "PUT":
@@ -99,24 +100,29 @@ def log_post(request):
         post = Post.objects.get(pk=id)
         post.content = content
         post.image_url = image_url
-        
-        post.save()
-        return JsonResponse({"message": "Post edited successfully."}, status=201)
+
+        if post.user == request.user:
+            post.save()
+            return JsonResponse({"message": "Post edited successfully."}, status=201)
+        else:
+            return JsonResponse({"message": "Edit denied."}, status=401)
+
 
 def homepage(request, page_num=1):
     if request.method == "POST":
         user = User.objects.get(pk=request.user.id)
         followed_users = user.following.all().values('user')
         users = User.objects.filter(id__in=followed_users)
-        posts = Post.objects.filter(user__in = users)
+        posts = Post.objects.filter(user__in=users)
         posts = posts.order_by("-timestamp")
         paginator = Paginator(posts, 10)
         page_contents = paginator.page(page_num)
-        list_of_posts = [post.serialize(request.user) for post in page_contents]
+        list_of_posts = [post.serialize(request.user)
+                         for post in page_contents]
         return JsonResponse({"posts": list_of_posts,
                              "pages": paginator.num_pages,
                              "source": "homepage"
-                            })
+                             })
     else:
         return render(request, "network/index.html", {
             "called_page": "homepage"
@@ -129,15 +135,17 @@ def all_posts(request, page_num=1):
         posts = posts.order_by("-timestamp")
         paginator = Paginator(posts, 10)
         page_contents = paginator.page(page_num)
-        list_of_posts = [post.serialize(request.user) for post in page_contents]
+        list_of_posts = [post.serialize(request.user)
+                         for post in page_contents]
         return JsonResponse({"posts": list_of_posts,
                              "pages": paginator.num_pages,
                              "source": "all_posts"
-                            })
+                             })
     else:
         return render(request, "network/index.html", {
             "called_page": "all_posts"
         })
+
 
 def profile_page(request, username, page_num=1):
     if request.method == "POST":
@@ -146,7 +154,8 @@ def profile_page(request, username, page_num=1):
         posts = posts.order_by("-timestamp")
         paginator = Paginator(posts, 10)
         page_contents = paginator.page(page_num)
-        list_of_posts = [post.serialize(request.user) for post in page_contents]
+        list_of_posts = [post.serialize(request.user)
+                         for post in page_contents]
         return JsonResponse({"posts": list_of_posts,
                              "pages": paginator.num_pages,
                              "source": "profile_page",
@@ -165,38 +174,42 @@ def user_info(request, username):
     avatar = get_avatar(requested_profile)
     follower_object = requested_profile.followers.get(user=requested_profile)
     follower_amount = follower_object.follower.all().count()
-    
+    followed_amount = requested_profile.following.all().values('user').count()
+
     user_dict = {
         "username": requested_profile.username,
         "join_date": requested_profile.date_joined.strftime("%B %Y"),
         "avatar": avatar,
         "follow_status": follow_status,
-        "follower_amount": follower_amount
+        "follower_amount": follower_amount,
+        "followed_amount": followed_amount
     }
     return JsonResponse(user_dict)
-    
+
+
 @login_required
 def follow(request, username):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     current_user = request.user
-    followed_user = User.objects.get(username = username)
-    
+    followed_user = User.objects.get(username=username)
+
     if followed_user == current_user:
         return JsonResponse({"error": "You cannot follow yourself"}, status=201)
-    
-    if followed_user.followers.get(follower = current_user):
+
+    if followed_user.followers.get(follower=current_user):
         Follower.remove_follower(followed_user, current_user)
         return JsonResponse({"message": "User unfollowed."}, status=201)
     else:
         Follower.add_follower(followed_user, current_user)
         return JsonResponse({"message": "Follow successful."}, status=201)
 
+
 @login_required
 def like(request, content_type, id):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
-    
+
     current_user = request.user
     if content_type == "post":
         liked_object = Post.objects.get(pk=id)

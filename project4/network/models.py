@@ -42,7 +42,8 @@ class Post(models.Model):
             "avatar": avatar,
             "like_status": like_status,
             "likes_amount": likes_amount,
-            "current_user": user.username
+            "current_user": user.username,
+            "type": "post"
         }
 
 class Comment(models.Model):
@@ -71,7 +72,8 @@ class Comment(models.Model):
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             "like_status": like_status,
             "likes_amount": likes_amount,
-            "current_user": user.username
+            "current_user": user.username,
+            "type": "comment"
         }
 
 class ReplySection(models.Model):

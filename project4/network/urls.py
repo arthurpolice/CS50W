@@ -16,6 +16,6 @@ urlpatterns = [
     path("user/<str:username>", views.user_info, name="user_info"),
     path("post/<int:id>", views.single_post, name="single_post"),
     path("like/<str:content_type>/<int:id>", views.like, name="like"),
-    #route to comment
+    path("logcomment", views.log_comment, name="log_comment"),
     path("follow/<str:username>", views.follow, name="follow")
 ]

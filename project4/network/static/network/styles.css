@@ -130,17 +130,17 @@ textarea {
   flex-direction: column;
 }
 
-#input-area {
+.input-area {
   margin-top: 2vh;
 }
 
-#post-input {
+.post-input {
   width: 100%;
   min-height: 150px;
   padding-right: 50px;
 }
 
-#image-input {
+.image-input {
   width: 100%;
   margin-top: 1vh;
 }
@@ -151,7 +151,7 @@ textarea {
   justify-content: right;
 }
 
-#image-btn {
+.image-btn {
   background-color: transparent;
   height:35px;
   position: absolute;
@@ -160,7 +160,7 @@ textarea {
   margin: 5px;
 }
 
-#post-btn {
+.post-btn {
   margin-top: -30px;
 }
 
@@ -178,7 +178,7 @@ textarea {
   animation-play-state: paused;
 }
 
-#image-btn:hover {
+.image-btn:hover {
   background-color: rgba(179, 204, 255)
 }
 
@@ -186,7 +186,7 @@ textarea {
   height: 30px;
 }
 
-#image-btn:active {
+.image-btn:active {
   background-color: rgba(179, 204, 255);
 }
 
@@ -196,6 +196,14 @@ textarea {
   border-style: solid;
   border-top: 0px;
 }
+
+.important-separator {
+    border-color: rgba(0, 0, 0, 0.5);
+    border-width: 1px;
+    border-style: solid;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
 
 .separator {
   border-color: rgba(0, 0, 0, 0.5);
@@ -210,6 +218,7 @@ textarea {
   padding-left: 10px;
   padding-right: 10px;
   min-width: 420px;
+  justify-content: center;
 }
 
 .avatar {

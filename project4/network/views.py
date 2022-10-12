@@ -220,20 +220,40 @@ def like(request, content_type, id):
         like_handler_comment(current_user, liked_object)
     return JsonResponse({"message": "Like action successful."}, status=201)
 
+
 def single_post(request, id):
     if request.method == "POST":
         post = Post.objects.get(pk=id)
         post_info = post.serialize(request.user)
-        
-        #may need a try/except somewhere
-        try:
-            comments = get_comments(request, post)
-        except:
-            comments = ""
-        
+        comments = get_comments(request, post)
+        print(comments)
         return JsonResponse({
             "post": post_info,
             "comments": comments,
             "current_user": request.user.username
         })
 
+
+@login_required
+def log_comment(request):
+    if request.method != "POST" and request.method != "PUT":
+        return JsonResponse({"error": "POST or PUT request required."}, status=400)
+    data = json.loads(request.body)
+    user = request.user
+    content = data.get("content", "")
+    image_url = data.get("picture", "")
+    if validators.url(image_url) == False:
+        image_url = None
+    post_id = data.get("id")
+    print(post_id)
+    post = Post.objects.get(pk=post_id)
+        
+    if request.method == "POST":
+        comment = Comment(
+            user=user,
+            content=content,
+            image_url=image_url 
+        )
+        comment.save()
+        ReplySection.add_comment(post, comment)
+        return JsonResponse({'message': 'Comment successfully stored.'})

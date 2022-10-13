@@ -97,7 +97,6 @@ function makePostHeader(post) {
 }
 
 function makeOptionsBtn(post) {
-  biggerDiv = document.createElement('div')
 
   btnDiv = document.createElement('div')
   btnDiv.classList.add('dropdown')
@@ -223,15 +222,8 @@ function makeEditInterface(editBtn) {
   menuDiv = menu.parentNode
   headerDiv = menuDiv.parentNode
   wrapper = headerDiv.parentNode
-
   contentDiv = wrapper.querySelector('.post-content')
-  content = contentDiv.querySelector('.content').innerHTML
-  imageDiv = wrapper.querySelector('.post-image-wrapper')
-  try {
-    imageUrl = imageDiv.querySelector('img').src
-  } catch {
-    imageUrl = ''
-  }
+
 
   inputArea = document.querySelector('#input-area')
 
@@ -241,9 +233,19 @@ function makeEditInterface(editBtn) {
 }
 
 function makeEditAreaPost(contentDiv, wrapper, inputArea) {
+  
+  imageDiv = wrapper.querySelector('.post-image-wrapper')
+  try {
+    imageUrl = imageDiv.querySelector('img').src
+  } catch {
+    imageUrl = ''
+  }
+
+  content = contentDiv.querySelector('.content').innerHTML
+
   contentDiv.replaceWith(inputArea.cloneNode(true))
-  newPostInput = wrapper.querySelector('#post-input')
-  newPostInput.innerHTML = content
+  newPostInput = wrapper.querySelector('.post-input')
+  newPostInput.value = content
   wrapper.querySelector('#image-input').value = imageUrl
   wrapper.querySelector('#image-input-div').classList.remove('unhidden-image-input')
   wrapper.querySelector('#image-input-div').classList.add('hidden-image-input')

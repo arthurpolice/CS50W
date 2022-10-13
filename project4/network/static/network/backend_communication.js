@@ -81,7 +81,7 @@ function getPosts(username, page) {
 
 
 function getSinglePost(id) {
-  document.querySelector('#profile-view').style.display = 'block'
+  document.querySelector('#profile-view').style.display = 'none'
   document.querySelector('#post-view').style.display = 'none'
   document.querySelector('#settings-view').style.display = 'none'
   document.querySelector('#user-list-view').style.display = 'none'
@@ -99,7 +99,6 @@ function getSinglePost(id) {
   .then((response) => response.json())
   .then((response) => {
     displayPosts(response['post'])
-    userInfo(response['post']['user'])
     preexistingButtons = document.querySelector('.pagination').classList.add('hidden')
     displayComments(response['comments'])
   })
@@ -109,7 +108,7 @@ function listenerSinglePost() {
   wrappers = document.querySelectorAll('.post-wrapper')
   wrappers.forEach((wrapper) => {
     wrapper.addEventListener('click', (ev) => {
-      if (ev.target.classList.contains('btn') === false){
+      if (ev.target.classList.contains('btn') === false && ev.target.classList.contains('dropdown-menu')){
       id = ev.currentTarget.querySelector('.id').value
       console.log(id)
       getSinglePost(id)
@@ -149,5 +148,12 @@ function logData(parentNode, method, route) {
     })
     content.value = ''
     imageUrl.value = ''
+    if (route === '/logpost') {
+      username = document.querySelector('#current-user').value
+      setTimeout(() => (profilePage(username)), 500)
+    }
+    else {
+      getSinglePost(id)
+    }
   }
 }

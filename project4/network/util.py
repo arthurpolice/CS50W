@@ -48,6 +48,7 @@ def like_handler_comment(current_user, liked_object):
 def get_comments(request, post):
     reply_section = post.replies.all().values('comments')
     comments = Comment.objects.filter(pk__in=reply_section)
+    comments = comments.order_by("-timestamp")
     comments_list = [comment.serialize(request.user) for comment in comments]
     return comments_list
     

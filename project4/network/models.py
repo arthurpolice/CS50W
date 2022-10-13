@@ -54,6 +54,11 @@ class Comment(models.Model):
 
     def serialize(self, user):
         try:
+            avatar = Avatar.objects.get(user=self.user)
+            avatar = avatar.image_url
+        except:
+            avatar = None
+        try:
             self.likes.get(like = user)
             like_status = True
         except:
@@ -73,7 +78,8 @@ class Comment(models.Model):
             "like_status": like_status,
             "likes_amount": likes_amount,
             "current_user": user.username,
-            "type": "comment"
+            "type": "comment",
+            "avatar": avatar
         }
 
 class ReplySection(models.Model):

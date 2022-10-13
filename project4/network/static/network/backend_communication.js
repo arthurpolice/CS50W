@@ -6,6 +6,7 @@ function getFeed(mode, page = 1) {
   document.querySelector('#settings-view').style.display = 'none'
   document.querySelector('#user-list-view').style.display = 'none'
   document.querySelector('#post-list-view').style.display = 'block'
+  document.querySelector('#comments-view').style.display = 'none'
 
   if (mode === 'homepage') {
     document.querySelector('#post-input-view').style.display = 'block'
@@ -24,6 +25,8 @@ function getFeed(mode, page = 1) {
     .then((posts) => {
       displayPosts(posts['posts'])
       makePageBar(posts)
+      console.log('call')
+      listenerSinglePost()
     })
     currentPage = document.querySelector('#current-page')
     currentPage.innerHTML = page
@@ -35,6 +38,7 @@ function profilePage(username) {
   document.querySelector('#settings-view').style.display = 'none'
   document.querySelector('#user-list-view').style.display = 'none'
   document.querySelector('#post-list-view').style.display = 'block'
+  document.querySelector('#comments-view').style.display = 'none'
   if (username === document.querySelector('#current-user').value) {
     document.querySelector('#post-input-view').style.display = 'block'
   } else {
@@ -71,6 +75,7 @@ function getPosts(username, page) {
     .then((posts) => {
       displayPosts(posts['posts'])
       makePageBar(posts)
+      listenerSinglePost()
     })
 }
 
@@ -82,6 +87,7 @@ function getSinglePost(id) {
   document.querySelector('#user-list-view').style.display = 'none'
   document.querySelector('#post-list-view').style.display = 'block'
   document.querySelector('#post-input-view').style.display = 'none'
+  document.querySelector('#comments-view').style.display = 'block'
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
@@ -94,22 +100,35 @@ function getSinglePost(id) {
   .then((response) => {
     displayPosts(response['post'])
     userInfo(response['post']['user'])
-    preexistingButtons = document.querySelector('.pagination').remove()
+    preexistingButtons = document.querySelector('.pagination').classList.add('hidden')
     displayComments(response['comments'])
   })
 }
 
+function listenerSinglePost() {
+  wrappers = document.querySelectorAll('.post-wrapper')
+  wrappers.forEach((wrapper) => {
+    wrapper.addEventListener('click', (ev) => {
+      if (ev.target.classList.contains('btn') === false){
+      id = ev.currentTarget.querySelector('.id').value
+      console.log(id)
+      getSinglePost(id)
+      }
+    })
+  })
+
+}
 
 // Data senders
 
 function logData(parentNode, method, route) {
   content = parentNode.querySelector('.post-input')
   imageUrl = parentNode.querySelector('.image-input')
-  if (route === '/logcomment') {
-    id = document.querySelector('.post-id').value
+  if (method === 'PUT') {
+    id = parentNode.querySelector('.id').value
   }
-  else if (method === 'PUT') {
-    id = parentNode.querySelector('.post-id').value
+  else if (route === '/logcomment') {
+    id = document.querySelector('.id').value
   }
   else {
     id = null

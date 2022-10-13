@@ -1,7 +1,9 @@
 function makePageBar(posts) {
+  console.log('call')
   preexistingButtons = document.querySelectorAll('.page-number')
   preexistingButtons.forEach((button) => button.remove())
   pageNavbar = document.querySelector('.pagination')
+  pageNavbar.classList.remove('hidden')
   numberOfPages = posts['pages']
   for (var i = 0; i < numberOfPages; i++) {
     var li = document.createElement('li')

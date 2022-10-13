@@ -226,7 +226,6 @@ def single_post(request, id):
         post = Post.objects.get(pk=id)
         post_info = post.serialize(request.user)
         comments = get_comments(request, post)
-        print(comments)
         return JsonResponse({
             "post": post_info,
             "comments": comments,
@@ -244,9 +243,8 @@ def log_comment(request):
     image_url = data.get("picture", "")
     if validators.url(image_url) == False:
         image_url = None
-    post_id = data.get("id")
-    print(post_id)
-    post = Post.objects.get(pk=post_id)
+    id = data.get("id")
+    post = Post.objects.get(pk=id)
         
     if request.method == "POST":
         comment = Comment(
@@ -257,3 +255,13 @@ def log_comment(request):
         comment.save()
         ReplySection.add_comment(post, comment)
         return JsonResponse({'message': 'Comment successfully stored.'})
+    elif request.method == "PUT":
+        comment = Comment.objects.get(pk=id)
+        comment.content = content
+        comment.image_url = image_url
+        
+        if comment.user == request.user:
+            comment.save()
+            return JsonResponse({"message": "Comment edited successfully"})
+        
+        return JsonResponse({"message": "You cannot edit someone else's comment!"})

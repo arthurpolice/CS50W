@@ -17,7 +17,6 @@ function movePostBtn(postBtn) {
 }
 
 function displayUrlInput(imageBtn, postBtn) {
-    console.log(imageBtn)
     imageBtn.addEventListener('click', (ev) => {
     buttonDiv = ev.currentTarget.parentNode
     inputDiv = buttonDiv.parentNode

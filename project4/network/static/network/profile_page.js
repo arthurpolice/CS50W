@@ -6,7 +6,6 @@ function makeFollowButton(username, followStatus) {
   changeFollowButton(newFollowButton, followStatus)
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-  console.log(username === document.querySelector('#current-user').value)
   if (username === document.querySelector('#current-user').value) {
     newFollowButton.classList.add('hidden')
   } else if (followStatus === true) {

@@ -221,6 +221,14 @@ textarea {
   justify-content: center;
 }
 
+.comment-wrapper {
+  display: flex;
+  padding-left: 10px;
+  padding-right: 10px;
+  min-width: 420px;
+  justify-content: center;
+}
+
 .avatar {
   height: 72px;
   width: 72px;

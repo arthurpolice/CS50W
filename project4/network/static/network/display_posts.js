@@ -77,7 +77,10 @@ function makePostHeader(post) {
   username = document.createElement('a')
   username.classList.add('username')
   username.innerHTML = post['user']
-  username.addEventListener('click', () => profilePage(post['user']))
+  username.addEventListener('click', (ev) => {
+    ev.stopPropagation()
+    profilePage(post['user'])
+  })
 
   postTime = document.createElement('p')
   postTime.classList.add('post-timestamp')
@@ -94,6 +97,8 @@ function makePostHeader(post) {
 }
 
 function makeOptionsBtn(post) {
+  biggerDiv = document.createElement('div')
+
   btnDiv = document.createElement('div')
   btnDiv.classList.add('dropdown')
 
@@ -159,7 +164,7 @@ function makePostLikeDiv(post) {
 
   postId = document.createElement('input')
   postId.value = post['id']
-  postId.classList.add('hidden', 'post-id')
+  postId.classList.add('hidden', 'id')
 
   svgHeart = document.querySelector('.svg-heart')
 
@@ -179,6 +184,7 @@ function makePostLikeBtn(post) {
   likeBtn.appendChild(svgHeart.cloneNode(true))
   likeStatusChecker(likeBtn, post)
   likeBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation()
     ev.currentTarget.disabled = true
     csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
     parent = ev.currentTarget.parentNode
@@ -250,11 +256,20 @@ function makeEditAreaPost(contentDiv, wrapper, inputArea) {
   editBtn.classList.remove('move-up')
   editBtn.classList.add('move-down')
 
+  contentType = wrapper.querySelector('.type-div').innerHTML
+  if (contentType === 'comment') {
+    route = '/logcomment'
+  }
+  else if (contentType === 'post') {
+    route = '/logpost'
+  }
+
   displayUrlInput(imageBtn, editBtn)
   editBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation()
     wrapper = ev.currentTarget.parentNode.parentNode.parentNode
     wrapperCopy = wrapper.cloneNode(true)
-    logData(wrapper, 'PUT', '/logpost')
+    logData(wrapper, 'PUT', route)
     revertEditInterface(wrapper, wrapperCopy, contentDiv)
   })
 }
@@ -262,9 +277,10 @@ function makeEditAreaPost(contentDiv, wrapper, inputArea) {
 function changeEditOption(editBtn, contentDiv) {
   newButton = editBtn.cloneNode(true)
   editBtn.replaceWith(newButton)
-  newButton.addEventListener('click', (ev) =>
+  newButton.addEventListener('click', (ev) => {
+    ev.stopPropagation()
     cancelEditInterface(ev.currentTarget, contentDiv)
-  )
+  })
   newButton.innerHTML = 'Close Editing'
 }
 
@@ -274,7 +290,10 @@ function cancelEditInterface(element, contentDiv) {
   element.innerHTML = 'Edit'
   newButton = element.cloneNode(true)
   element.replaceWith(newButton)
-  newButton.addEventListener('click', (ev) => makeEditInterface(ev.currentTarget))
+  newButton.addEventListener('click', (ev) => {
+    ev.stopPropagation()
+    makeEditInterface(ev.currentTarget)
+  })
 }
 
 function revertEditInterface(wrapper, wrapperCopy, contentDiv) {
@@ -283,7 +302,10 @@ function revertEditInterface(wrapper, wrapperCopy, contentDiv) {
   newButton = button.cloneNode(true)
   button.replaceWith(newButton)
   newButton.innerHTML = 'Edit'
-  newButton.addEventListener('click', (ev) => makeEditInterface(ev.currentTarget))
+  newButton.addEventListener('click', (ev) => {
+    ev.stopPropagation()
+    makeEditInterface(ev.currentTarget)
+  })
 }
 
 function displayEditedPost(wrapper, wrapperCopy, contentDiv) {
@@ -292,5 +314,8 @@ function displayEditedPost(wrapper, wrapperCopy, contentDiv) {
   newImage = wrapperCopy.querySelector('#image-input').value
   postArea.replaceWith(contentDiv)
   contentDiv.querySelector('.content').innerHTML = newContent
+  try {
   wrapper.querySelector('.post-image').src = newImage
+  }
+  catch {}
 }

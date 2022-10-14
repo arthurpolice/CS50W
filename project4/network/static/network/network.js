@@ -5,20 +5,54 @@ document.addEventListener('DOMContentLoaded', () => {
     postInputInterface()
     document
       .querySelector('#current-user-profile')
-      .addEventListener('click', () =>
+      .addEventListener('click', () => 
         profilePage(document.querySelector('#current-user').value)
       )
     document
       .querySelector('#homepage')
-      .addEventListener('click', () => getFeed('homepage'))
+      .addEventListener('click', () => {
+        getFeed('homepage')
+        history.pushState({
+          feed: 'homepage',
+          page: 1
+        },
+        '', '/homepage/1')
+      })
   }
   document
     .querySelector('#network-button')
-    .addEventListener('click', () => getFeed('homepage'))
+    .addEventListener('click', () => {
+      getFeed('homepage')
+      history.pushState({
+        feed: 'homepage',
+        page: 1
+      },
+      '', '/homepage/1')
+    })
   document
     .querySelector('#all-posts')
-    .addEventListener('click', () => getFeed('all_posts'))
+    .addEventListener('click', () => {
+      getFeed('all_posts')
+      history.pushState({
+        feed: 'all_posts',
+        page: 1
+      },
+      '', '/all_posts/1')
+    })
 })
+
+window.onpopstate = function (ev) {
+  console.log(ev.state)
+  if (ev.state.feed === "homepage" || ev.state.feed === "all_posts") {
+    getFeed(ev.state.feed, ev.state.page)
+  }
+  else if (ev.state.feed === "profile") {
+    profilePage(ev.state.username, ev.state.page)
+  }
+  else if (ev.state.feed === "single_post") {
+    getSinglePost(ev.state.id)
+  }
+}
 
 // Backend Communication Section
 
@@ -48,6 +82,6 @@ function checkAvatar(avatarElement, avatarUrl) {
     avatarElement.src = avatarUrl
   } else {
     avatarElement.src =
-      '../static/network/default_avatar.png'
+      '/static/network/default_avatar.png'
   }
 }

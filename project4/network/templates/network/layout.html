@@ -21,22 +21,22 @@
         </svg>
     </div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" id="network-button" href="#">Network</a>
+        <a class="navbar-brand" id="network-button">Network</a>
 
         <div>
             <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
                     <input id="current-user" value={{ user.username }} class="hidden">
-                    <a id="current-user-profile" class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                    <a id="current-user-profile" class="nav-link"><strong>{{ user.username }}</strong></a>
                 </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" id="all-posts" href="#">All Posts</a>
+                    <a class="nav-link" id="all-posts">All Posts</a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" id="homepage" href="#">Following</a>
+                    <a class="nav-link" id="homepage">Following</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="log" href="{% url 'logout' %}">Log Out</a>

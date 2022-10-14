@@ -32,7 +32,7 @@ function getFeed(mode, page = 1) {
     currentPage.innerHTML = page
 }
 
-function profilePage(username) {
+function profilePage(username, page=1) {
   document.querySelector('#profile-view').style.display = 'block'
   document.querySelector('#post-view').style.display = 'none'
   document.querySelector('#settings-view').style.display = 'none'
@@ -45,7 +45,7 @@ function profilePage(username) {
     document.querySelector('#post-input-view').style.display = 'none'
   }
   userInfo(username)
-  getPosts(username, 1)
+  getPosts(username, page)
 }
 
 
@@ -91,7 +91,7 @@ function getSinglePost(id) {
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-  fetch(`post/${id}`, {
+  fetch(`/post/${id}`, {
     method: 'POST',
     headers: { 'X-CSRFToken': csrftoken },
     mode: 'same-origin'
@@ -108,11 +108,15 @@ function listenerSinglePost() {
   wrappers = document.querySelectorAll('.post-wrapper')
   wrappers.forEach((wrapper) => {
     wrapper.addEventListener('click', (ev) => {
-      if (ev.target.classList.contains('btn') === false && ev.target.classList.contains('dropdown-menu')){
+      if (ev.target.classList.contains('btn') === false && ev.target.classList.contains('dropdown-menu') === false && ev.target.classList.contains('dropdown-item') === false){
       id = ev.currentTarget.querySelector('.id').value
-      console.log(id)
       getSinglePost(id)
-      }
+      history.pushState({
+        feed: 'single_post',
+        id
+      },
+      '', `/post/${id}`)
+     }
     })
   })
 
@@ -141,7 +145,7 @@ function logData(parentNode, method, route) {
       body: JSON.stringify({
         content: content.value,
         picture: imageUrl.value,
-        id: id,
+        id,
       }),
       headers: { 'X-CSRFToken': csrftoken },
       mode: 'same-origin',

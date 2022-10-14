@@ -78,8 +78,18 @@ function makePostHeader(post) {
   username.classList.add('username')
   username.innerHTML = post['user']
   username.addEventListener('click', (ev) => {
+    page = 1
+    username = ev.target.innerHTML
     ev.stopPropagation()
-    profilePage(post['user'])
+    profilePage(username)
+    history.pushState({
+      feed: 'profile',
+      page,
+      username
+    },
+    '', `/profile/${username}/${page}`)
+
+    //GOTTA MAKE THE PUSHSTATE FOR SINGLE POSTS AND MAYBE MORE?
   })
 
   postTime = document.createElement('p')
@@ -280,7 +290,6 @@ function changeEditOption(editBtn, contentDiv) {
   newButton = editBtn.cloneNode(true)
   editBtn.replaceWith(newButton)
   newButton.addEventListener('click', (ev) => {
-    ev.stopPropagation()
     cancelEditInterface(ev.currentTarget, contentDiv)
   })
   newButton.innerHTML = 'Close Editing'
@@ -293,7 +302,6 @@ function cancelEditInterface(element, contentDiv) {
   newButton = element.cloneNode(true)
   element.replaceWith(newButton)
   newButton.addEventListener('click', (ev) => {
-    ev.stopPropagation()
     makeEditInterface(ev.currentTarget)
   })
 }
@@ -305,7 +313,6 @@ function revertEditInterface(wrapper, wrapperCopy, contentDiv) {
   button.replaceWith(newButton)
   newButton.innerHTML = 'Edit'
   newButton.addEventListener('click', (ev) => {
-    ev.stopPropagation()
     makeEditInterface(ev.currentTarget)
   })
 }

@@ -15,7 +15,7 @@ from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Fo
 def index(request):
     if request.user.is_authenticated:
         return render(request, "network/index.html", {
-            "called_page": "home"
+            "called_page": "homepage"
         })
     else:
         return render(request, "network/index.html", {
@@ -107,7 +107,7 @@ def log_post(request):
         else:
             return JsonResponse({"message": "Edit denied."}, status=401)
 
-
+@login_required
 def homepage(request, page_num=1):
     if request.method == "POST":
         user = User.objects.get(pk=request.user.id)

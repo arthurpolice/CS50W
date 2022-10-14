@@ -15,13 +15,27 @@ function makePageBar(posts) {
     li.appendChild(a)
     if (posts['source'] === 'homepage' || posts['source'] === 'all_posts') {
       li.addEventListener('click', (ev) => {
-        getFeed(posts['source'], ev.target.innerHTML)
-        document.querySelector('#current-page').innerHTML = ev.target.innerHTML
+        page = ev.target.innerHTML
+        getFeed(posts['source'], page)
+        document.querySelector('#current-page').innerHTML = page
+        history.pushState({
+          feed: posts['source'],
+          page,
+        },
+        '', `${posts['source']}/${page}`)
       })
     } else if (posts['source'] === 'profile_page') {
       li.addEventListener('click', (ev) => {
-        getPosts(posts['user'], ev.target.innerHTML)
-        document.querySelector('#current-page').innerHTML = ev.target.innerHTML
+        username = posts['user']
+        page = ev.target.innerHTML
+        getPosts(posts['user'], page)
+        document.querySelector('#current-page').innerHTML = page
+        history.pushState({
+          feed: 'profile',
+          page,
+          username
+        },
+        '', `/profile/${username}/${page}`)
       })
     }
     pageNavbar.insertBefore(li, pageNavbar.children[i + 1])

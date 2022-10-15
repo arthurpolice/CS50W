@@ -88,8 +88,6 @@ function makePostHeader(post) {
       username
     },
     '', `/profile/${username}/${page}`)
-
-    //GOTTA MAKE THE PUSHSTATE FOR SINGLE POSTS AND MAYBE MORE?
   })
 
   postTime = document.createElement('p')
@@ -130,8 +128,9 @@ function makeOptionsBtn(post) {
   }
   if (post['user'] === post['current_user']) {
     editOption.classList.remove('inactive-btn')
-    editOption.addEventListener('click', (ev) =>
+    editOption.addEventListener('click', (ev) => {
     makeEditInterface(ev.currentTarget)
+    }
   )}
   optionsDiv.appendChild(editOption)
   btnDiv.appendChild(btn)
@@ -231,11 +230,12 @@ function makeEditInterface(editBtn) {
   menu = editBtn.parentNode
   menuDiv = menu.parentNode
   headerDiv = menuDiv.parentNode
-  wrapper = headerDiv.parentNode
+  postDiv = headerDiv.parentNode
+  wrapper = postDiv.parentNode
   contentDiv = wrapper.querySelector('.post-content')
 
-
   inputArea = document.querySelector('#input-area')
+  wrapper.removeEventListener('click', listenerSinglePostHandler)
 
   makeEditAreaPost(contentDiv, wrapper, inputArea)
 
@@ -291,12 +291,13 @@ function changeEditOption(editBtn, contentDiv) {
   editBtn.replaceWith(newButton)
   newButton.addEventListener('click', (ev) => {
     cancelEditInterface(ev.currentTarget, contentDiv)
+    wrapper.addEventListener('click', listenerSinglePostHandler)
   })
   newButton.innerHTML = 'Close Editing'
 }
 
 function cancelEditInterface(element, contentDiv) {
-  wrapper = element.parentNode.parentNode.parentNode.parentNode
+  let wrapper = element.parentNode.parentNode.parentNode.parentNode
   wrapper.querySelector('#input-area').replaceWith(contentDiv)
   element.innerHTML = 'Edit'
   newButton = element.cloneNode(true)

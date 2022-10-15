@@ -25,7 +25,6 @@ function getFeed(mode, page = 1) {
     .then((posts) => {
       displayPosts(posts['posts'])
       makePageBar(posts)
-      console.log('call')
       listenerSinglePost()
     })
     currentPage = document.querySelector('#current-page')
@@ -107,19 +106,20 @@ function getSinglePost(id) {
 function listenerSinglePost() {
   wrappers = document.querySelectorAll('.post-wrapper')
   wrappers.forEach((wrapper) => {
-    wrapper.addEventListener('click', (ev) => {
-      if (ev.target.classList.contains('btn') === false && ev.target.classList.contains('dropdown-menu') === false && ev.target.classList.contains('dropdown-item') === false){
-      id = ev.currentTarget.querySelector('.id').value
-      getSinglePost(id)
-      history.pushState({
-        feed: 'single_post',
-        id
-      },
-      '', `/post/${id}`)
-     }
-    })
+    wrapper.addEventListener('click', listenerSinglePostHandler)
   })
+}
 
+function listenerSinglePostHandler(ev) {
+  if (ev.target.classList.contains('btn') === false && ev.target.classList.contains('dropdown-menu') === false && ev.target.classList.contains('dropdown-item') === false){
+    id = ev.currentTarget.querySelector('.id').value
+    getSinglePost(id)
+    history.pushState({
+      feed: 'single_post',
+      id
+    },
+    '', `/post/${id}`)
+   }
 }
 
 // Data senders

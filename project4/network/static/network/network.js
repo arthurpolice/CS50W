@@ -5,9 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
     postInputInterface()
     document
       .querySelector('#current-user-profile')
-      .addEventListener('click', () => 
-        profilePage(document.querySelector('#current-user').value)
-      )
+      .addEventListener('click', () => {
+        username = document.querySelector('#current-user').value
+        page = 1
+        profilePage(username)
+        history.pushState({
+          feed: 'profile',
+          page,
+          username
+        },
+        '', `/profile/${username}/${page}`)
+      })
     document
       .querySelector('#homepage')
       .addEventListener('click', () => {
@@ -42,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 window.onpopstate = function (ev) {
-  console.log(ev.state)
   if (ev.state.feed === "homepage" || ev.state.feed === "all_posts") {
     getFeed(ev.state.feed, ev.state.page)
   }

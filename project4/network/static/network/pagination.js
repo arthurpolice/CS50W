@@ -1,5 +1,4 @@
 function makePageBar(posts) {
-  console.log('call')
   preexistingButtons = document.querySelectorAll('.page-number')
   preexistingButtons.forEach((button) => button.remove())
   pageNavbar = document.querySelector('.pagination')
@@ -22,7 +21,7 @@ function makePageBar(posts) {
           feed: posts['source'],
           page,
         },
-        '', `${posts['source']}/${page}`)
+        '', `/${posts['source']}/${page}`)
       })
     } else if (posts['source'] === 'profile_page') {
       li.addEventListener('click', (ev) => {

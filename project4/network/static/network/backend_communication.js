@@ -57,8 +57,8 @@ function userInfo(username) {
     document.querySelector(
       '#join-date'
     ).innerHTML = `Joined ${user['join_date']}`
-    document.querySelector('#followers').innerHTML = `${user['follower_amount']} Followers`
-    document.querySelector('#following').innerHTML = `${user['followed_amount']} Following`
+    document.querySelector('#followers').innerHTML = `${user['follower_amount']} `
+    document.querySelector('#following').innerHTML = `${user['followed_amount']} `
     makeFollowButton(username, user['follow_status'])
   })
 }

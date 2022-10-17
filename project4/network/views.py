@@ -1,4 +1,5 @@
 import json
+import re
 import validators
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -14,14 +15,9 @@ from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Fo
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, "network/index.html", {
-            "called_page": "homepage"
-        })
+        return homepage(request)
     else:
-        return render(request, "network/index.html", {
-            "called_page": "all_posts"
-        })
-
+        return all_posts(request)
 
 def login_view(request):
     if request.method == "POST":
@@ -125,7 +121,8 @@ def homepage(request, page_num=1):
                              })
     else:
         return render(request, "network/index.html", {
-            "called_page": "homepage"
+            "called_page": "homepage",
+            "page": page_num
         })
 
 
@@ -143,7 +140,8 @@ def all_posts(request, page_num=1):
                              })
     else:
         return render(request, "network/index.html", {
-            "called_page": "all_posts"
+            "called_page": "all_posts",
+            "page": page_num
         })
 
 
@@ -164,7 +162,8 @@ def profile_page(request, username, page_num=1):
     else:
         return render(request, "network/index.html", {
             "called_page": "profile",
-            "username": username
+            "username": username,
+            "page": page_num
         })
 
 
@@ -230,6 +229,11 @@ def single_post(request, id):
             "post": post_info,
             "comments": comments,
             "current_user": request.user.username
+        })
+    else:
+        return render(request, 'network/index.html', {
+            "called_page": "single_post",
+            "id": id
         })
 
 

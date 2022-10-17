@@ -16,23 +16,45 @@ class Post(models.Model):
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
     
-    def serialize(self, user):
+    def get_avatar(self):
         try:
             avatar = Avatar.objects.get(user=self.user)
             avatar = avatar.image_url
         except:
             avatar = None
+        return avatar
+    
+    def get_like_status(self, user):
         try:
             self.likes.get(like = user)
             like_status = True
         except:
             like_status = False
+        return like_status
+    
+    def get_likes_amount(self):
         try:
             likes_object = self.likes.get(post = self)
             likes = likes_object.like.all()
             likes_amount = likes.count()
         except:
             likes_amount = 0
+        return likes_amount
+    
+    def get_comments_amount(self):
+        try:
+            reply_section = self.replies.get(post = self)
+            comments = reply_section.comments.all()
+            comments_amount = comments.count()
+        except:
+            comments_amount = 0
+        return comments_amount
+                
+    def serialize(self, user):
+        avatar = self.get_avatar()
+        like_status = self.get_like_status(user)
+        likes_amount = self.get_likes_amount()
+        comments_amount = self.get_comments_amount()
         return {
             "id": self.pk,
             "user": self.user.username,
@@ -42,6 +64,7 @@ class Post(models.Model):
             "avatar": avatar,
             "like_status": like_status,
             "likes_amount": likes_amount,
+            "comments_amount": comments_amount,
             "current_user": user.username,
             "type": "post"
         }
@@ -51,24 +74,37 @@ class Comment(models.Model):
     content = models.CharField(max_length=255)
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
-
-    def serialize(self, user):
+    
+    
+    def get_avatar(self):
         try:
             avatar = Avatar.objects.get(user=self.user)
             avatar = avatar.image_url
         except:
             avatar = None
+        return avatar
+    
+    def get_like_status(self, user):
         try:
             self.likes.get(like = user)
             like_status = True
         except:
             like_status = False
+        return like_status
+    
+    def get_likes_amount(self):
         try:
             likes_object = self.likes.get(comment = self)
             likes = likes_object.like.all()
             likes_amount = likes.count()
         except:
             likes_amount = 0
+        return likes_amount
+    
+    def serialize(self, user):
+        avatar = self.get_avatar()
+        like_status = self.get_like_status(user)
+        likes_amount = self.get_likes_amount()
         return {
             "id": self.pk,
             "user": self.user.username,

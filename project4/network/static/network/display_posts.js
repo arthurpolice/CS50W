@@ -179,9 +179,16 @@ function makePostLikeDiv(post) {
   likeBtn = makePostLikeBtn(post)
   likeCounter = makePostLikeCounter(post)
 
+  commentButton = makePostCommentBtn(post)
+  commentCounter = makePostCommentCounter(post)
+
   likeDiv.appendChild(postId)
   likeDiv.appendChild(likeBtn)
   likeDiv.appendChild(likeCounter)
+  if (post['type'] === 'post') { 
+  likeDiv.appendChild(commentButton)
+  likeDiv.appendChild(commentCounter)
+  }
 
   return likeDiv
 }
@@ -224,6 +231,34 @@ function likeStatusChecker(likeBtn, post) {
     likeBtn.classList.add('not-liked')
     likeBtn.querySelector('svg').classList.add('white-heart')
   }
+}
+
+function makePostCommentBtn(post) {
+  let commentButton = document.createElement('button')
+  commentButton.classList.add('comment-btn')
+  
+  let art = document.createElement('img')
+  art.src = "/static/network/bubble_icon.png"
+  art.classList.add('comment-icon')
+
+  commentButton.appendChild(art)
+
+  commentButton.addEventListener('click', (ev) => {
+    likeDiv = ev.currentTarget.parentNode
+    id = likeDiv.querySelector('.id').value
+    getSinglePost(id)
+    document.querySelector('#comment-input').focus()
+  })
+
+  return commentButton
+}
+
+function makePostCommentCounter(post) {
+  let commentCounter = document.createElement('span')
+  commentCounter.classList.add('like-counter')
+  commentCounter.innerHTML = post['comments_amount']
+
+  return commentCounter
 }
 
 function makeEditInterface(editBtn) {

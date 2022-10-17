@@ -25,29 +25,28 @@ function changeFollowButton(followButton, followStatus) {
   if (followStatus === true) {
     followButton.classList.add('already-followed')
     followButton.innerHTML = 'Unfollow'
-    followButton.addEventListener('click', () => unfollow(followButton))
+    followButton.addEventListener('click', unfollow)
   } else {
     followButton.classList.remove('already-followed')
     followButton.innerHTML = 'Follow'
-    followStatus === true
-    followButton.addEventListener('click', () => follow(followButton))
+    followButton.addEventListener('click', follow)
   }
 }
 
-function unfollow(followButton) {
+function unfollow(ev) {
   followStatus = false
-  followButton.removeEventListener('click', () =>
-    unfollow(followButton, followStatus)
-  )
-  changeFollowButton(followButton, followStatus)
+  followerAmount = document.querySelector('#followers')
+  followerAmount.innerHTML = `${parseInt(followerAmount.innerHTML) - 1} `
+  ev.currentTarget.removeEventListener('click', unfollow)
+  changeFollowButton(ev.currentTarget, followStatus)
 }
 
-function follow(followButton) {
+function follow(ev) {
   followStatus = true
-  followButton.removeEventListener('click', () =>
-    follow(followButton, followStatus)
-  )
-  changeFollowButton(followButton, followStatus)
+  followerAmount = document.querySelector('#followers')
+  followerAmount.innerHTML = `${parseInt(followerAmount.innerHTML) + 1} `
+  ev.currentTarget.removeEventListener('click', follow)
+  changeFollowButton(ev.currentTarget, followStatus)
 }
 
 function displayAvatar(user) {

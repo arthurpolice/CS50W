@@ -11,8 +11,9 @@
                     <span id="username-wrapper"><p id="username"></p></span>
                     <span id="join-date"></span>
                     <div>
-                        <span id="followers"></span>
-                        <span id="following"></span>
+                        <span><span id="followers"></span>Followers</span>
+                        <span>&nbsp;&bull;&nbsp;</span>
+                        <span><span id="following"></span>Following</span>
                     </div>
                 </div>
             </div>
@@ -97,15 +98,40 @@
 <script src="{% static 'network/animations.js' %}"></script>
 {% if called_page == "profile" %}
     <script>
-        profilePage('{{ username }}');
+        profilePage('{{ username }}', '{{ page }}');        
+        history.pushState({
+          feed: 'profile',
+          page: '{{ page }}',
+          username: '{{ username }}'
+        },
+        '', `/profile/{{ username }}/{{ page }}`)
     </script>
 {% elif called_page == "homepage" %}
     <script>
-        getFeed("homepage")
+        getFeed('homepage', '{{ page }}')
+        history.pushState({
+        feed: 'homepage',
+        page: '{{ page }}'
+      },
+      '', '/homepage/{{ page }}')
     </script>
 {% elif called_page == "all_posts" %}
     <script>
-        getFeed("all_posts")
+        getFeed('all_posts', '{{ page }}')
+        history.pushState({
+            feed: 'all_posts',
+            page: '{{ page }}'
+        },
+        '', '/all_posts/{{ page }}')
+    </script>
+{% elif called_page == "single_post" %}
+    <script>
+        getSinglePost('{{ id }}')
+        history.pushState({
+          feed: 'single_post',
+          id: parseInt('{{ id }}')
+        },
+        '', `/post/{{ id }}`)
     </script>
 {% endif %}
 {% endblock %}

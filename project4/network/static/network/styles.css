@@ -201,16 +201,12 @@ textarea {
     border-color: rgba(0, 0, 0, 0.5);
     border-width: 1px;
     border-style: solid;
-    margin-top: 5px;
-    margin-bottom: 5px;
   }
 
 .separator {
   border-color: rgba(0, 0, 0, 0.5);
   border-width: 1px;
   border-style: solid;
-  margin-top: 5px;
-  margin-bottom: 5px;
 }
 
 .post-wrapper {
@@ -218,7 +214,17 @@ textarea {
   padding-left: 10px;
   padding-right: 10px;
   min-width: 420px;
-  justify-content: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.post-wrapper:hover {
+  background-color: rgb(245, 241, 238);
+}
+
+#comment-area {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .comment-wrapper {
@@ -227,6 +233,8 @@ textarea {
   padding-right: 10px;
   min-width: 420px;
   justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .avatar {
@@ -243,6 +251,11 @@ textarea {
   border-radius: 100%;
   margin-right: 10px;
   margin-left: 10px;
+}
+
+#profile-info {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 #profile-header {
@@ -367,6 +380,21 @@ textarea {
   margin-left: 90%;
   margin-top: -80px; 
   background-color: transparent;
+}
+
+.comment-btn {
+  height: 35px;
+  width: 35px;
+  background-color: transparent;
+  border-radius: 100%;
+  box-shadow: none;
+  border: 0;
+  margin-left: 50px;
+}
+
+.comment-icon {
+  height: 25px;
+  width: 25px;
 }
 
 .inactive-btn {

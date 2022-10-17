@@ -269,3 +269,21 @@ def log_comment(request):
             return JsonResponse({"message": "Comment edited successfully"})
         
         return JsonResponse({"message": "You cannot edit someone else's comment!"})
+    
+def remove_post(request, id):
+    if request.method == "POST":
+        post = Post.objects.get(pk=id)
+        if request.user == post.user:
+            post.delete()
+            return JsonResponse({"message": "Post deleted"})
+        else:
+            return JsonResponse({"message": "You cannot delete someone else's posts."})
+        
+def remove_comment(request, id):
+        if request.method == "POST":
+            comment = Comment.objects.get(pk=id)
+        if request.user == comment.user:
+            comment.delete()
+            return JsonResponse({"message": "Comment deleted"})
+        else:
+            return JsonResponse({"message": "You cannot delete someone else's comment."})

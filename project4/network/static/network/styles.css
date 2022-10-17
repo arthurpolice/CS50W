@@ -96,6 +96,32 @@
   }
 }
 
+@keyframes shrink-post {
+  0% {
+    height: 100%;
+    max-height: 800px;
+    opacity: 0.8;
+    padding: 0;
+  }
+  25% {
+    height: 100%;
+    max-height: 500px;
+    opacity: 0;
+    padding: 0;
+  }
+  60% {
+    max-height: 300px;
+    opacity: 0;
+    padding: 0;
+  }
+  100% {
+    max-height: 0px;
+    opacity: 0;
+    padding: 0;
+  }
+  
+}
+
 #header-info {
   display: flex;
   flex-direction: column;
@@ -216,10 +242,17 @@ textarea {
   min-width: 420px;
   padding-top: 5px;
   padding-bottom: 5px;
+  min-height: 300px;
 }
 
 .post-wrapper:hover {
   background-color: rgb(245, 241, 238);
+}
+
+.post-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 #comment-area {
@@ -235,6 +268,19 @@ textarea {
   justify-content: center;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.remove-wrapper {
+  min-height: 0px !important; 
+  animation-name: shrink-post;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  animation-timing-function: linear;
+}
+
+.remove-btn {
+  color: red !important;
 }
 
 .avatar {

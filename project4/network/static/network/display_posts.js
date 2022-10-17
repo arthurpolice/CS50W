@@ -118,6 +118,19 @@ function makeOptionsBtn(post) {
   btn.setAttribute('type', 'button')
   btn.setAttribute('aria-expanded', 'false')
   btn.innerHTML = '...'
+  
+  editOption = makeEditOption(post)
+  removeOption = makeRemoveOption(post)
+
+  optionsDiv.appendChild(editOption)
+  optionsDiv.appendChild(removeOption)
+  btnDiv.appendChild(btn)
+  btnDiv.appendChild(optionsDiv)
+
+  return btnDiv
+}
+
+function makeEditOption(post) {
   editOption = document.createElement('a')
   editOption.classList.add('dropdown-item', 'edit-btn', 'inactive-btn')
   if (post['type'] === 'post') {
@@ -132,11 +145,29 @@ function makeOptionsBtn(post) {
     makeEditInterface(ev.currentTarget)
     }
   )}
-  optionsDiv.appendChild(editOption)
-  btnDiv.appendChild(btn)
-  btnDiv.appendChild(optionsDiv)
+  return editOption
+}
 
-  return btnDiv
+function makeRemoveOption(post) {
+  let removeOption = document.createElement('a')
+  removeOption.classList.add('dropdown-item', 'remove-btn', 'inactive-btn')
+  removeOption.innerHTML = 'Delete'
+  if (post['user'] === post['current_user']) {
+    removeOption.classList.remove('inactive-btn')
+    removeOption.addEventListener('click', (ev) => {
+      let menu = ev.currentTarget.parentNode
+      let dropdownDiv = menu.parentNode
+      let headerDiv = dropdownDiv.parentNode
+      let postDiv = headerDiv.parentNode
+      let wrapper = postDiv.parentNode
+      wrapper.classList.add('remove-wrapper')
+      removeData(post)
+      wrapper.addEventListener('animationend', (ev) => {
+        ev.currentTarget.remove()
+      })
+    })
+  }
+  return removeOption
 }
 
 function makePostContent(post) {
@@ -233,7 +264,7 @@ function likeStatusChecker(likeBtn, post) {
   }
 }
 
-function makePostCommentBtn(post) {
+function makePostCommentBtn() {
   let commentButton = document.createElement('button')
   commentButton.classList.add('comment-btn')
   

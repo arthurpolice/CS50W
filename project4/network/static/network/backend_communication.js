@@ -161,3 +161,15 @@ function logData(parentNode, method, route) {
     }
   }
 }
+
+function removeData(post) {
+  route = 'remove' + post['type']
+  console.log(route)
+  id = post['id']
+  console.log(id)
+  fetch(`/${route}/${id}`, {
+    method: 'post',
+    headers: { 'X-CSRFToken': csrftoken },
+    mode: 'same-origin',
+  })
+}

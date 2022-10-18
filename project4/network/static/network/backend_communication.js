@@ -1,5 +1,6 @@
 // Data retrievers
 
+// Gets posts for the called app mode. It'll either be homepage or all posts for this one.
 function getFeed(mode, page = 1) {
   document.querySelector('#profile-view').style.display = 'none'
   document.querySelector('#post-view').style.display = 'none'
@@ -7,15 +8,14 @@ function getFeed(mode, page = 1) {
   document.querySelector('#user-list-view').style.display = 'none'
   document.querySelector('#post-list-view').style.display = 'block'
   document.querySelector('#comments-view').style.display = 'none'
-
   if (mode === 'homepage') {
     document.querySelector('#post-input-view').style.display = 'block'
   } else {
     document.querySelector('#post-input-view').style.display = 'none'
   }
 
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-
+  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  // Fetch the data, then send it to the frontend functions.
   fetch(`/${mode}/${page}`, {
     method: 'POST',
     headers: { 'X-CSRFToken': csrftoken },
@@ -27,10 +27,13 @@ function getFeed(mode, page = 1) {
       makePageBar(posts)
       listenerSinglePost()
     })
-  currentPage = document.querySelector('#current-page')
+  // Set up the current-page element, so the next and previous pagination arrows can use it.
+  let currentPage = document.querySelector('#current-page')
   currentPage.innerHTML = page
 }
 
+
+// Gets posts corresponding to a given user's profile. Also gets that profile's data.
 function profilePage(username, page = 1) {
   document.querySelector('#profile-view').style.display = 'block'
   document.querySelector('#post-view').style.display = 'none'
@@ -38,6 +41,7 @@ function profilePage(username, page = 1) {
   document.querySelector('#user-list-view').style.display = 'none'
   document.querySelector('#post-list-view').style.display = 'block'
   document.querySelector('#comments-view').style.display = 'none'
+  // If the current user is visiting their own profile, they can post new things.
   if (username === document.querySelector('#current-user').value) {
     document.querySelector('#post-input-view').style.display = 'block'
   } else {
@@ -47,6 +51,7 @@ function profilePage(username, page = 1) {
   getPosts(username, page)
 }
 
+// This function is in charge of the header of the profile page.
 function userInfo(username) {
   fetch(`/user/${username}`)
     .then((user) => user.json())
@@ -66,8 +71,9 @@ function userInfo(username) {
     })
 }
 
+// Fetches the posts from a user, then sends them to the frontend functions. Is called by profilePage.
 function getPosts(username, page) {
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
   fetch(`/profile/${username}/${page}`, {
     method: 'POST',
     headers: { 'X-CSRFToken': csrftoken },
@@ -81,6 +87,7 @@ function getPosts(username, page) {
     })
 }
 
+// Retrieves a single post from the database and sends it to the frontend functions. Also calls the comments functions (which come with the data from this route).
 function getSinglePost(id) {
   document.querySelector('#profile-view').style.display = 'none'
   document.querySelector('#post-view').style.display = 'none'
@@ -90,7 +97,7 @@ function getSinglePost(id) {
   document.querySelector('#post-input-view').style.display = 'none'
   document.querySelector('#comments-view').style.display = 'block'
 
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
   fetch(`/post/${id}`, {
     method: 'POST',
@@ -107,13 +114,17 @@ function getSinglePost(id) {
     })
 }
 
+// Sets up a click listener on the wrappers to send the user to the singlePost page corresponding to that clicked post.
 function listenerSinglePost() {
-  wrappers = document.querySelectorAll('.post-wrapper')
+  let wrappers = document.querySelectorAll('.post-wrapper')
   wrappers.forEach((wrapper) => {
     wrapper.addEventListener('click', listenerSinglePostHandler)
   })
 }
 
+
+// Prevents the triggering of listenerSinglePost when clicking on elements that should take priority over it.
+// Some elements within the wrapper have the stopPropagation() approach instead. 
 function listenerSinglePostHandler(ev) {
   if (
     ev.target.classList.contains('btn') === false &&
@@ -121,7 +132,8 @@ function listenerSinglePostHandler(ev) {
     ev.target.classList.contains('dropdown-item') === false &&
     ev.target.classList.contains('username') === false
   ) {
-    id = ev.currentTarget.querySelector('.id').value
+    // This id is contained in every single wrapper and is hidden by default.
+    let id = ev.currentTarget.querySelector('.id').value
     getSinglePost(id)
     history.pushState(
       {
@@ -137,15 +149,25 @@ function listenerSinglePostHandler(ev) {
 // Data senders
 
 function logData(parentNode, method, route) {
-  content = parentNode.querySelector('.post-input')
-  imageUrl = parentNode.querySelector('.image-input')
+  let content = parentNode.querySelector('.post-input')
+  let imageUrl = parentNode.querySelector('.image-input')
+  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  // The decision process is as follows:
+  // Method PUT means we're altering a post with an existing id, so we can catch it.
   if (method === 'PUT') {
-    id = parentNode.querySelector('.id').value
-  } else if (route === '/logcomment') {
-    id = document.querySelector('.id').value
-  } else {
-    id = null
+    var id = parentNode.querySelector('.id').value
+  } 
+  // Route /logcomment means we're sending a comment to a posts's reply section. That post has a preexisting id to be caught.
+  // This query selector catches the first element of class id, which is, in this design, always going to be the post's ID.
+  // Should this design change, this might need to be changed, as even comments have IDs. 
+  else if (route === '/logcomment') {
+    var id = document.querySelector('.id').value
+  } 
+  // If neither of the previous is true, it means we're sending a new post to the database and there is no existing ID to consult. 
+  else {
+    var id = null
   }
+  // Make sure the post/comment isn't completely empty. (AKA it must have at least some text OR an image.)
   if (
     (content.value != '' && content.value != null) ||
     (imageUrl.value != '' && imageUrl.value != null)
@@ -160,8 +182,10 @@ function logData(parentNode, method, route) {
       headers: { 'X-CSRFToken': csrftoken },
       mode: 'same-origin',
     })
+    // Reset the input area to be empty after the fetch is done.
     content.value = ''
     imageUrl.value = ''
+    // Display the user's profile page, if it's a new post.
     if (route === '/logpost') {
       username = document.querySelector('#current-user').value
       setTimeout(() => profilePage(username), 500)
@@ -172,10 +196,10 @@ function logData(parentNode, method, route) {
 }
 
 function removeData(post) {
+  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  // Route for post deletion is based on the 'type' key attributed to the backend to this post/comment.
   route = 'remove' + post['type']
-  console.log(route)
   id = post['id']
-  console.log(id)
   fetch(`/${route}/${id}`, {
     method: 'post',
     headers: { 'X-CSRFToken': csrftoken },

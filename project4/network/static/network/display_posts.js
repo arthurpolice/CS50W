@@ -1,25 +1,30 @@
+// This file is dedicated to creating the frontend for the posts (and partly the comments).
+
 function displayPosts(posts) {
-  postWrappers = document.querySelectorAll('.post-wrapper')
+  // Remove all posts and separators to get a clean slate for the new posts.
+  let postWrappers = document.querySelectorAll('.post-wrapper')
   postWrappers.forEach((postWrapper) => postWrapper.remove())
-  separators = document.querySelectorAll('.separator')
+  let separators = document.querySelectorAll('.separator')
   separators.forEach((separator) => separator.remove())
+  // This try/catch is needed due to the possibility of there being a single post returned, in which case the forEach breaks.
   try {
-  posts.forEach((post) => makePostWrapper(post))
-  }
-  catch {
+    posts.forEach((post) => makePostWrapper(post))
+  } catch {
     makePostWrapper(posts)
   }
 }
 
+// The first stop: makes the separators and the wrappers, while calling the functions to fill the wrapper.
+// Also the last stop: attaches the product of every other function in this file to the wrapper it created.
 function makePostWrapper(post) {
-  separator = document.createElement('div')
+  let separator = document.createElement('div')
   separator.classList.add('separator')
 
-  wrapper = document.createElement('div')
+  let wrapper = document.createElement('div')
   wrapper.classList.add('post-wrapper')
 
-  avatarDiv = makePostAvatar(post)
-  postDiv = makePost(post)
+  let avatarDiv = makePostAvatar(post)
+  let postDiv = makePost(post)
 
   wrapper.appendChild(avatarDiv)
   wrapper.appendChild(postDiv)
@@ -28,19 +33,20 @@ function makePostWrapper(post) {
   document.querySelector('#posts').appendChild(wrapper)
 }
 
+// Makes the meat and potatoes of the post, then sends it to the wrapper function.
 function makePost(post) {
-  postDiv = document.createElement('div')
+  let postDiv = document.createElement('div')
   postDiv.classList.add('post-div')
 
-  headerDiv = makePostHeader(post)
+  let headerDiv = makePostHeader(post)
 
-  contentDiv = makePostContent(post)
+  let contentDiv = makePostContent(post)
 
-  likeDiv = makePostLikeDiv(post)
+  let likeDiv = makePostLikeDiv(post)
 
-  imageDiv = makePostImageDiv(post)
+  let imageDiv = makePostImageDiv(post)
 
-  typeDiv = makeTypeDiv(post)
+  let typeDiv = makeTypeDiv(post)
 
   postDiv.appendChild(typeDiv)
   postDiv.appendChild(headerDiv)
@@ -51,8 +57,9 @@ function makePost(post) {
   return postDiv
 }
 
+// This makes a hidden element that will indicate to other functions if this wrapper corresponds to a post or comment.
 function makeTypeDiv(post) {
-  typeDiv = document.createElement('div')
+  let typeDiv = document.createElement('div')
   typeDiv.innerHTML = post['type']
   typeDiv.classList.add('hidden', 'type-div')
 
@@ -60,9 +67,9 @@ function makeTypeDiv(post) {
 }
 
 function makePostAvatar(post) {
-  avatarDiv = document.createElement('div')
+  let avatarDiv = document.createElement('div')
   avatarDiv.classList.add('avatar-div')
-  avatar = document.createElement('img')
+  let avatar = document.createElement('img')
   avatar.classList.add('avatar-small')
   checkAvatar(avatar, post['avatar'])
   avatarDiv.appendChild(avatar)
@@ -70,32 +77,18 @@ function makePostAvatar(post) {
   return avatarDiv
 }
 
+// Header gives information on the timestamp of the post and gives an access point to a user's profile.
 function makePostHeader(post) {
-  headerDiv = document.createElement('div')
+  let headerDiv = document.createElement('div')
   headerDiv.classList.add('post-header')
 
-  username = document.createElement('a')
-  username.classList.add('username')
-  username.innerHTML = post['user']
-  username.addEventListener('click', (ev) => {
-    page = 1
-    username = ev.target.innerHTML
-    ev.stopPropagation()
-    profilePage(username)
-    history.pushState({
-      feed: 'profile',
-      page,
-      username
-    },
-    '', `/profile/${username}/${page}`)
-  })
+  let username = makeUsername(post)
 
-  postTime = document.createElement('p')
+  let postTime = document.createElement('p')
   postTime.classList.add('post-timestamp')
   postTime.innerHTML = post['timestamp']
 
-    
-  options = makeOptionsBtn(post)
+  let options = makeOptionsBtn(post)
 
   headerDiv.appendChild(username)
   headerDiv.appendChild(postTime)
@@ -104,23 +97,176 @@ function makePostHeader(post) {
   return headerDiv
 }
 
-function makeOptionsBtn(post) {
+function makeUsername(post) {
+  let usernameElement = document.createElement('a')
+  usernameElement.classList.add('username')
+  usernameElement.innerHTML = post['user']
+  // Clicking on the username takes the user to the first page of that profile.
+  usernameElement.addEventListener('click', (ev) => {
+    let page = 1
+    let username = ev.target.innerHTML
+    profilePage(username)
+    history.pushState(
+      {
+        feed: 'profile',
+        page,
+        username,
+      },
+      '',
+      `/profile/${username}/${page}`
+    )
+  })
+  return usernameElement
+}
 
-  btnDiv = document.createElement('div')
+// Grab the text content given by the backend and display it.
+function makePostContent(post) {
+  let contentDiv = document.createElement('div')
+  contentDiv.classList.add('post-content')
+
+  let content = document.createElement('p')
+  content.classList.add('content')
+  content.innerHTML = post['content']
+
+  contentDiv.appendChild(content)
+
+  return contentDiv
+}
+
+// Grab the image url given by the backend (it's curated in the backend, so it shouldn't give bad urls) and display it.
+function makePostImageDiv(post) {
+  let imageDiv = document.createElement('div')
+  imageDiv.classList.add('post-image-wrapper')
+
+  if (post['image_url'] != null && post['image_url'] != '') {
+    let image = document.createElement('img')
+    image.classList.add('post-image')
+    image.src = post['image_url']
+
+    imageDiv.appendChild(image)
+  }
+  return imageDiv
+}
+
+// Make the bar with the like button and counter, and comment button and counter (if it's a post)
+function makePostLikeDiv(post) {
+  let likeDiv = document.createElement('div')
+  likeDiv.classList.add('like-div')
+
+  let postId = document.createElement('input')
+  postId.value = post['id']
+  postId.classList.add('hidden', 'id')
+
+  let likeBtn = makePostLikeBtn(post)
+  let likeCounter = makePostLikeCounter(post)
+
+  let commentButton = makePostCommentBtn(post)
+  let commentCounter = makePostCommentCounter(post)
+
+  likeDiv.appendChild(postId)
+  likeDiv.appendChild(likeBtn)
+  likeDiv.appendChild(likeCounter)
+  if (post['type'] === 'post') {
+    likeDiv.appendChild(commentButton)
+    likeDiv.appendChild(commentCounter)
+  }
+
+  return likeDiv
+}
+
+// Make the heart button and add the listeners for the little animation it does.
+function makePostLikeBtn(post) {
+  let likeBtn = document.createElement('button')
+  likeBtn.classList.add('like-btn')
+
+  // This is a hidden element placed in HTML to facilitate using dynamically generated vector images.
+  let svgHeart = document.querySelector('.svg-heart')
+  likeBtn.appendChild(svgHeart.cloneNode(true))
+
+  likeStatusChecker(likeBtn, post)
+  likeBtn.addEventListener('click', (ev) => {
+    let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    let parent = ev.currentTarget.parentNode
+    let postId = parent.querySelector('input').value
+    let icon = ev.currentTarget.querySelector('.svg-heart')
+    // This prevents the like button click to bubble up to a wrapper click event!
+    ev.stopPropagation()
+    // Disable the button momentarily to let the animation play out, it's enabled again in the likeBtnPress function
+    ev.currentTarget.disabled = true
+    fetch(`/like/${post['type']}/${postId}`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrftoken },
+      mode: 'same-origin',
+    })
+    likeBtnPress(ev.currentTarget, icon)
+  })
+  return likeBtn
+}
+
+function makePostLikeCounter(post) {
+  let likeCounter = document.createElement('span')
+  likeCounter.classList.add('like-counter')
+  likeCounter.innerHTML = post['likes_amount']
+
+  return likeCounter
+}
+
+// This function determines the initial state of the like button upon loading the post.
+function likeStatusChecker(likeBtn, post) {
+  if (post['like_status'] === true) {
+    likeBtn.classList.add('already-liked')
+    likeBtn.querySelector('svg').classList.add('red-heart')
+  } else {
+    likeBtn.classList.add('not-liked')
+    likeBtn.querySelector('svg').classList.add('white-heart')
+  }
+}
+
+function makePostCommentBtn() {
+  let commentButton = document.createElement('button')
+  commentButton.classList.add('comment-btn')
+
+  let art = document.createElement('img')
+  art.src = '/static/network/bubble_icon.png'
+  art.classList.add('comment-icon')
+
+  commentButton.appendChild(art)
+
+  commentButton.addEventListener('click', (ev) => {
+    let likeDiv = ev.currentTarget.parentNode
+    let id = likeDiv.querySelector('.id').value
+    getSinglePost(id)
+    document.querySelector('#comment-input').focus()
+  })
+
+  return commentButton
+}
+
+function makePostCommentCounter(post) {
+  let commentCounter = document.createElement('span')
+  commentCounter.classList.add('like-counter')
+  commentCounter.innerHTML = post['comments_amount']
+
+  return commentCounter
+}
+
+// This makes a bootstrap dropdown menu.
+function makeOptionsBtn(post) {
+  let btnDiv = document.createElement('div')
   btnDiv.classList.add('dropdown')
 
-  optionsDiv = document.createElement('div')
+  let optionsDiv = document.createElement('div')
   optionsDiv.classList.add('dropdown-menu')
 
-  btn = document.createElement('button')
+  let btn = document.createElement('button')
   btn.classList.add('btn', 'btn-light', 'options-btn')
   btn.setAttribute('data-toggle', 'dropdown')
   btn.setAttribute('type', 'button')
   btn.setAttribute('aria-expanded', 'false')
   btn.innerHTML = '...'
-  
-  editOption = makeEditOption(post)
-  removeOption = makeRemoveOption(post)
+
+  let editOption = makeEditOption(post)
+  let removeOption = makeRemoveOption(post)
 
   optionsDiv.appendChild(editOption)
   optionsDiv.appendChild(removeOption)
@@ -130,24 +276,28 @@ function makeOptionsBtn(post) {
   return btnDiv
 }
 
+// Upon being clicked, this button will:
+// Replace the post's content with a textarea pre-filled with the content and a button to submit the changes made.
 function makeEditOption(post) {
-  editOption = document.createElement('a')
+  let editOption = document.createElement('a')
   editOption.classList.add('dropdown-item', 'edit-btn', 'inactive-btn')
   if (post['type'] === 'post') {
     editOption.innerHTML = 'Edit Post'
-  }
-  else {
+  } else {
     editOption.innerHTML = 'Edit Comment'
   }
   if (post['user'] === post['current_user']) {
     editOption.classList.remove('inactive-btn')
     editOption.addEventListener('click', (ev) => {
-    makeEditInterface(ev.currentTarget)
-    }
-  )}
+      makeEditInterface(ev.currentTarget)
+    })
+  }
   return editOption
 }
 
+// Upon being clicked, this button will:
+// Do an animation to remove the post from the view.
+// Send a fetch to delete the post from the database (removeData function).
 function makeRemoveOption(post) {
   let removeOption = document.createElement('a')
   removeOption.classList.add('dropdown-item', 'remove-btn', 'inactive-btn')
@@ -170,193 +320,85 @@ function makeRemoveOption(post) {
   return removeOption
 }
 
-function makePostContent(post) {
-  contentDiv = document.createElement('div')
-  contentDiv.classList.add('post-content')
-
-  content = document.createElement('p')
-  content.classList.add('content')
-  content.innerHTML = post['content']
-
-  contentDiv.appendChild(content)
-
-  return contentDiv
-}
-
-function makePostImageDiv(post) {
-  imageDiv = document.createElement('div')
-  imageDiv.classList.add('post-image-wrapper')
-
-  if (post['image_url'] != null && post['image_url'] != '') {
-    image = document.createElement('img')
-    image.classList.add('post-image')
-    image.src = post['image_url']
-
-    imageDiv.appendChild(image)
-  }
-  return imageDiv
-}
-
-function makePostLikeDiv(post) {
-  likeDiv = document.createElement('div')
-  likeDiv.classList.add('like-div')
-
-  postId = document.createElement('input')
-  postId.value = post['id']
-  postId.classList.add('hidden', 'id')
-
-  svgHeart = document.querySelector('.svg-heart')
-
-  likeBtn = makePostLikeBtn(post)
-  likeCounter = makePostLikeCounter(post)
-
-  commentButton = makePostCommentBtn(post)
-  commentCounter = makePostCommentCounter(post)
-
-  likeDiv.appendChild(postId)
-  likeDiv.appendChild(likeBtn)
-  likeDiv.appendChild(likeCounter)
-  if (post['type'] === 'post') { 
-  likeDiv.appendChild(commentButton)
-  likeDiv.appendChild(commentCounter)
-  }
-
-  return likeDiv
-}
-
-function makePostLikeBtn(post) {
-  likeBtn = document.createElement('button')
-  likeBtn.classList.add('like-btn')
-  likeBtn.appendChild(svgHeart.cloneNode(true))
-  likeStatusChecker(likeBtn, post)
-  likeBtn.addEventListener('click', (ev) => {
-    ev.stopPropagation()
-    ev.currentTarget.disabled = true
-    csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-    parent = ev.currentTarget.parentNode
-    postId = parent.querySelector('input').value
-    fetch(`/like/${post['type']}/${postId}`, {
-      method: 'POST',
-      headers: { 'X-CSRFToken': csrftoken },
-      mode: 'same-origin',
-    })
-    icon = ev.currentTarget.querySelector('.svg-heart')
-    likeBtnPress(ev.currentTarget, icon)
-  })
-  return likeBtn
-}
-
-function makePostLikeCounter(post) {
-  likeCounter = document.createElement('span')
-  likeCounter.classList.add('like-counter')
-  likeCounter.innerHTML = post['likes_amount']
-
-  return likeCounter
-}
-
-function likeStatusChecker(likeBtn, post) {
-  if (post['like_status'] === true) {
-    likeBtn.classList.add('already-liked')
-    likeBtn.querySelector('svg').classList.add('red-heart')
-  } else {
-    likeBtn.classList.add('not-liked')
-    likeBtn.querySelector('svg').classList.add('white-heart')
-  }
-}
-
-function makePostCommentBtn() {
-  let commentButton = document.createElement('button')
-  commentButton.classList.add('comment-btn')
-  
-  let art = document.createElement('img')
-  art.src = "/static/network/bubble_icon.png"
-  art.classList.add('comment-icon')
-
-  commentButton.appendChild(art)
-
-  commentButton.addEventListener('click', (ev) => {
-    likeDiv = ev.currentTarget.parentNode
-    id = likeDiv.querySelector('.id').value
-    getSinglePost(id)
-    document.querySelector('#comment-input').focus()
-  })
-
-  return commentButton
-}
-
-function makePostCommentCounter(post) {
-  let commentCounter = document.createElement('span')
-  commentCounter.classList.add('like-counter')
-  commentCounter.innerHTML = post['comments_amount']
-
-  return commentCounter
-}
-
 function makeEditInterface(editBtn) {
-  menu = editBtn.parentNode
-  menuDiv = menu.parentNode
-  headerDiv = menuDiv.parentNode
-  postDiv = headerDiv.parentNode
-  wrapper = postDiv.parentNode
-  contentDiv = wrapper.querySelector('.post-content')
+  let menu = editBtn.parentNode
+  let menuDiv = menu.parentNode
+  let headerDiv = menuDiv.parentNode
+  let postDiv = headerDiv.parentNode
+  let wrapper = postDiv.parentNode
+  let contentDiv = wrapper.querySelector('.post-content')
 
-  inputArea = document.querySelector('#input-area')
+  let inputArea = document.querySelector('#input-area')
+  // This removes the listener from the wrapper (that usually takes users to single post page). This is so people can actually click on the new interface.
   wrapper.removeEventListener('click', listenerSinglePostHandler)
-
+  // This makes the textarea mentioned in makeEditOption.
   makeEditAreaPost(contentDiv, wrapper, inputArea)
-
+  // This changes the edit option to make it do the opposite way (closing the edit interface).
   changeEditOption(editBtn, contentDiv)
 }
 
 function makeEditAreaPost(contentDiv, wrapper, inputArea) {
-  
-  imageDiv = wrapper.querySelector('.post-image-wrapper')
+  let imageDiv = wrapper.querySelector('.post-image-wrapper')
   try {
-    imageUrl = imageDiv.querySelector('img').src
+    var imageUrl = imageDiv.querySelector('img').src
   } catch {
-    imageUrl = ''
+    var imageUrl = ''
   }
-
-  content = contentDiv.querySelector('.content').innerHTML
-
+  // Select the area to be replaced.
+  let content = contentDiv.querySelector('.content').innerHTML
+  // Clone the input area from the input view and replace content with it.
   contentDiv.replaceWith(inputArea.cloneNode(true))
-  newPostInput = wrapper.querySelector('.post-input')
+  let newPostInput = wrapper.querySelector('.post-input')
+  // Insert the old content into the new textarea.
   newPostInput.value = content
   wrapper.querySelector('#image-input').value = imageUrl
-  wrapper.querySelector('#image-input-div').classList.remove('unhidden-image-input')
+  wrapper
+    .querySelector('#image-input-div')
+    .classList.remove('unhidden-image-input')
   wrapper.querySelector('#image-input-div').classList.add('hidden-image-input')
 
-  imageBtn = wrapper.querySelector('#image-btn')
-  postBtn = wrapper.querySelector('#post-btn')
+  let imageBtn = wrapper.querySelector('#image-btn')
+  let postBtn = wrapper.querySelector('#post-btn')
+  // Replace the post button with a clone of itself to clear it from old listeners.
   postBtn.replaceWith(postBtn.cloneNode(true))
-  editBtn = wrapper.querySelector('#post-btn')
+  // Call it editBtn now.
+  let editBtn = wrapper.querySelector('#post-btn')
   editBtn.innerHTML = 'Edit'
+  // This makes sure that the edit button has the correct class for the animation of showing the image input.
   editBtn.classList.remove('move-up')
   editBtn.classList.add('move-down')
-
-  contentType = wrapper.querySelector('.type-div').innerHTML
+  // The type-div contains the type of content being edited. It's hidden in HTML. 
+  let contentType = wrapper.querySelector('.type-div').innerHTML
+  // We're using it to determine the route we're sending the PUT request below.
   if (contentType === 'comment') {
-    route = '/logcomment'
+    var route = '/logcomment'
+  } else if (contentType === 'post') {
+    var route = '/logpost'
   }
-  else if (contentType === 'post') {
-    route = '/logpost'
-  }
-
+  // This function plays out the animation for revealing the image input.
   displayUrlInput(imageBtn, editBtn)
   editBtn.addEventListener('click', (ev) => {
     ev.stopPropagation()
-    wrapper = ev.currentTarget.parentNode.parentNode.parentNode
-    wrapperCopy = wrapper.cloneNode(true)
+    let wrapper = ev.currentTarget.parentNode.parentNode.parentNode
+    // We copy the wrapper to store its information for use even after we've already replaced its contents.
+    let wrapperCopy = wrapper.cloneNode(true)
+    // Send new data to backend.
     logData(wrapper, 'PUT', route)
+    // Remake the post, now with the new contents displayed. Without reloading the page.
     revertEditInterface(wrapper, wrapperCopy, contentDiv)
   })
 }
 
+// The same button used to start editing is now a button to cancel editing.
 function changeEditOption(editBtn, contentDiv) {
-  newButton = editBtn.cloneNode(true)
+  // Clone button to clear it from old listeners
+  let newButton = editBtn.cloneNode(true)
   editBtn.replaceWith(newButton)
   newButton.addEventListener('click', (ev) => {
+    // Transform the interface back into the old post. Also change the edit button back to its original state.
     cancelEditInterface(ev.currentTarget, contentDiv)
+    let wrapper = contentDiv.parentNode.parentNode
+    // Restore the listener to wrapper that got removed in makeEditAreaPost.
     wrapper.addEventListener('click', listenerSinglePostHandler)
   })
   newButton.innerHTML = 'Close Editing'
@@ -365,33 +407,46 @@ function changeEditOption(editBtn, contentDiv) {
 function cancelEditInterface(element, contentDiv) {
   let wrapper = element.parentNode.parentNode.parentNode.parentNode
   wrapper.querySelector('#input-area').replaceWith(contentDiv)
-  element.innerHTML = 'Edit'
-  newButton = element.cloneNode(true)
+  if (wrapper.querySelector('.type-div').innerHTML === 'post') {
+    element.innerHTML = 'Edit Post'
+  }
+  else {
+    element.innerHTML = 'Edit Comment'
+  }
+  // Once again clone button to clear up listeners. This is done every time this button changes, as is obvious by now.
+  let newButton = element.cloneNode(true)
   element.replaceWith(newButton)
   newButton.addEventListener('click', (ev) => {
     makeEditInterface(ev.currentTarget)
   })
 }
 
+// This is called when the post is actually edited and transposes the new input into the post's content in the frontend.
+// Also changed the edit button in a similar way to the cancel edit function.
 function revertEditInterface(wrapper, wrapperCopy, contentDiv) {
   displayEditedPost(wrapper, wrapperCopy, contentDiv)
-  button = wrapper.querySelector('.edit-btn')
-  newButton = button.cloneNode(true)
+  let button = wrapper.querySelector('.edit-btn')
+  let newButton = button.cloneNode(true)
   button.replaceWith(newButton)
-  newButton.innerHTML = 'Edit'
+  if (wrapper.querySelector('.type-div').innerHTML === 'post') {
+    newButton.innerHTML = 'Edit Post'
+  }
+  else {
+    newButton.innerHTML = 'Edit Comment'
+  }
   newButton.addEventListener('click', (ev) => {
     makeEditInterface(ev.currentTarget)
   })
 }
 
 function displayEditedPost(wrapper, wrapperCopy, contentDiv) {
-  postArea = wrapper.querySelector('#input-area')
-  newContent = wrapperCopy.querySelector('#post-input').value
-  newImage = wrapperCopy.querySelector('#image-input').value
+  let postArea = wrapper.querySelector('#input-area')
+  let newContent = wrapperCopy.querySelector('#post-input').value
+  let newImage = wrapperCopy.querySelector('#image-input').value
   postArea.replaceWith(contentDiv)
   contentDiv.querySelector('.content').innerHTML = newContent
+  // This try/catch is needed in case the post doesn't have an image, which breaks the querySelector.
   try {
-  wrapper.querySelector('.post-image').src = newImage
-  }
-  catch {}
+    wrapper.querySelector('.post-image').src = newImage
+  } catch {}
 }

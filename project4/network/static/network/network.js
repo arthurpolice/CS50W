@@ -1,7 +1,11 @@
-// Set up navbar and post input UI.
+// This file contains functions that set up the layout or enable basic functions of the page that are reused often.
 
+// Set up navbar and post input UI.
 document.addEventListener('DOMContentLoaded', () => {
+  // This is a hacky way to check whether the user is logged in or not without calling the backend.
   if (document.querySelector('#log').innerHTML === 'Log Out') {
+    // If the user is indeed logged in, go ahead and load the post interface (this is only loaded once throughout the whole time the user is on the page)
+    // Furthermore just set up the click event listeners for each of the navigation buttons and give them their respective push states.
     postInputInterface()
     document
       .querySelector('#current-user-profile')
@@ -49,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 })
 
+// When the user goes backwards/forwards on navigation, we analyze the information in the state to decide where to send them.
+// The state is comprised of feed, page and/or id. This is manually determined at the moment of the push state. More information later.
 window.onpopstate = function (ev) {
   if (ev.state.feed === "homepage" || ev.state.feed === "all_posts") {
     getFeed(ev.state.feed, ev.state.page)
@@ -61,9 +67,7 @@ window.onpopstate = function (ev) {
   }
 }
 
-// Backend Communication Section
-
-
+// TODO
 function searchUser() {
   document.querySelector('#profile-view').style.display = 'none'
   document.querySelector('#post-view').style.display = 'none'
@@ -73,11 +77,8 @@ function searchUser() {
   document.querySelector('#post-list-view').style.display = 'none'
 }
 
-// Frontend Creation
 
-
-// Embelishments Section
-
+// This function checks whether an avatar has a valid URL and replaces it with a default icon otherwise.
 function checkAvatar(avatarElement, avatarUrl) {
   try {
     new URL(avatarUrl)

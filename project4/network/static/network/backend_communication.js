@@ -27,11 +27,11 @@ function getFeed(mode, page = 1) {
       makePageBar(posts)
       listenerSinglePost()
     })
-    currentPage = document.querySelector('#current-page')
-    currentPage.innerHTML = page
+  currentPage = document.querySelector('#current-page')
+  currentPage.innerHTML = page
 }
 
-function profilePage(username, page=1) {
+function profilePage(username, page = 1) {
   document.querySelector('#profile-view').style.display = 'block'
   document.querySelector('#post-view').style.display = 'none'
   document.querySelector('#settings-view').style.display = 'none'
@@ -47,20 +47,23 @@ function profilePage(username, page=1) {
   getPosts(username, page)
 }
 
-
 function userInfo(username) {
   fetch(`/user/${username}`)
-  .then((user) => user.json())
-  .then((user) => {
-    displayAvatar(user)
-    document.querySelector('#username').innerHTML = user['username']
-    document.querySelector(
-      '#join-date'
-    ).innerHTML = `Joined ${user['join_date']}`
-    document.querySelector('#followers').innerHTML = `${user['follower_amount']} `
-    document.querySelector('#following').innerHTML = `${user['followed_amount']} `
-    makeFollowButton(username, user['follow_status'])
-  })
+    .then((user) => user.json())
+    .then((user) => {
+      displayAvatar(user)
+      document.querySelector('#username').innerHTML = user['username']
+      document.querySelector(
+        '#join-date'
+      ).innerHTML = `Joined ${user['join_date']}`
+      document.querySelector(
+        '#followers'
+      ).innerHTML = `${user['follower_amount']} `
+      document.querySelector(
+        '#following'
+      ).innerHTML = `${user['followed_amount']} `
+      makeFollowButton(username, user['follow_status'])
+    })
 }
 
 function getPosts(username, page) {
@@ -78,7 +81,6 @@ function getPosts(username, page) {
     })
 }
 
-
 function getSinglePost(id) {
   document.querySelector('#profile-view').style.display = 'none'
   document.querySelector('#post-view').style.display = 'none'
@@ -93,14 +95,16 @@ function getSinglePost(id) {
   fetch(`/post/${id}`, {
     method: 'POST',
     headers: { 'X-CSRFToken': csrftoken },
-    mode: 'same-origin'
+    mode: 'same-origin',
   })
-  .then((response) => response.json())
-  .then((response) => {
-    displayPosts(response['post'])
-    preexistingButtons = document.querySelector('.pagination').classList.add('hidden')
-    displayComments(response['comments'])
-  })
+    .then((response) => response.json())
+    .then((response) => {
+      displayPosts(response['post'])
+      preexistingButtons = document
+        .querySelector('.pagination')
+        .classList.add('hidden')
+      displayComments(response['comments'])
+    })
 }
 
 function listenerSinglePost() {
@@ -111,15 +115,23 @@ function listenerSinglePost() {
 }
 
 function listenerSinglePostHandler(ev) {
-  if (ev.target.classList.contains('btn') === false && ev.target.classList.contains('dropdown-menu') === false && ev.target.classList.contains('dropdown-item') === false){
+  if (
+    ev.target.classList.contains('btn') === false &&
+    ev.target.classList.contains('dropdown-menu') === false &&
+    ev.target.classList.contains('dropdown-item') === false &&
+    ev.target.classList.contains('username') === false
+  ) {
     id = ev.currentTarget.querySelector('.id').value
     getSinglePost(id)
-    history.pushState({
-      feed: 'single_post',
-      id
-    },
-    '', `/post/${id}`)
-   }
+    history.pushState(
+      {
+        feed: 'single_post',
+        id,
+      },
+      '',
+      `/post/${id}`
+    )
+  }
 }
 
 // Data senders
@@ -129,11 +141,9 @@ function logData(parentNode, method, route) {
   imageUrl = parentNode.querySelector('.image-input')
   if (method === 'PUT') {
     id = parentNode.querySelector('.id').value
-  }
-  else if (route === '/logcomment') {
+  } else if (route === '/logcomment') {
     id = document.querySelector('.id').value
-  }
-  else {
+  } else {
     id = null
   }
   if (
@@ -154,9 +164,8 @@ function logData(parentNode, method, route) {
     imageUrl.value = ''
     if (route === '/logpost') {
       username = document.querySelector('#current-user').value
-      setTimeout(() => (profilePage(username)), 500)
-    }
-    else {
+      setTimeout(() => profilePage(username), 500)
+    } else {
       getSinglePost(id)
     }
   }

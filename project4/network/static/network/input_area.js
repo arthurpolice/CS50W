@@ -6,5 +6,7 @@ function postInputInterface() {
   // Sets up the little animation for displaying the input for image urls.
   displayUrlInput(imageBtn, postBtn)
 
-  postBtn.addEventListener('click', () => logData(inputArea, 'POST', '/logpost'))
+  postBtn.addEventListener('click', () =>
+    logData(inputArea, 'POST', '/logpost')
+  )
 }

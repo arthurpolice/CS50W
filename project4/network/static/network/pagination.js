@@ -1,4 +1,4 @@
-// Take the number of pages given by the backend and set up navigation through them. 
+// Take the number of pages given by the backend and set up navigation through them.
 function makePageBar(posts) {
   // Remove old buttons from other pages in the app.
   let preexistingButtons = document.querySelectorAll('.page-number')
@@ -32,11 +32,14 @@ function navItemListenerHandler(li, posts) {
       getFeed(posts['source'], page)
       document.querySelector('#current-page').innerHTML = page
       // Notice that this push state uses the event target to save which page the user was visiting, and the source to know in which part of the app
-      history.pushState({
-        feed: posts['source'],
-        page,
-      },
-      '', `/${posts['source']}/${page}`)
+      history.pushState(
+        {
+          feed: posts['source'],
+          page,
+        },
+        '',
+        `/${posts['source']}/${page}`
+      )
     })
   } else if (posts['source'] === 'profile_page') {
     li.addEventListener('click', (ev) => {
@@ -45,12 +48,15 @@ function navItemListenerHandler(li, posts) {
       getPosts(posts['user'], page)
       document.querySelector('#current-page').innerHTML = page
       // Same deal as the previous push state.
-      history.pushState({
-        feed: 'profile',
-        page,
-        username
-      },
-      '', `/profile/${username}/${page}`)
+      history.pushState(
+        {
+          feed: 'profile',
+          page,
+          username,
+        },
+        '',
+        `/profile/${username}/${page}`
+      )
     })
   }
 }

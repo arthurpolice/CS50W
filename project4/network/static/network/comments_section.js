@@ -1,36 +1,39 @@
+// This is the comment variant of the displayPosts() function.
 function displayComments(comments) {
   commentInputInterface()
   let commentWrappers = document.querySelectorAll('.comment-wrapper')
   commentWrappers.forEach((commentWrapper) => commentWrapper.remove())
-  separators = document.querySelectorAll('.separator')
+  let separators = document.querySelectorAll('.separator')
   separators.forEach((separator) => separator.remove())
   try {
-  comments.forEach((comment) => makeCommentWrapper(comment))
-  }
-  catch {
+    comments.forEach((comment) => makeCommentWrapper(comment))
+  } catch {
     makeCommentWrapper(comments)
   }
 }
 
+// This is a separate function from the posts ones, because the comment input area is different, so we need to select different elements.
 function commentInputInterface() {
-  commentBtn = document.querySelector('#comment-btn')
-  inputArea = document.querySelector('#comment-input-area')
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-  imageBtn = document.querySelector('#comment-image-btn')
+  let commentBtn = document.querySelector('#comment-btn')
+  let inputArea = document.querySelector('#comment-input-area')
+  let imageBtn = document.querySelector('#comment-image-btn')
   displayUrlInput(imageBtn, commentBtn)
 
-  commentBtn.addEventListener('click', () => logData(inputArea, 'POST', '/logcomment'))
+  commentBtn.addEventListener('click', () =>
+    logData(inputArea, 'POST', '/logcomment')
+  )
 }
 
+// After this point, we start using the functions in display_posts.js
 function makeCommentWrapper(comment) {
-  separator = document.createElement('div')
+  let separator = document.createElement('div')
   separator.classList.add('separator')
 
-  wrapper = document.createElement('div')
+  let wrapper = document.createElement('div')
   wrapper.classList.add('comment-wrapper')
 
-  avatarDiv = makePostAvatar(comment)
-  postDiv = makePost(comment)
+  let avatarDiv = makePostAvatar(comment)
+  let postDiv = makePost(comment)
 
   wrapper.appendChild(avatarDiv)
   wrapper.appendChild(postDiv)

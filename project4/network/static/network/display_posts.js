@@ -367,7 +367,7 @@ function makeEditAreaPost(contentDiv, wrapper, inputArea) {
   // This makes sure that the edit button has the correct class for the animation of showing the image input.
   editBtn.classList.remove('move-up')
   editBtn.classList.add('move-down')
-  // The type-div contains the type of content being edited. It's hidden in HTML. 
+  // The type-div contains the type of content being edited. It's hidden in HTML.
   let contentType = wrapper.querySelector('.type-div').innerHTML
   // We're using it to determine the route we're sending the PUT request below.
   if (contentType === 'comment') {
@@ -409,8 +409,7 @@ function cancelEditInterface(element, contentDiv) {
   wrapper.querySelector('#input-area').replaceWith(contentDiv)
   if (wrapper.querySelector('.type-div').innerHTML === 'post') {
     element.innerHTML = 'Edit Post'
-  }
-  else {
+  } else {
     element.innerHTML = 'Edit Comment'
   }
   // Once again clone button to clear up listeners. This is done every time this button changes, as is obvious by now.
@@ -430,8 +429,7 @@ function revertEditInterface(wrapper, wrapperCopy, contentDiv) {
   button.replaceWith(newButton)
   if (wrapper.querySelector('.type-div').innerHTML === 'post') {
     newButton.innerHTML = 'Edit Post'
-  }
-  else {
+  } else {
     newButton.innerHTML = 'Edit Comment'
   }
   newButton.addEventListener('click', (ev) => {

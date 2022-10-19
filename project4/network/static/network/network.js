@@ -13,56 +13,73 @@ document.addEventListener('DOMContentLoaded', () => {
         username = document.querySelector('#current-user').value
         page = 1
         profilePage(username)
-        history.pushState({
-          feed: 'profile',
-          page,
-          username
-        },
-        '', `/profile/${username}/${page}`)
+        history.pushState(
+          {
+            feed: 'profile',
+            page,
+            username,
+          },
+          '',
+          `/profile/${username}/${page}`
+        )
       })
-    document
-      .querySelector('#homepage')
-      .addEventListener('click', () => {
-        getFeed('homepage')
-        history.pushState({
-          feed: 'homepage',
-          page: 1
-        },
-        '', '/homepage/1')
-      })
-  }
-  document
-    .querySelector('#network-button')
-    .addEventListener('click', () => {
+    document.querySelector('#homepage').addEventListener('click', () => {
       getFeed('homepage')
-      history.pushState({
-        feed: 'homepage',
-        page: 1
-      },
-      '', '/homepage/1')
+      history.pushState(
+        {
+          feed: 'homepage',
+          page: 1,
+        },
+        '',
+        '/homepage/1'
+      )
     })
-  document
-    .querySelector('#all-posts')
-    .addEventListener('click', () => {
+    document.querySelector('#network-button').addEventListener('click', () => {
+      getFeed('homepage')
+      history.pushState(
+        {
+          feed: 'homepage',
+          page: 1,
+        },
+        '',
+        '/homepage/1'
+      )
+    })
+  }
+  else {
+    document.querySelector('#network-button').addEventListener('click', () => {
       getFeed('all_posts')
-      history.pushState({
-        feed: 'all_posts',
-        page: 1
-      },
-      '', '/all_posts/1')
+      history.pushState(
+        {
+          feed: 'all_posts',
+          page: 1,
+        },
+        '',
+        '/all_posts/1'
+      )
     })
+  }
+  document.querySelector('#all-posts').addEventListener('click', () => {
+    getFeed('all_posts')
+    history.pushState(
+      {
+        feed: 'all_posts',
+        page: 1,
+      },
+      '',
+      '/all_posts/1'
+    )
+  })
 })
 
 // When the user goes backwards/forwards on navigation, we analyze the information in the state to decide where to send them.
 // The state is comprised of feed, page and/or id. This is manually determined at the moment of the push state. More information later.
 window.onpopstate = function (ev) {
-  if (ev.state.feed === "homepage" || ev.state.feed === "all_posts") {
+  if (ev.state.feed === 'homepage' || ev.state.feed === 'all_posts') {
     getFeed(ev.state.feed, ev.state.page)
-  }
-  else if (ev.state.feed === "profile") {
+  } else if (ev.state.feed === 'profile') {
     profilePage(ev.state.username, ev.state.page)
-  }
-  else if (ev.state.feed === "single_post") {
+  } else if (ev.state.feed === 'single_post') {
     getSinglePost(ev.state.id)
   }
 }
@@ -77,7 +94,6 @@ function searchUser() {
   document.querySelector('#post-list-view').style.display = 'none'
 }
 
-
 // This function checks whether an avatar has a valid URL and replaces it with a default icon otherwise.
 function checkAvatar(avatarElement, avatarUrl) {
   try {
@@ -89,7 +105,6 @@ function checkAvatar(avatarElement, avatarUrl) {
   if (url === true) {
     avatarElement.src = avatarUrl
   } else {
-    avatarElement.src =
-      '/static/network/default_avatar.png'
+    avatarElement.src = '/static/network/default_avatar.png'
   }
 }

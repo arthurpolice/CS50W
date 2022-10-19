@@ -14,7 +14,7 @@ function makeFollowButton(username, followStatus) {
   // Here we hide the button when the user is visiting their own profile page
   if (username === document.querySelector('#current-user').value) {
     newFollowButton.classList.add('hidden')
-  } 
+  }
   // If the user is not visiting their own page, we check if the backend has said that this profile is already followed by the user or not.
   else if (followStatus === true) {
     newFollowButton.classList.add('already-followed')
@@ -29,7 +29,7 @@ function makeFollowButton(username, followStatus) {
   })
 }
 
-// Changes color and inner HTML of the button. 
+// Changes color and inner HTML of the button.
 // It's a facade to make the website seem snappier than it is by excluding the need to fetch.
 function changeFollowButton(followButton, followStatus) {
   if (followStatus === true) {
@@ -61,7 +61,6 @@ function follow(ev) {
   ev.currentTarget.removeEventListener('click', follow)
   changeFollowButton(ev.currentTarget, followStatus)
 }
-
 
 // This is a bigger avatar that is attached to the profile page.
 function displayAvatar(user) {

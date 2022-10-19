@@ -19,6 +19,7 @@ def index(request):
     else:
         return all_posts(request)
 
+
 def login_view(request):
     if request.method == "POST":
 
@@ -72,53 +73,30 @@ def register(request):
 
 
 @login_required
-def log_post(request):
-    if request.method != "POST" and request.method != "PUT":
-        return JsonResponse({"error": "POST or PUT request required."}, status=400)
-    data = json.loads(request.body)
-    user = request.user
-    content = data.get("content", "")
-    image_url = data.get("picture", "")
-    if validators.url(image_url) == False:
-        image_url = None
-
-    if request.method == "POST":
-        post = Post(
-            user=user,
-            content=content,
-            image_url=image_url
-        )
-
-        post.save()
-        return JsonResponse({"message": "Post logged successfully."}, status=201)
-    elif request.method == "PUT":
-        id = data.get("id")
-        post = Post.objects.get(pk=id)
-        post.content = content
-        post.image_url = image_url
-
-        if post.user == request.user:
-            post.save()
-            return JsonResponse({"message": "Post edited successfully."}, status=201)
-        else:
-            return JsonResponse({"message": "Edit denied."}, status=401)
-
-@login_required
 def homepage(request, page_num=1):
+    # Returns the posts to be displayed to the javascript files.
     if request.method == "POST":
+        # Gets the posts from users followed by the current user.
         user = User.objects.get(pk=request.user.id)
+        # Using the related name "following" to get all the followed users.
         followed_users = user.following.all().values('user')
+        # We then use the id of all the users found to get their posts in the next 2 lines.
         users = User.objects.filter(id__in=followed_users)
         posts = Post.objects.filter(user__in=users)
         posts = posts.order_by("-timestamp")
+        # Breaks the list of posts into smaller lists of 10 posts.
         paginator = Paginator(posts, 10)
+        # We send this information so we can make the navigation bar for the pages.
         page_contents = paginator.page(page_num)
+        # serialize() returns a dictionary with information pertaining the post. It can be found in models.py.
         list_of_posts = [post.serialize(request.user)
                          for post in page_contents]
         return JsonResponse({"posts": list_of_posts,
                              "pages": paginator.num_pages,
                              "source": "homepage"
                              })
+    # If the user accesses the page through GET request, we redirect him to a function that calls the function through POST request.
+    # Why: to enable users to access different pages from this single page application through the URL.
     else:
         return render(request, "network/index.html", {
             "called_page": "homepage",
@@ -127,17 +105,24 @@ def homepage(request, page_num=1):
 
 
 def all_posts(request, page_num=1):
+    # Returns the posts to be displayed to the javascript files.
     if request.method == "POST":
+        # Get all posts indiscriminately for this page.
         posts = Post.objects.all()
         posts = posts.order_by("-timestamp")
+        # Breaks the list of posts into smaller lists of 10 posts.
         paginator = Paginator(posts, 10)
+        # We send this information so we can make the navigation bar for the pages.
         page_contents = paginator.page(page_num)
+        # serialize() returns a dictionary with information pertaining the post. It can be found in models.py.
         list_of_posts = [post.serialize(request.user)
                          for post in page_contents]
         return JsonResponse({"posts": list_of_posts,
                              "pages": paginator.num_pages,
                              "source": "all_posts"
                              })
+    # If the user accesses the page through GET request, we redirect him to a function that calls the function through POST request.
+    # Why: to enable users to access different pages from this single page application through the URL.
     else:
         return render(request, "network/index.html", {
             "called_page": "all_posts",
@@ -146,12 +131,17 @@ def all_posts(request, page_num=1):
 
 
 def profile_page(request, username, page_num=1):
+    # Returns the posts to be displayed to the javascript files.
     if request.method == "POST":
+        # Get all posts from the profile's owner.
         requested_profile = User.objects.get(username=username)
-        posts = Post.objects.filter(user=requested_profile)
+        posts = requested_profile.posts.all()
         posts = posts.order_by("-timestamp")
+        # Breaks the list of posts into smaller lists of 10 posts.
         paginator = Paginator(posts, 10)
+        # We send this information so we can make the navigation bar for the pages.
         page_contents = paginator.page(page_num)
+        # serialize() returns a dictionary with information pertaining the post. It can be found in models.py.
         list_of_posts = [post.serialize(request.user)
                          for post in page_contents]
         return JsonResponse({"posts": list_of_posts,
@@ -159,12 +149,16 @@ def profile_page(request, username, page_num=1):
                              "source": "profile_page",
                              "user": username
                              })
+    # If the user accesses the page through GET request, we redirect him to a function that calls the function through POST request.
+    # Why: to enable users to access different pages from this single page application through the URL.
     else:
         return render(request, "network/index.html", {
             "called_page": "profile",
             "username": username,
             "page": page_num
         })
+
+# This function is called in conjunction with profile_page()
 
 
 def user_info(request, username):
@@ -186,20 +180,41 @@ def user_info(request, username):
     return JsonResponse(user_dict)
 
 
+def single_post(request, id):
+    if request.method == "POST":
+        post = Post.objects.get(pk=id)
+        # serialize() returns a dictionary with information pertaining the post. It can be found in models.py.
+        post_info = post.serialize(request.user)
+        # get_comments() returns a serialized list of comments linked to this post. It can be found in util.py.
+        comments = get_comments(request, post)
+        return JsonResponse({
+            "post": post_info,
+            "comments": comments,
+            "current_user": request.user.username
+        })
+    else:
+        return render(request, 'network/index.html', {
+            "called_page": "single_post",
+            "id": id
+        })
+
+
 @login_required
 def follow(request, username):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     current_user = request.user
     followed_user = User.objects.get(username=username)
-
+    # This is just a safeguard, since the follow button is hidden in a user's own profile.
     if followed_user == current_user:
         return JsonResponse({"error": "You cannot follow yourself"}, status=201)
-
+    # If this try succeeds, it means the function is being called from a profile that is already followed by the current_user, so we remove it.
+    # If this try fails, it means the followed_user is not present in the current_user's list of followed profiles...
     try:
         if followed_user.followers.get(follower=current_user):
             Follower.remove_follower(followed_user, current_user)
             return JsonResponse({"message": "User unfollowed."}, status=201)
+    # So we add them to that list.
     except:
         Follower.add_follower(followed_user, current_user)
         return JsonResponse({"message": "Follow successful."}, status=201)
@@ -220,41 +235,62 @@ def like(request, content_type, id):
     return JsonResponse({"message": "Like action successful."}, status=201)
 
 
-def single_post(request, id):
-    if request.method == "POST":
-        post = Post.objects.get(pk=id)
-        post_info = post.serialize(request.user)
-        comments = get_comments(request, post)
-        return JsonResponse({
-            "post": post_info,
-            "comments": comments,
-            "current_user": request.user.username
-        })
-    else:
-        return render(request, 'network/index.html', {
-            "called_page": "single_post",
-            "id": id
-        })
-
-
 @login_required
-def log_comment(request):
+def log_post(request):
+    # Just a safeguard, once the post input interface won't even load if the user isn't authenticated.
     if request.method != "POST" and request.method != "PUT":
         return JsonResponse({"error": "POST or PUT request required."}, status=400)
     data = json.loads(request.body)
     user = request.user
     content = data.get("content", "")
     image_url = data.get("picture", "")
+    # Make sure the image_url is a valid url. Don't send it to the database if the check fails, to prevent unexpected behavior.
+    if validators.url(image_url) == False:
+        image_url = None
+    # Method POST saves for the first time.
+    if request.method == "POST":
+        post = Post(
+            user=user,
+            content=content,
+            image_url=image_url
+        )
+
+        post.save()
+        return JsonResponse({"message": "Post logged successfully."}, status=201)
+    # Method PUT updates.
+    elif request.method == "PUT":
+        id = data.get("id")
+        post = Post.objects.get(pk=id)
+        post.content = content
+        post.image_url = image_url
+        # Just a safeguard, once the edit button won't be clickable if the post doesn't belong to the current user.
+        if post.user == request.user:
+            post.save()
+            return JsonResponse({"message": "Post edited successfully."}, status=201)
+        else:
+            return JsonResponse({"message": "Edit denied."}, status=401)
+
+
+@login_required
+def log_comment(request):
+    # Just a safeguard, once the comment input interface won't even load if the user isn't authenticated.
+    if request.method != "POST" and request.method != "PUT":
+        return JsonResponse({"error": "POST or PUT request required."}, status=400)
+    data = json.loads(request.body)
+    user = request.user
+    content = data.get("content", "")
+    image_url = data.get("picture", "")
+    # Make sure the image_url is a valid url. Don't send it to the database if the check fails, to prevent unexpected behavior.
     if validators.url(image_url) == False:
         image_url = None
     id = data.get("id")
     post = Post.objects.get(pk=id)
-        
+    # Method POST saves for the first time.
     if request.method == "POST":
         comment = Comment(
             user=user,
             content=content,
-            image_url=image_url 
+            image_url=image_url
         )
         comment.save()
         ReplySection.add_comment(post, comment)
@@ -263,13 +299,14 @@ def log_comment(request):
         comment = Comment.objects.get(pk=id)
         comment.content = content
         comment.image_url = image_url
-        
+        # Just a safeguard, once the edit button won't be clickable if the post doesn't belong to the current user.
         if comment.user == request.user:
             comment.save()
             return JsonResponse({"message": "Comment edited successfully"})
-        
+
         return JsonResponse({"message": "You cannot edit someone else's comment!"})
-    
+
+
 def remove_post(request, id):
     if request.method == "POST":
         post = Post.objects.get(pk=id)
@@ -278,12 +315,13 @@ def remove_post(request, id):
             return JsonResponse({"message": "Post deleted"})
         else:
             return JsonResponse({"message": "You cannot delete someone else's posts."})
-        
+
+
 def remove_comment(request, id):
-        if request.method == "POST":
-            comment = Comment.objects.get(pk=id)
-        if request.user == comment.user:
-            comment.delete()
-            return JsonResponse({"message": "Comment deleted"})
-        else:
-            return JsonResponse({"message": "You cannot delete someone else's comment."})
+    if request.method == "POST":
+        comment = Comment.objects.get(pk=id)
+    if request.user == comment.user:
+        comment.delete()
+        return JsonResponse({"message": "Comment deleted"})
+    else:
+        return JsonResponse({"message": "You cannot delete someone else's comment."})

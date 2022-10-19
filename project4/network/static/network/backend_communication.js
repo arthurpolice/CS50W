@@ -32,7 +32,6 @@ function getFeed(mode, page = 1) {
   currentPage.innerHTML = page
 }
 
-
 // Gets posts corresponding to a given user's profile. Also gets that profile's data.
 function profilePage(username, page = 1) {
   document.querySelector('#profile-view').style.display = 'block'
@@ -122,9 +121,8 @@ function listenerSinglePost() {
   })
 }
 
-
 // Prevents the triggering of listenerSinglePost when clicking on elements that should take priority over it.
-// Some elements within the wrapper have the stopPropagation() approach instead. 
+// Some elements within the wrapper have the stopPropagation() approach instead.
 function listenerSinglePostHandler(ev) {
   if (
     ev.target.classList.contains('btn') === false &&
@@ -156,14 +154,14 @@ function logData(parentNode, method, route) {
   // Method PUT means we're altering a post with an existing id, so we can catch it.
   if (method === 'PUT') {
     var id = parentNode.querySelector('.id').value
-  } 
+  }
   // Route /logcomment means we're sending a comment to a posts's reply section. That post has a preexisting id to be caught.
   // This query selector catches the first element of class id, which is, in this design, always going to be the post's ID.
-  // Should this design change, this might need to be changed, as even comments have IDs. 
+  // Should this design change, this might need to be changed, as even comments have IDs.
   else if (route === '/logcomment') {
     var id = document.querySelector('.id').value
-  } 
-  // If neither of the previous is true, it means we're sending a new post to the database and there is no existing ID to consult. 
+  }
+  // If neither of the previous is true, it means we're sending a new post to the database and there is no existing ID to consult.
   else {
     var id = null
   }

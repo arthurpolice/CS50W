@@ -2,6 +2,7 @@
 
 // Set up navbar and post input UI.
 document.addEventListener('DOMContentLoaded', () => {
+  search()
   // This is a hacky way to check whether the user is logged in or not without calling the backend.
   if (document.querySelector('#log').innerHTML === 'Log Out') {
     // If the user is indeed logged in, go ahead and load the post interface (this is only loaded once throughout the whole time the user is on the page)

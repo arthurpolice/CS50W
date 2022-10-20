@@ -29,7 +29,7 @@
         {% endif %}
 
         <div>
-            <ul class="navbar-nav mr-auto">
+            <ul id="navbar" class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
                     <input id="current-user" value={{ user.username }} class="hidden">
@@ -55,10 +55,10 @@
                     <a class="nav-link" href="{% url 'register' %}">Register</a>
                 </li>
                 {% endif %}
-                <li class="nav-item">
-                    <form>
-                        <input name="search-bar" id="search-bar" type="text">
-                    </form>
+                <li class="nav-item" id="search-nav">
+                    <div id="suggestion-dropdown" class="dropdown">
+                        <input name="search-bar" id="search-bar" type="text" placeholder="User search">
+                    </div>
                 </li>
             </ul>
         </div>
@@ -79,6 +79,7 @@
     <script src="{% static 'network/pagination.js' %}"></script>
     <script src="{% static 'network/profile_page.js' %}"></script>
     <script src="{% static 'network/animations.js' %}"></script>
+    <script src="{% static 'network/search.js' %}"></script>
     {% if called_page == "profile" %}
         <script>
             profilePage('{{ username }}', '{{ page }}');        

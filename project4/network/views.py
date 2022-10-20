@@ -201,6 +201,7 @@ def single_post(request, id):
             "current_user": request.user.username
         })
     else:
+        print(id)
         return render(request, 'network/index.html', {
             "called_page": "single_post",
             "id": id
@@ -333,6 +334,7 @@ def remove_comment(request, id):
         return JsonResponse({"message": "Comment deleted"})
     else:
         return JsonResponse({"message": "You cannot delete someone else's comment."})
+ 
     
 def search(request, username):
     users = User.objects.filter(username__iregex=username)

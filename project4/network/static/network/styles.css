@@ -122,6 +122,50 @@
   
 }
 
+@media screen and (min-width: 980px) {
+  #navbar {
+    width: 90vw !important;
+  }
+  
+  #search-nav {
+    margin-left: auto !important;
+  }
+
+  #search-bar {
+    width: 300px !important;
+  }
+  .suggestion-dropdown-div {
+    width: 300px !important;
+  }
+}
+
+#search-nav {
+  padding-right: 20px;
+}
+
+.suggestion-dropdown-div {
+  width: 220px;
+  position: absolute !important;
+  z-index: 9;
+  margin-top: -25px;
+  padding-top: 20px;
+}
+
+#search-bar {
+  width: 220px;
+  position: relative;
+  z-index: 10;
+  height: 35px;
+  border-radius: 20px;
+  border-style: solid;
+  border-color: rgba(26, 24, 24, 0.452);
+  padding-left: 10px;
+}
+
+#search-bar:focus {
+  outline: none;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -451,6 +495,27 @@ textarea {
 .comment-icon {
   height: 25px;
   width: 25px;
+}
+
+.suggestion-wrapper {
+  display: flex;
+  padding: 8px;
+  min-width: 220px; 
+}
+
+.suggestion-wrapper:hover {
+  background-color: azure;
+}
+
+.suggestion-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-avatar-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .inactive-btn {

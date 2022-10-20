@@ -40,10 +40,16 @@ function profilePage(username, page = 1) {
   document.querySelector('#user-list-view').style.display = 'none'
   document.querySelector('#post-list-view').style.display = 'block'
   document.querySelector('#comments-view').style.display = 'none'
+
+  try {
   // If the current user is visiting their own profile, they can post new things.
-  if (username === document.querySelector('#current-user').value) {
-    document.querySelector('#post-input-view').style.display = 'block'
-  } else {
+    if (username === document.querySelector('#current-user').value) {
+      document.querySelector('#post-input-view').style.display = 'block'
+    } else {
+      document.querySelector('#post-input-view').style.display = 'none'
+    }
+  }
+  catch {
     document.querySelector('#post-input-view').style.display = 'none'
   }
   userInfo(username)

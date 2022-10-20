@@ -1,6 +1,8 @@
 // This is the comment variant of the displayPosts() function.
 function displayComments(comments) {
+  if (document.querySelector('#log').innerHTML === 'Log Out') {
   commentInputInterface()
+  }
   let commentWrappers = document.querySelectorAll('.comment-wrapper')
   commentWrappers.forEach((commentWrapper) => commentWrapper.remove())
   let separators = document.querySelectorAll('.separator')

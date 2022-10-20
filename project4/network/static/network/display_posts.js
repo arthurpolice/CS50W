@@ -184,22 +184,29 @@ function makePostLikeBtn(post) {
   likeBtn.appendChild(svgHeart.cloneNode(true))
 
   likeStatusChecker(likeBtn, post)
-  likeBtn.addEventListener('click', (ev) => {
-    let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-    let parent = ev.currentTarget.parentNode
-    let postId = parent.querySelector('input').value
-    let icon = ev.currentTarget.querySelector('.svg-heart')
-    // This prevents the like button click to bubble up to a wrapper click event!
-    ev.stopPropagation()
-    // Disable the button momentarily to let the animation play out, it's enabled again in the likeBtnPress function
-    ev.currentTarget.disabled = true
-    fetch(`/like/${post['type']}/${postId}`, {
-      method: 'POST',
-      headers: { 'X-CSRFToken': csrftoken },
-      mode: 'same-origin',
+  if (document.querySelector('#log').innerHTML === 'Log Out') {
+    likeBtn.addEventListener('click', (ev) => {
+      let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+      let parent = ev.currentTarget.parentNode
+      let postId = parent.querySelector('input').value
+      let icon = ev.currentTarget.querySelector('.svg-heart')
+      // This prevents the like button click to bubble up to a wrapper click event!
+      ev.stopPropagation()
+      // Disable the button momentarily to let the animation play out, it's enabled again in the likeBtnPress function
+      ev.currentTarget.disabled = true
+      fetch(`/like/${post['type']}/${postId}`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken },
+        mode: 'same-origin',
+      })
+      likeBtnPress(ev.currentTarget, icon)
     })
-    likeBtnPress(ev.currentTarget, icon)
-  })
+  }
+  else {
+    likeBtn.addEventListener('click', () => {
+      window.location.replace("/login")
+    })
+  }
   return likeBtn
 }
 

@@ -158,16 +158,20 @@ def profile_page(request, username, page_num=1):
             "page": page_num
         })
 
+
 # This function is called in conjunction with profile_page()
-
-
 def user_info(request, username):
     requested_profile = User.objects.get(username=username)
     follow_status = follow_status_check(request, requested_profile)
     avatar = get_avatar(requested_profile)
-    follower_object = requested_profile.followers.get(user=requested_profile)
-    follower_amount = follower_object.follower.all().count()
-    followed_amount = requested_profile.following.all().values('user').count()
+    try:
+        follower_object = requested_profile.followers.get(user=requested_profile)
+        follower_amount = follower_object.follower.all().count()
+        followed_amount = requested_profile.following.all().values('user').count()
+    except:
+        Follower.objects.create(user=requested_profile)
+        follower_amount = follower_object.follower.all().count()
+        followed_amount = requested_profile.following.all().values('user').count()
 
     user_dict = {
         "username": requested_profile.username,
@@ -177,6 +181,10 @@ def user_info(request, username):
         "follower_amount": follower_amount,
         "followed_amount": followed_amount
     }
+    return user_dict
+
+def user_info_profile(request, username):
+    user_dict = user_info(request, username)
     return JsonResponse(user_dict)
 
 
@@ -325,3 +333,13 @@ def remove_comment(request, id):
         return JsonResponse({"message": "Comment deleted"})
     else:
         return JsonResponse({"message": "You cannot delete someone else's comment."})
+    
+def search(request, username):
+    users = User.objects.filter(username__iregex=username)
+    users = users.order_by("username")
+    users = users[:5]
+    list_of_matches = [user_info(request, user.username) for user in users]
+    print(list_of_matches)
+    return JsonResponse({
+        "matches": list_of_matches
+    })

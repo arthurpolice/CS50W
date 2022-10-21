@@ -60,6 +60,9 @@
                         <input name="search-bar" id="search-bar" type="text" placeholder="User search">
                     </div>
                 </li>
+                <li class="nav-item" id="settings-nav">
+                    <a id="settings-btn"><img id="settings-btn-img" src="/static/network/cog.png" title="Settings"></a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -80,6 +83,7 @@
     <script src="{% static 'network/profile_page.js' %}"></script>
     <script src="{% static 'network/animations.js' %}"></script>
     <script src="{% static 'network/search.js' %}"></script>
+    <script src="{% static 'network/settings_page.js' %}"></script>
     {% if called_page == "profile" %}
         <script>
             profilePage('{{ username }}', '{{ page }}');        

@@ -1,6 +1,6 @@
 import json
-import re
 import validators
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .util import follow_status_check, get_avatar, get_comments, like_handler_post, like_handler_comment
+from .util import get_comments, like_handler_post, like_handler_comment, user_info
 from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower, Avatar
 
 
@@ -72,6 +72,54 @@ def register(request):
         return render(request, "network/register.html")
 
 
+@login_required
+def settings_page(request):
+    username = request.user.username
+    email = User.objects.get(pk=request.user.id).email
+    user_dict = user_info(request, username)
+    user_dict['email'] = email
+    
+    return JsonResponse(user_dict)
+
+@login_required
+def edit_profile(request):
+    data = json.loads(request.body)
+    current_user = User.objects.get(pk=request.user.id)
+    username = data.get("username")
+    avatar = data.get("avatar", "")
+    email = data.get("email")
+     
+    current_user.username = username
+    current_user.email = email
+    
+    try:
+        avatar_object = Avatar.objects.get(user = current_user)
+        avatar_object.image_url = avatar
+    except:
+        avatar_object = Avatar.objects.create(user = current_user, image_url = avatar)
+        
+    avatar_object.save()    
+    current_user.save()
+    return JsonResponse({"message": "Profile successfully changed"})
+
+
+@login_required
+def edit_password(request):
+    data = json.loads(request.body)
+    password = data.get("old_password")
+    user = authenticate(request, username=request.user.username, password=password)
+    
+    if user is not None:
+        new_password = data.get("new_password")
+        confirmation = data.get("confirmation")
+        
+        if new_password == confirmation:
+            user.password = make_password(new_password)
+            user.save()
+            return JsonResponse({"message": "Password successfully changed"})
+    
+    return JsonResponse({"message": "Old password or confirmation wrong."})
+            
 @login_required
 def homepage(request, page_num=1):
     # Returns the posts to be displayed to the javascript files.
@@ -160,29 +208,6 @@ def profile_page(request, username, page_num=1):
 
 
 # This function is called in conjunction with profile_page()
-def user_info(request, username):
-    requested_profile = User.objects.get(username=username)
-    follow_status = follow_status_check(request, requested_profile)
-    avatar = get_avatar(requested_profile)
-    try:
-        follower_object = requested_profile.followers.get(user=requested_profile)
-        follower_amount = follower_object.follower.all().count()
-        followed_amount = requested_profile.following.all().values('user').count()
-    except:
-        Follower.objects.create(user=requested_profile)
-        follower_amount = follower_object.follower.all().count()
-        followed_amount = requested_profile.following.all().values('user').count()
-
-    user_dict = {
-        "username": requested_profile.username,
-        "join_date": requested_profile.date_joined.strftime("%B %Y"),
-        "avatar": avatar,
-        "follow_status": follow_status,
-        "follower_amount": follower_amount,
-        "followed_amount": followed_amount
-    }
-    return user_dict
-
 def user_info_profile(request, username):
     user_dict = user_info(request, username)
     return JsonResponse(user_dict)

@@ -518,6 +518,27 @@ textarea {
   align-items: center;
 }
 
+.settings-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#settings-btn-img {
+  transition: 5s;
+}
+
+#settings-btn-img:hover {
+  transform: rotate(180deg);
+}
+
+#settings-message {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .inactive-btn {
   color: lightgray !important;
   pointer-events: none;

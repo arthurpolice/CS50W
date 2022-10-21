@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
       '/all_posts/1'
     )
   })
+  document.querySelector('#settings-btn-img').addEventListener('click', settingsPage)
 })
 
 // When the user goes backwards/forwards on navigation, we analyze the information in the state to decide where to send them.

@@ -76,7 +76,32 @@
         <div id="user-list"></div>
     </div>
     <div id="settings-view" class="view">
-        <div id="settings"></div>
+        <div id="settings">
+            <h2>Edit your profile</h2>
+            <div>
+                <label for="username-edit">Username:</label>
+                <input name="username" id="username-edit" class="form-control">
+                <label for="avatar-edit">Avatar URL:</label>
+                <input name="avatar" id="avatar-edit" class="form-control">
+                <label for="email-edit">Email:</label>
+                <input name="email" id="email-edit" class="form-control">
+                <div class="settings-btn">
+                    <button id="submit-profile-info" class="btn btn-secondary">Change Profile</button>
+                </div>
+            </div>
+            <div>
+                <label for="old-password-edit">Old Password:</label>
+                <input type="password" id="old-password-edit" class="form-control">
+                <label for="password-edit">New Password:</label>
+                <input type="password" id="password-edit" class="form-control">
+                <label for="password-edit-confirm">Confirm Password:</label>
+                <input type="password" id="password-edit-confirm" class="form-control">
+                <div class="settings-btn">
+                    <button id="submit-password" class="btn btn-secondary">Change Password</button>
+                </div>
+            </div>
+            <span id="settings-message"></span>
+        </div>
     </div>
 </div>   
 {% endblock %}

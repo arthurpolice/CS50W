@@ -9,6 +9,29 @@ from django.urls import reverse
 from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower, Avatar
 
 
+def user_info(request, username):
+    requested_profile = User.objects.get(username=username)
+    follow_status = follow_status_check(request, requested_profile)
+    avatar = get_avatar(requested_profile)
+    try:
+        follower_object = requested_profile.followers.get(user=requested_profile)
+        follower_amount = follower_object.follower.all().count()
+        followed_amount = requested_profile.following.all().values('user').count()
+    except:
+        Follower.objects.create(user=requested_profile)
+        follower_amount = follower_object.follower.all().count()
+        followed_amount = requested_profile.following.all().values('user').count()
+
+    user_dict = {
+        "username": requested_profile.username,
+        "join_date": requested_profile.date_joined.strftime("%B %Y"),
+        "avatar": avatar,
+        "follow_status": follow_status,
+        "follower_amount": follower_amount,
+        "followed_amount": followed_amount
+    }
+    return user_dict
+
 def follow_status_check(request, requested_profile):
     if requested_profile == request.user:
         follow_status = False

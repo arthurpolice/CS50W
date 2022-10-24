@@ -212,6 +212,7 @@ textarea {
 
 .input-area {
   margin-top: 2vh;
+  justify-content: inherit;
 }
 
 .post-input {

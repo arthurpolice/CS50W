@@ -1,3 +1,4 @@
+// Set up the correct views, automatically fill the profile info fields, set up the listeners to send information to the backend.
 function settingsPage() {
   document.querySelector('#profile-view').style.display = 'none'
   document.querySelector('#post-view').style.display = 'none'
@@ -13,6 +14,7 @@ function settingsPage() {
   document.querySelector('#submit-password').addEventListener('click', submitPassword)
 }
 
+// This function retrieves the user information from the backend and displays it in the settings page fields for easy editing.
 function autoFill() {
   let usernameField = document.querySelector('#username-edit')
   let avatarField = document.querySelector('#avatar-edit')

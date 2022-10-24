@@ -78,9 +78,10 @@ def settings_page(request):
     email = User.objects.get(pk=request.user.id).email
     user_dict = user_info(request, username)
     user_dict['email'] = email
-    
+    # Automatically fills the fields in the settings page.
     return JsonResponse(user_dict)
 
+# This route is called from the settings page.
 @login_required
 def edit_profile(request):
     data = json.loads(request.body)
@@ -102,22 +103,23 @@ def edit_profile(request):
     current_user.save()
     return JsonResponse({"message": "Profile successfully changed"})
 
-
+# This route is called from the settings page.
 @login_required
 def edit_password(request):
     data = json.loads(request.body)
     password = data.get("old_password")
+    # Check if the current password the user input is correct.
     user = authenticate(request, username=request.user.username, password=password)
     
     if user is not None:
         new_password = data.get("new_password")
         confirmation = data.get("confirmation")
-        
+        # Make sure the new password and confirmation fields match.
         if new_password == confirmation:
             user.password = make_password(new_password)
             user.save()
             return JsonResponse({"message": "Password successfully changed"})
-    
+    # If any of the checks fail, we send this error message to the page.
     return JsonResponse({"message": "Old password or confirmation wrong."})
             
 @login_required

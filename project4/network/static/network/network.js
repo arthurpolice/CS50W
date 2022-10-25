@@ -46,8 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '/homepage/1'
       )
     })
-  }
-  else {
+  } else {
     document.querySelector('#network-button').addEventListener('click', () => {
       getFeed('all_posts')
       history.pushState(
@@ -71,7 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
       '/all_posts/1'
     )
   })
-  document.querySelector('#settings-btn-img').addEventListener('click', settingsPage)
+  document
+    .querySelector('#settings-btn-img')
+    .addEventListener('click', (ev) => {
+      settingsPage(ev)
+      history.pushState(
+        {
+          feed: 'settings',
+        },
+        '',
+        '/settings'
+      )
+    })
 })
 
 // When the user goes backwards/forwards on navigation, we analyze the information in the state to decide where to send them.
@@ -83,6 +93,8 @@ window.onpopstate = function (ev) {
     profilePage(ev.state.username, ev.state.page)
   } else if (ev.state.feed === 'single_post') {
     getSinglePost(ev.state.id)
+  } else if (ev.state.feed === 'settings') {
+    settingsPage()
   }
 }
 

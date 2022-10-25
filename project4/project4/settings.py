@@ -25,13 +25,13 @@ SECRET_KEY = '13kl@xtukpwe&xj2xoysxe9_6=tf@f8ewxer5n&ifnd46+6$%8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
+SESSION_COOKIE_SECURE = True
 
-                 ]
+CSRF_COOKIE_SECURE = True
 
-CSRF_TRUSTED_ORIGINS = [
+ALLOWED_HOSTS = ['6178-179-214-159-59.sa.ngrok.io']
 
-                        ]
+CSRF_TRUSTED_ORIGINS = ['https://6178-179-214-159-59.sa.ngrok.io']
 # Application definition
 
 INSTALLED_APPS = [

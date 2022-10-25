@@ -82,6 +82,8 @@ def settings_page(request):
     return JsonResponse(user_dict)
 
 # This route is called from the settings page.
+
+
 @login_required
 def edit_profile(request):
     data = json.loads(request.body)
@@ -89,28 +91,32 @@ def edit_profile(request):
     username = data.get("username")
     avatar = data.get("avatar", "")
     email = data.get("email")
-     
+
     current_user.username = username
     current_user.email = email
-    
+
     try:
-        avatar_object = Avatar.objects.get(user = current_user)
+        avatar_object = Avatar.objects.get(user=current_user)
         avatar_object.image_url = avatar
     except:
-        avatar_object = Avatar.objects.create(user = current_user, image_url = avatar)
-        
-    avatar_object.save()    
+        avatar_object = Avatar.objects.create(
+            user=current_user, image_url=avatar)
+
+    avatar_object.save()
     current_user.save()
     return JsonResponse({"message": "Profile successfully changed"})
 
 # This route is called from the settings page.
+
+
 @login_required
 def edit_password(request):
     data = json.loads(request.body)
     password = data.get("old_password")
     # Check if the current password the user input is correct.
-    user = authenticate(request, username=request.user.username, password=password)
-    
+    user = authenticate(
+        request, username=request.user.username, password=password)
+
     if user is not None:
         new_password = data.get("new_password")
         confirmation = data.get("confirmation")
@@ -121,7 +127,8 @@ def edit_password(request):
             return JsonResponse({"message": "Password successfully changed"})
     # If any of the checks fail, we send this error message to the page.
     return JsonResponse({"message": "Old password or confirmation wrong."})
-            
+
+
 @login_required
 def homepage(request, page_num=1):
     # Returns the posts to be displayed to the javascript files.
@@ -228,7 +235,6 @@ def single_post(request, id):
             "current_user": request.user.username
         })
     else:
-        print(id)
         return render(request, 'network/index.html', {
             "called_page": "single_post",
             "id": id
@@ -361,14 +367,13 @@ def remove_comment(request, id):
         return JsonResponse({"message": "Comment deleted"})
     else:
         return JsonResponse({"message": "You cannot delete someone else's comment."})
- 
-    
+
+
 def search(request, username):
     users = User.objects.filter(username__iregex=username)
     users = users.order_by("username")
     users = users[:5]
     list_of_matches = [user_info(request, user.username) for user in users]
-    print(list_of_matches)
     return JsonResponse({
         "matches": list_of_matches
     })

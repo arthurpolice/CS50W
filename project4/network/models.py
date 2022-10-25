@@ -6,16 +6,20 @@ from django.forms import CharField
 class User(AbstractUser):
     pass
 
+
 class Avatar(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="avatar")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="avatar")
     image_url = models.CharField(null=True, max_length=255)
 
+
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="posts")
     content = models.CharField(max_length=255)
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     def get_avatar(self):
         try:
             avatar = Avatar.objects.get(user=self.user)
@@ -23,33 +27,33 @@ class Post(models.Model):
         except:
             avatar = None
         return avatar
-    
+
     def get_like_status(self, user):
         try:
-            self.likes.get(like = user)
+            self.likes.get(like=user)
             like_status = True
         except:
             like_status = False
         return like_status
-    
+
     def get_likes_amount(self):
         try:
-            likes_object = self.likes.get(post = self)
+            likes_object = self.likes.get(post=self)
             likes = likes_object.like.all()
             likes_amount = likes.count()
         except:
             likes_amount = 0
         return likes_amount
-    
+
     def get_comments_amount(self):
         try:
-            reply_section = self.replies.get(post = self)
+            reply_section = self.replies.get(post=self)
             comments = reply_section.comments.all()
             comments_amount = comments.count()
         except:
             comments_amount = 0
         return comments_amount
-                
+
     def serialize(self, user):
         avatar = self.get_avatar()
         like_status = self.get_like_status(user)
@@ -69,13 +73,14 @@ class Post(models.Model):
             "type": "post"
         }
 
+
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="comments")
     content = models.CharField(max_length=255)
     image_url = models.CharField(null=True, max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
-    
+
     def get_avatar(self):
         try:
             avatar = Avatar.objects.get(user=self.user)
@@ -83,24 +88,24 @@ class Comment(models.Model):
         except:
             avatar = None
         return avatar
-    
+
     def get_like_status(self, user):
         try:
-            self.likes.get(like = user)
+            self.likes.get(like=user)
             like_status = True
         except:
             like_status = False
         return like_status
-    
+
     def get_likes_amount(self):
         try:
-            likes_object = self.likes.get(comment = self)
+            likes_object = self.likes.get(comment=self)
             likes = likes_object.like.all()
             likes_amount = likes.count()
         except:
             likes_amount = 0
         return likes_amount
-    
+
     def serialize(self, user):
         avatar = self.get_avatar()
         like_status = self.get_like_status(user)
@@ -118,72 +123,78 @@ class Comment(models.Model):
             "avatar": avatar
         }
 
+
 class ReplySection(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="replies")
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="replies")
     comments = models.ManyToManyField(Comment, related_name="parent_post")
-    
+
     @classmethod
     def add_comment(cls, post, new_comment):
         reply_section, created = cls.objects.get_or_create(
-            post = post
+            post=post
         )
         reply_section.comments.add(new_comment)
-        
+
+
 class Follower(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "followers")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="followers")
     follower = models.ManyToManyField(User, related_name="following")
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     @classmethod
     def add_follower(cls, user, new_follower):
         follower_list, created = cls.objects.get_or_create(
-            user = user
+            user=user
         )
         follower_list.follower.add(new_follower)
-        
+
     @classmethod
     def remove_follower(cls, user, follower):
         follower_list, created = cls.objects.get_or_create(
-            user = user
+            user=user
         )
         follower_list.follower.remove(follower)
-        
+
+
 class PostLike(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="likes")
     like = models.ManyToManyField(User, related_name="liked_post")
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     @classmethod
     def add_like_post(cls, post, new_like):
         like_list, created = cls.objects.get_or_create(
-            post = post
+            post=post
         )
         like_list.like.add(new_like)
 
-        
     @classmethod
     def remove_like_post(cls, post, new_like):
         like_list, created = cls.objects.get_or_create(
-            post = post
+            post=post
         )
-        print(like_list)
         like_list.like.remove(new_like)
-        
+
+
 class CommentLike(models.Model):
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="likes")
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, related_name="likes")
     like = models.ManyToManyField(User, related_name="liked_comment")
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     @classmethod
     def add_like_comment(cls, comment, new_like):
         like_list, created = cls.objects.get_or_create(
-            comment = comment
+            comment=comment
         )
         like_list.like.add(new_like)
-        
+
     @classmethod
     def remove_like_comment(cls, comment, new_like):
         like_list, created = cls.objects.get_or_create(
-            comment = comment
+            comment=comment
         )
         like_list.like.remove(new_like)

@@ -10,8 +10,12 @@ function settingsPage() {
 
   autoFill()
 
-  document.querySelector('#submit-profile-info').addEventListener('click', submitProfileInfo)
-  document.querySelector('#submit-password').addEventListener('click', submitPassword)
+  document
+    .querySelector('#submit-profile-info')
+    .addEventListener('click', submitProfileInfo)
+  document
+    .querySelector('#submit-password')
+    .addEventListener('click', submitPassword)
 }
 
 // This function retrieves the user information from the backend and displays it in the settings page fields for easy editing.
@@ -21,12 +25,12 @@ function autoFill() {
   let emailField = document.querySelector('#email-edit')
 
   fetch('/settings')
-  .then((response) => response.json())
-  .then((response) => {
-    usernameField.value = response['username']
-    avatarField.value = response['avatar']
-    emailField.value = response['email']
-  })
+    .then((response) => response.json())
+    .then((response) => {
+      usernameField.value = response['username']
+      avatarField.value = response['avatar']
+      emailField.value = response['email']
+    })
 }
 
 function submitProfileInfo() {
@@ -36,19 +40,20 @@ function submitProfileInfo() {
   let email = document.querySelector('#email-edit').value
 
   fetch('/edit_profile', {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify({
-    username,
-    avatar,
-    email
-  }),
-  headers: { 'X-CSRFToken': csrftoken },
-  mode: 'same-origin'
+      username,
+      avatar,
+      email,
+    }),
+    headers: { 'X-CSRFToken': csrftoken },
+    mode: 'same-origin',
   })
-  .then(response => response.json())
-  .then((response) => {
-    document.querySelector('#settings-message').innerHTML = response['message']
-  })
+    .then((response) => response.json())
+    .then((response) => {
+      document.querySelector('#settings-message').innerHTML =
+        response['message']
+    })
 }
 
 function submitPassword() {
@@ -58,17 +63,18 @@ function submitPassword() {
   let confirmation = document.querySelector('#password-edit-confirm').value
 
   fetch('/edit_password', {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify({
-    old_password: oldPassword,
-    new_password: newPassword,
-    confirmation
-  }),
-  headers: { 'X-CSRFToken': csrftoken },
-  mode: 'same-origin'
+      old_password: oldPassword,
+      new_password: newPassword,
+      confirmation,
+    }),
+    headers: { 'X-CSRFToken': csrftoken },
+    mode: 'same-origin',
   })
-  .then(response => response.json())
-  .then((response) => {
-    document.querySelector('#settings-message').innerHTML = response['message']
-  })
+    .then((response) => response.json())
+    .then((response) => {
+      document.querySelector('#settings-message').innerHTML =
+        response['message']
+    })
 }

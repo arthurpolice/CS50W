@@ -18,9 +18,9 @@ function movePostBtn(postBtn) {
 
 function displayUrlInput(imageBtn, postBtn) {
   imageBtn.addEventListener('click', (ev) => {
-    let buttonDiv = ev.currentTarget.parentNode
-    let inputDiv = buttonDiv.parentNode
-    let imageUrlDiv = inputDiv.querySelector('.image-input-div')
+    const buttonDiv = ev.currentTarget.parentNode
+    const inputDiv = buttonDiv.parentNode
+    const imageUrlDiv = inputDiv.querySelector('.image-input-div')
     imageBtn.disabled = true
     setTimeout(() => (imageBtn.disabled = false), 1000)
     if (imageUrlDiv.classList.contains('hidden-image-input')) {
@@ -74,6 +74,6 @@ function likeBtnPress(likeBtn, icon) {
 }
 
 function changeLikeCounter(likeBtn, amount) {
-  let likeCounter = likeBtn.parentNode.querySelector('.like-counter')
+  const likeCounter = likeBtn.parentNode.querySelector('.like-counter')
   likeCounter.innerHTML = parseInt(likeCounter.innerHTML) + parseInt(amount)
 }

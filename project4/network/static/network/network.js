@@ -88,42 +88,43 @@ document.addEventListener('DOMContentLoaded', () => {
 // When the user goes backwards/forwards on navigation, we analyze the information in the state to decide where to send them.
 // The state is comprised of feed, page and/or id. This is manually determined at the moment of the push state. More information later.
 window.onpopstate = function (ev) {
-  if (ev.state.feed === 'homepage' || ev.state.feed === 'all_posts') {
-    getFeed(ev.state.feed, ev.state.page)
-  } else if (ev.state.feed === 'profile') {
-    profilePage(ev.state.username, ev.state.page)
-  } else if (ev.state.feed === 'single_post') {
-    getSinglePost(ev.state.id)
-  } else if (ev.state.feed === 'settings') {
-    settingsPage()
+  switch(ev.state.feed) {
+    case 'homepage':
+      getFeed(ev.state.feed, ev.state.page)
+      break
+    case 'all_posts':
+      getFeed(ev.state.feed, ev.state.page)
+      break
+    case 'profile':
+      profilePage(ev.state.username, ev.state.page)
+      break
+    case 'single_post':
+      getSinglePost(ev.state.id)
+      break
+    case 'settings':
+      settingsPage()
+      break
+    default:
+      getFeed('homepage', 1)
+      break
   }
 }
 
 
 // This function checks whether an avatar has a valid URL and replaces it with a default icon otherwise.
 function checkAvatar(avatarElement, avatarUrl) {
-  try {
-    new URL(avatarUrl)
-    url = true
-  } catch (e) {
-    url = false
-  }
-  if (url === true) {
-    avatarElement.src = avatarUrl
-  } else {
-    avatarElement.src = '/static/network/default_avatar.png'
-  }
+  avatarUrl !== null ? (avatarElement.src = avatarUrl) : (avatarElement.src = '/static/network/default_avatar.png')
 }
+
 
 function navAvatar() {
   try {
-    let avatarElement = document.querySelector('#nav-avatar')
-    let username = document.querySelector('#current-user').value
+    const avatarElement = document.querySelector('#nav-avatar')
+    const username = document.querySelector('#current-user').value
     fetch(`/user/${username}`)
     .then((response) => response.json())
     .then((response) => {
-      console.log(response)
-      avatarElement.src = response['avatar']
+      checkAvatar(avatarElement, response['avatar'])
     })
   }
   catch {}

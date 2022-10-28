@@ -2,15 +2,15 @@
 
 function makeFollowButton(username, followStatus) {
   // Clone the follow button to remove old listeners.
-  let followButton = document.querySelector('#follow-button')
-  let newFollowButton = followButton.cloneNode(true)
+  const followButton = document.querySelector('#follow-button')
+  const newFollowButton = followButton.cloneNode(true)
   // Remove hidden class (which is added when the user visits their own profile page)
   newFollowButton.classList.remove('hidden')
   followButton.replaceWith(newFollowButton)
   // This sets up the visual behavior when the button is clicked
   changeFollowButton(newFollowButton, followStatus)
 
-  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
   // Here we hide the button when the user is visiting their own profile page
   if (username === document.querySelector('#current-user').value) {
     newFollowButton.classList.add('hidden')
@@ -46,8 +46,8 @@ function changeFollowButton(followButton, followStatus) {
 // Changes the number of followers without having to fetch.
 // Notice the recursion with the changeFollowButton function.
 function unfollow(ev) {
-  let followStatus = false
-  let followerAmount = document.querySelector('#followers')
+  const followStatus = false
+  const followerAmount = document.querySelector('#followers')
   followerAmount.innerHTML = `${parseInt(followerAmount.innerHTML) - 1} `
   ev.currentTarget.removeEventListener('click', unfollow)
   changeFollowButton(ev.currentTarget, followStatus)
@@ -55,8 +55,8 @@ function unfollow(ev) {
 
 // Changes the number of followers without having to fetch.
 function follow(ev) {
-  let followStatus = true
-  let followerAmount = document.querySelector('#followers')
+  const followStatus = true
+  const followerAmount = document.querySelector('#followers')
   followerAmount.innerHTML = `${parseInt(followerAmount.innerHTML) + 1} `
   ev.currentTarget.removeEventListener('click', follow)
   changeFollowButton(ev.currentTarget, followStatus)
@@ -69,7 +69,7 @@ function displayAvatar(user) {
     avatarWrapper.removeChild(document.querySelector('.avatar'))
     avatarWrapper = document.querySelector('#avatar-wrapper')
   }
-  let avatar = document.createElement('img')
+  const avatar = document.createElement('img')
   avatar.classList.add('avatar')
   checkAvatar(avatar, user['avatar'])
   avatarWrapper.appendChild(avatar)

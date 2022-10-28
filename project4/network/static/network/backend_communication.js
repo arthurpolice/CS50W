@@ -153,23 +153,21 @@ function listenerSinglePostHandler(ev) {
 // Data senders
 
 function logData(parentNode, method, route) {
-  let content = parentNode.querySelector('.post-input')
-  let imageUrl = parentNode.querySelector('.image-input')
-  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  const content = parentNode.querySelector('.post-input')
+  const imageUrl = parentNode.querySelector('.image-input')
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
   // The decision process is as follows:
+  // Base state is sending a new post to the database and there being no existing ID to consult.
+  let id = null
   // Method PUT means we're altering a post with an existing id, so we can catch it.
   if (method === 'PUT') {
-    var id = parentNode.querySelector('.id').value
+    id = parentNode.querySelector('.id').value
   }
   // Route /logcomment means we're sending a comment to a posts's reply section. That post has a preexisting id to be caught.
   // This query selector catches the first element of class id, which is, in this design, always going to be the post's ID.
   // Should this design change, this might need to be changed, as even comments have IDs.
   else if (route === '/logcomment') {
-    var id = document.querySelector('.id').value
-  }
-  // If neither of the previous is true, it means we're sending a new post to the database and there is no existing ID to consult.
-  else {
-    var id = null
+    id = document.querySelector('.id').value
   }
   // Make sure the post/comment isn't completely empty. (AKA it must have at least some text OR an image.)
   if (
@@ -191,7 +189,7 @@ function logData(parentNode, method, route) {
     imageUrl.value = ''
     // Display the user's profile page, if it's a new post.
     if (route === '/logpost') {
-      username = document.querySelector('#current-user').value
+      const username = document.querySelector('#current-user').value
       setTimeout(() => profilePage(username), 500)
     } else {
       getSinglePost(id)
@@ -200,10 +198,10 @@ function logData(parentNode, method, route) {
 }
 
 function removeData(post) {
-  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
   // Route for post deletion is based on the 'type' key attributed to the backend to this post/comment.
-  route = 'remove' + post['type']
-  id = post['id']
+  const route = 'remove' + post['type']
+  const id = post['id']
   fetch(`/${route}/${id}`, {
     method: 'post',
     headers: { 'X-CSRFToken': csrftoken },

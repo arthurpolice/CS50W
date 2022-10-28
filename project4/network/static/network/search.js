@@ -1,5 +1,5 @@
 function search() {
-  let searchBar = document.querySelector('#search-bar')
+  const searchBar = document.querySelector('#search-bar')
   searchBar.addEventListener('input', () => {
     // Try/catch needed because sometimes the elements being selected don't exist yet.
     try {
@@ -8,7 +8,7 @@ function search() {
         .querySelectorAll('.suggestion-wrapper')
         .forEach((wrapper) => wrapper.remove())
     } catch {}
-    username = searchBar.value
+    const username = searchBar.value
     // Prevent the fetch from happening with an empty string, because it breaks the backend.
     if (username === '' || username === null) {
       document.querySelector('.suggestion-dropdown-div').remove()
@@ -25,25 +25,25 @@ function search() {
 
 // This function kickstarts the frontend generation for the search suggestions.
 function makeProfileSuggestions(profiles) {
-  let suggestions = document.createElement('div')
+  const suggestions = document.createElement('div')
   // Try/catch in case there is a single profile only and forEach gives an error.
   try {
     profiles.forEach((profile) => {
-      let suggestionDiv = makeSuggestion(profile)
+      const suggestionDiv = makeSuggestion(profile)
       suggestionDiv.addEventListener('click', suggestionRedirection)
       suggestions.appendChild(suggestionDiv)
     })
   } catch {
-    let suggestionDiv = makeSuggestion(profiles)
+    const suggestionDiv = makeSuggestion(profiles)
     suggestions.appendChild(suggestionDiv)
   }
   suggestions.classList.add('dropdown-menu', 'show', 'suggestion-dropdown-div')
-  let dropdown = document.querySelector('#suggestion-dropdown')
+  const dropdown = document.querySelector('#suggestion-dropdown')
   dropdown.appendChild(suggestions)
 }
 
 function suggestionRedirection(ev) {
-  let username = ev.currentTarget.querySelector(
+  const username = ev.currentTarget.querySelector(
     '.suggestion-username'
   ).innerHTML
   profilePage(username)
@@ -61,12 +61,12 @@ function suggestionRedirection(ev) {
 }
 
 function makeSuggestion(profile) {
-  let wrapper = document.createElement('div')
+  const wrapper = document.createElement('div')
   wrapper.classList.add('suggestion-wrapper')
 
-  let avatarDiv = makeSuggestionAvatar(profile)
+  const avatarDiv = makeSuggestionAvatar(profile)
 
-  let profileInfo = makeSuggestionInfo(profile)
+  const profileInfo = makeSuggestionInfo(profile)
 
   wrapper.appendChild(avatarDiv)
   wrapper.appendChild(profileInfo)
@@ -75,9 +75,9 @@ function makeSuggestion(profile) {
 }
 
 function makeSuggestionAvatar(profile) {
-  let avatarDiv = document.createElement('div')
+  const avatarDiv = document.createElement('div')
   avatarDiv.classList.add('suggestion-avatar-div')
-  let avatar = document.createElement('img')
+  const avatar = document.createElement('img')
   avatar.classList.add('suggestion-avatar', 'avatar-small')
   // This checks if the avatar url is valid and returns a default icon otherwise.
   checkAvatar(avatar, profile['avatar'])
@@ -87,14 +87,14 @@ function makeSuggestionAvatar(profile) {
 }
 
 function makeSuggestionInfo(profile) {
-  let profileInfo = document.createElement('div')
+  const profileInfo = document.createElement('div')
   profileInfo.classList.add('suggestion-profile-info')
 
-  let username = document.createElement('span')
+  const username = document.createElement('span')
   username.classList.add('suggestion-username')
   username.innerHTML = profile['username']
 
-  let followStatus = document.createElement('span')
+  const followStatus = document.createElement('span')
   followStatus.classList.add('suggestion-follow-status')
   if (profile['follow_status'] === true) {
     followStatus.innerHTML = 'Followed'

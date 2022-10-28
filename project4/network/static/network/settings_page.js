@@ -20,9 +20,9 @@ function settingsPage() {
 
 // This function retrieves the user information from the backend and displays it in the settings page fields for easy editing.
 function autoFill() {
-  let usernameField = document.querySelector('#username-edit')
-  let avatarField = document.querySelector('#avatar-edit')
-  let emailField = document.querySelector('#email-edit')
+  const usernameField = document.querySelector('#username-edit')
+  const avatarField = document.querySelector('#avatar-edit')
+  const emailField = document.querySelector('#email-edit')
 
   fetch('/settings')
     .then((response) => response.json())
@@ -34,10 +34,10 @@ function autoFill() {
 }
 
 function submitProfileInfo() {
-  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-  let username = document.querySelector('#username-edit').value
-  let avatar = document.querySelector('#avatar-edit').value
-  let email = document.querySelector('#email-edit').value
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  const username = document.querySelector('#username-edit').value
+  const avatar = document.querySelector('#avatar-edit').value
+  const email = document.querySelector('#email-edit').value
 
   fetch('/edit_profile', {
     method: 'PUT',
@@ -57,10 +57,10 @@ function submitProfileInfo() {
 }
 
 function submitPassword() {
-  let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-  let oldPassword = document.querySelector('#old-password-edit').value
-  let newPassword = document.querySelector('#password-edit').value
-  let confirmation = document.querySelector('#password-edit-confirm').value
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  const oldPassword = document.querySelector('#old-password-edit').value
+  const newPassword = document.querySelector('#password-edit').value
+  const confirmation = document.querySelector('#password-edit-confirm').value
 
   fetch('/edit_password', {
     method: 'PUT',

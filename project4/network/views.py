@@ -94,17 +94,21 @@ def edit_profile(request):
 
     current_user.username = username
     current_user.email = email
-
+    if validators.url(avatar) == True:
+        image_url = avatar
+    else:
+        image_url = None
+        error = "But your avatar URL was invalid."
     try:
         avatar_object = Avatar.objects.get(user=current_user)
-        avatar_object.image_url = avatar
+        avatar_object.image_url = image_url
     except:
         avatar_object = Avatar.objects.create(
-            user=current_user, image_url=avatar)
-
-    avatar_object.save()
+            user=current_user, image_url=image_url)
+    
+    avatar_object.save()   
     current_user.save()
-    return JsonResponse({"message": "Profile successfully changed"})
+    return JsonResponse({"message": f"Profile successfully changed. {error}"})
 
 # This route is called from the settings page.
 

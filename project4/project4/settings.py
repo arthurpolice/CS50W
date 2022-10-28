@@ -29,9 +29,9 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = ['6178-179-214-159-59.sa.ngrok.io']
+ALLOWED_HOSTS = ['211e-179-221-126-209.sa.ngrok.io', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS = ['https://6178-179-214-159-59.sa.ngrok.io']
+CSRF_TRUSTED_ORIGINS = ['https://211e-179-221-126-209.sa.ngrok.io']
 # Application definition
 
 INSTALLED_APPS = [

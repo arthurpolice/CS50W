@@ -65,13 +65,13 @@
     background-color: black;
   }
   0% {
-    background-color: white;
+    background-color: transparent;
   }
 }
 
 @keyframes black-to-white-btn {
   100% {
-    background-color: white;
+    background-color: transparent;
   }
   0% {
     background-color: black;
@@ -121,21 +121,32 @@
   }
 }
 
-@media screen and (min-width: 980px) {
-  #navbar {
-    width: 90vw !important;
-  }
-
-  #search-nav {
-    margin-left: auto !important;
-  }
+@media screen and (min-width: 1200px) {
 
   #search-bar {
-    width: 300px !important;
+    width: 250px !important;
   }
   .suggestion-dropdown-div {
-    width: 300px !important;
+    width: 250px !important;
   }
+}
+
+@media screen and (max-width: 700px) {
+  .nav-text {
+    display: none;
+  }
+  #search-nav {
+    display: none;
+  }
+  .main-navbar {
+    margin-right: 0 !important;
+    width: 90px !important;
+  }
+}
+
+body {
+  background: linear-gradient(to right, rgb(136, 255, 243), rgb(255, 176, 255));
+  display: flex;
 }
 
 #search-nav {
@@ -165,6 +176,35 @@
   outline: none;
 }
 
+.nav-anchor {
+  width: 200px;
+}
+
+.nav-anchor:hover {
+  border-width: 1px;
+  border-radius: 30px;
+  border-style: solid;
+  backdrop-filter: brightness(110%);
+}
+
+#nav-avatar {
+  border-radius: 100%;
+  border: 0;
+  border-style: none;
+}
+
+.nav-link {
+  font-size: 17pt;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-icon {
+  height: 42px;
+  width: 40px;
+  margin-right: 5px;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -185,6 +225,7 @@ form {
 }
 
 textarea {
+  background-color: transparent;
   resize: none;
   border-radius: 10px;
   border-style: hidden;
@@ -304,7 +345,7 @@ textarea {
 }
 
 .post-wrapper:hover {
-  background-color: rgb(245, 241, 238);
+  backdrop-filter: brightness(110%);
 }
 
 .post-div {
@@ -383,8 +424,18 @@ textarea {
   justify-content: center;
 }
 
+.page-link {
+  background-color: transparent !important;
+  border-color: aquamarine;
+}
+
+.page-link:hover {
+  background-color: rgba(0, 255, 255, 0.452) !important;
+  backdrop-filter: brightness(110%);
+}
+
 .already-followed {
-  background-color: white;
+  background-color: transparent;
   color: blue;
 }
 
@@ -463,8 +514,8 @@ textarea {
 }
 
 .already-liked {
-  background-color: white;
-  border-color: white;
+  background-color: transparent;
+  border-color: transparent;
   animation-name: white-to-black-btn;
   animation-duration: 1s;
   animation-fill-mode: forwards;
@@ -484,6 +535,12 @@ textarea {
   margin-left: 90%;
   margin-top: -80px;
   background-color: transparent;
+  border-color: transparent !important;
+}
+
+.options-btn:hover {
+  background-color: transparent;
+  backdrop-filter: brightness(1.05);
 }
 
 .comment-btn {
@@ -522,6 +579,7 @@ textarea {
   align-items: center;
 }
 
+
 .settings-btn {
   display: flex;
   justify-content: center;
@@ -541,6 +599,24 @@ textarea {
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+.main-navbar {
+  flex-direction: column;
+  width: 25%;
+  background-color: transparent !important;
+  flex-shrink: 0;
+  margin-right: 10%;
+}
+
+#navbar {
+  flex-direction: column;
+  width: 250px !important;
+  gap: 60px !important;
+}
+
+#network-button {
+  margin: 0;
 }
 
 .inactive-btn {
@@ -573,4 +649,13 @@ textarea {
 
 a:not([href]):hover {
   cursor: pointer;
+}
+
+
+.login-page {
+  margin-top: 200px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

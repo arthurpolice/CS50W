@@ -10,14 +10,16 @@ function search() {
     } catch {}
     username = searchBar.value
     // Prevent the fetch from happening with an empty string, because it breaks the backend.
-    if (username === '') {
-      return
+    if (username === '' || username === null) {
+      document.querySelector('.suggestion-dropdown-div').remove()
     }
-    fetch(`/search/${username}`)
+    else {
+      fetch(`/search/${username}`)
       .then((response) => response.json())
       .then((response) => {
         makeProfileSuggestions(response['matches'])
       })
+    }
   })
 }
 

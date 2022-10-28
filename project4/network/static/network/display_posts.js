@@ -234,7 +234,7 @@ function makePostCommentBtn() {
   commentButton.classList.add('comment-btn')
 
   let art = document.createElement('img')
-  art.src = '/static/network/bubble_icon.png'
+  art.src = '/static/network/icons/bubble_icon.png'
   art.classList.add('comment-icon')
 
   commentButton.appendChild(art)

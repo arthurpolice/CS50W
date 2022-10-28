@@ -2,6 +2,7 @@
 
 // Set up navbar and post input UI.
 document.addEventListener('DOMContentLoaded', () => {
+  navAvatar()
   search()
   // This is a hacky way to check whether the user is logged in or not without calling the backend.
   if (document.querySelector('#log').innerHTML === 'Log Out') {
@@ -98,15 +99,6 @@ window.onpopstate = function (ev) {
   }
 }
 
-// TODO
-function searchUser() {
-  document.querySelector('#profile-view').style.display = 'none'
-  document.querySelector('#post-view').style.display = 'none'
-  document.querySelector('#settings-view').style.display = 'none'
-  document.querySelector('#user-list-view').style.display = 'block'
-  document.querySelector('#post-input-view').style.display = 'none'
-  document.querySelector('#post-list-view').style.display = 'none'
-}
 
 // This function checks whether an avatar has a valid URL and replaces it with a default icon otherwise.
 function checkAvatar(avatarElement, avatarUrl) {
@@ -121,4 +113,18 @@ function checkAvatar(avatarElement, avatarUrl) {
   } else {
     avatarElement.src = '/static/network/default_avatar.png'
   }
+}
+
+function navAvatar() {
+  try {
+    let avatarElement = document.querySelector('#nav-avatar')
+    let username = document.querySelector('#current-user').value
+    fetch(`/user/${username}`)
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response)
+      avatarElement.src = response['avatar']
+    })
+  }
+  catch {}
 }

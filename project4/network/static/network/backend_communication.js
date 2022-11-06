@@ -122,7 +122,7 @@ function getSinglePost(id) {
 // Sets up a click listener on the wrappers to send the user to the singlePost page corresponding to that clicked post.
 function listenerSinglePost() {
   let wrappers = document.querySelectorAll('.post-wrapper')
-  wrappers.forEach((wrapper) => {
+  wrappers.forEach(wrapper => {
     wrapper.addEventListener('click', listenerSinglePostHandler)
   })
 }

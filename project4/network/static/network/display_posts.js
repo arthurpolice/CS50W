@@ -142,6 +142,7 @@ function makePostImageDiv(post) {
     const image = document.createElement('img')
     image.classList.add('post-image')
     image.src = post['image_url']
+    image.setAttribute('loading', 'lazy')
 
     imageDiv.appendChild(image)
   }

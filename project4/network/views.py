@@ -8,7 +8,6 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-
 from .util import get_comments, like_handler_post, like_handler_comment, user_info
 from .models import Post, Comment, PostLike, CommentLike, User, ReplySection, Follower, Avatar
 

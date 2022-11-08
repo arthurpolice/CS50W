@@ -1,3 +1,5 @@
+# MAKE THIS STATELESS REST API
+
 #TODO: def get_recipe(request):
   # Look for recipe in the database
     # Use URL for the URL lookup
@@ -59,7 +61,7 @@
 #TODO def get_daily_plan(request):
     # Receive date through fetch request
     # Get user's daily plan using the date
-    # Serialize the day
+    # Serialize the day (function in models.py)
     # Send the result to the frontend
     
     
@@ -90,6 +92,3 @@
 #TODO def favorite_recipe(request):
   #TODO Make a model for this
   # Similar to likes, but can be displayed differently?
-  
-
-

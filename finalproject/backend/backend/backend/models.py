@@ -16,7 +16,7 @@ class Ingredient(models.Model):
 
 # RecipeIngredient is specific to a given recipe
 class RecipeIngredient(models.Model):
-    produce = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     metric_amount = models.FloatField(null=True)
     metric_unit = models.CharField(null=True, max_length=10)
     imperial_amount = models.FloatField(null=True)
@@ -30,8 +30,26 @@ class Recipe(models.Model):
     url = models.CharField(max_length = 300)
     calories = models.FloatField(null=True)
     total_servings = models.IntegerField()
-    ingredients = models.ManyToManyField(RecipeIngredient, related_name='recipes')
+    recipe_ingredients = models.ManyToManyField(RecipeIngredient, related_name='recipes')
     image = models.CharField(null=True, max_length = 100)
+    cuisine = models.CharField(null=True, max_length=20)
+
+    def get_ingredients(self):
+        ingredient_list = {}
+        for recipe_ingredient in self.recipe_ingredients:
+            ingredient = recipe_ingredient.ingredient
+            ingredient_list[f'{ingredient.name}'] = {
+                "api_id": ingredient.api_id,
+                "calories_per_gram": ingredient.calories_per_gram,
+                "image": ingredient.image,
+                "metric_amount": recipe_ingredient.metric_amount,
+                "metric_unit": recipe_ingredient.metric_unit,
+                "imperial_amount": recipe_ingredient.imperial_amount,
+                "imperial_unit": recipe_ingredient.imperial_unit,
+                "grams_amount": recipe_ingredient.grams_amount
+            }
+        return ingredient_list
+            
 
 
 class MealComponent(models.Model):

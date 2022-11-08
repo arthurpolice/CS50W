@@ -1,47 +1,41 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    recommended_calories = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(9999)])
 
-
-class RecommendedCalorieAmount(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='calories')
-    calories = models.IntegerField(null=True, max_legth=5)
-
-
-#Produce is general for all other objects
-class Ingredient:
-    name = models.CharField()
+#Ingredient is general for all other objects
+class Ingredient(models.Model):
+    name = models.CharField(max_length = 100)
     api_id = models.IntegerField(unique=True)
     calories_per_gram = models.FloatField()
     image = models.ImageField()
 
 
-# Ingredient is specific to a certain recipe
-class RecipeIngredient:
-    produce = models.ForeignKey(Ingredient)
+# RecipeIngredient is specific to a given recipe
+class RecipeIngredient(models.Model):
+    produce = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     metric_amount = models.FloatField(null=True)
-    metric_unit = models.CharField(null=True)
+    metric_unit = models.CharField(null=True, max_length=10)
     imperial_amount = models.FloatField(null=True)
-    imperial_unit = models.CharField(null=True)
+    imperial_unit = models.CharField(null=True, max_length = 10)
     grams_amount = models.FloatField()
     
 
 class Recipe(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length = 100)
     api_id = models.IntegerField(null=True)
-    url = models.CharField()
+    url = models.CharField(max_length = 300)
     calories = models.FloatField(null=True)
     total_servings = models.IntegerField()
     ingredients = models.ManyToManyField(RecipeIngredient, related_name='recipes')
-    image = models.CharField(null=True)
+    image = models.CharField(null=True, max_length = 100)
 
 
 class MealComponent(models.Model):
-    recipe = models.ForeignKey(Recipe)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     servings = models.FloatField()
 
 
@@ -81,5 +75,5 @@ class Like(models.Model):
     user = models.ManyToManyField(User, related_name='liked_recipes')
 
 class Favorite(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='likes')
-    user = models.ManyToManyField(User, related_name='liked_recipes') 
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorites')
+    user = models.ManyToManyField(User, related_name='favorited_recipes') 

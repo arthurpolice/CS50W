@@ -108,6 +108,7 @@ def log_recipe(dictionary):
             new_ingredient.calories_per_gram = calories_per_gram
             new_ingredient.save()
             new_recipe_ingredient.ingredient = new_ingredient
+        ####### send calories to recipe somehow
         new_recipe.recipe_ingredients.add()
         # Rest of info should be in the dictionary already
 

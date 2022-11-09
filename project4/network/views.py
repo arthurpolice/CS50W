@@ -244,7 +244,6 @@ def single_post(request, id):
         })
 
 
-@login_required
 def follow(request, username):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
@@ -280,7 +279,6 @@ def like(request, content_type, id):
     return JsonResponse({"message": "Like action successful."}, status=201)
 
 
-@login_required
 def log_post(request):
     # Just a safeguard, once the post input interface won't even load if the user isn't authenticated.
     if request.method != "POST" and request.method != "PUT":
@@ -316,7 +314,6 @@ def log_post(request):
             return JsonResponse({"message": "Edit denied."}, status=401)
 
 
-@login_required
 def log_comment(request):
     # Just a safeguard, once the comment input interface won't even load if the user isn't authenticated.
     if request.method != "POST" and request.method != "PUT":
@@ -365,11 +362,11 @@ def remove_post(request, id):
 def remove_comment(request, id):
     if request.method == "POST":
         comment = Comment.objects.get(pk=id)
-    if request.user == comment.user:
-        comment.delete()
-        return JsonResponse({"message": "Comment deleted"})
-    else:
-        return JsonResponse({"message": "You cannot delete someone else's comment."})
+        if request.user == comment.user:
+            comment.delete()
+            return JsonResponse({"message": "Comment deleted"})
+        else:
+            return JsonResponse({"message": "You cannot delete someone else's comment."})
 
 
 def search(request, username):

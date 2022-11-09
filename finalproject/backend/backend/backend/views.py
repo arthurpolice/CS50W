@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient
-from .util import recipe_url_lookup, get_grams_amount, get_calories
+from .util import recipe_url_lookup, get_grams_amount, get_calories, get_ingredient, add_ingredients_to_recipe
 
 
 def register(request):
@@ -43,9 +43,9 @@ def register(request):
 # MAKE THIS A STATELESS REST API
 
 def get_recipe(request, id):
-  recipe = Recipe.objects.get(pk=id)
-  recipe_info = Recipe.get_ingredients()
-  return JsonResponse(recipe_info)
+    recipe = Recipe.objects.get(pk=id)
+    recipe_info = Recipe.get_ingredients()
+    return JsonResponse(recipe_info)
 
 
 def extract_recipe_from_url(request):
@@ -70,67 +70,27 @@ def log_recipe(dictionary):
     # Step 1:
     # Make a recipe object (name, api_id, url, total_servings)
     new_recipe = Recipe(
-      name=dictionary['title'],
-      api_id=dictionary['id'],
-      url=dictionary['sourceUrl'],
-      total_servings=dictionary['servings'],
-      image=dictionary['image'],
-      cuisine=dictionary['cuisine']
+        name=dictionary['title'],
+        api_id=dictionary['id'],
+        url=dictionary['sourceUrl'],
+        total_servings=dictionary['servings'],
+        image=dictionary['image'],
+        cuisine=dictionary['cuisine']
     )
     # Declare a total calories variable
-    total_calories = 0
+    total_calories = []
     # Step 2:
     # Make the recipe ingredients
-    # Loop:
-    for item in dictionary['extendedIngredients']:
-        new_recipe_ingredient = RecipeIngredient(
-          metric_amount=item.measures.metric.amount,
-          metric_unit=item.measures.metric.unitShort,
-          imperial_amont=item.measures.us.amount,
-          imperial_unit=item.measures.us.unitShort,
-        )
-        # Step 2.1:
-          # Look for the ingredients (using api_id)
-        try:
-            ingredient = Ingredient.objects.get(pk=item.id)
-            new_recipe_ingredient.ingredient = ingredient
-            new_recipe_ingredient.grams_amount = get_grams_amount(
-                ingredient, item)
-          # If not found, log the ingredient:
-        except:
-            new_ingredient = Ingredient(
-              name=item.nameClean,
-              api_id=item.id,
-              image=item.image
-            )
-            # Call the spoonacular API to get calories per gram (call 1 gram)
-            calories_per_gram = get_calories(1, item.id)
-            new_ingredient.calories_per_gram = calories_per_gram
-            new_ingredient.save()
-            new_recipe_ingredient.ingredient = new_ingredient
-        ####### send calories to recipe somehow
-        new_recipe.recipe_ingredients.add()
-        # Rest of info should be in the dictionary already
-
-    # Step 2.2:
-    # Make the ingredient out of the produce:
-    # Check the metric unit returned by the spoonacular API
-    # If it's not gram or grams:
-    # Try:
-    # to find a previously logged ingredient that contains this same produce with the same base measuring units (metric or imperial)
-    # and use that to calculate the amount in grams of this new ingredient, using simple correlation.
-    # Except:
-    # As a last resort call the API to convert it to grams
-    # (Not very happy with this way of dealing with the problem)
-    # With the produce amount in grams, we consult the calories per gram information in the produce and calculate the total calories of this ingredient
-    # We add this value to the total calories variable
-    # Save all the above with whatever measures we get from the dictionary
-    # Add the ingredient to the recipe object
-
+    # Loop over all the ingredients present in dictionary['extendedIngredients']:
+    add_ingredients_to_recipe(dictionary['extendedIngredients'], new_recipe, total_calories)
     # Step 3:
     # Assign the total calories variable to the total_calories attribute of the recipe
+    new_recipe.calories = sum(total_calories)
     # Save recipe (can i do recipe.pk after saving to get its newly assigned id?)
-    # Return a dictionary with all this information or use get_recipe()? Performance considerations?
+    new_recipe.save()
+    # Return the recipe's ID
+    return JsonResponse({"recipe_id": new_recipe.pk})
+
 
     # TODO def save_meal(request):
     # Receive the date and meal type through the fetch request

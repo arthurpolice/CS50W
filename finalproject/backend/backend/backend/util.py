@@ -68,12 +68,14 @@ def get_grams_amount(ingredient, item):
     metric_unit = item.measures.metric.unitShort
     imperial_amount = item.measures.us.amount
     imperial_unit = item.measures.us.unitShort
+    # Try to find a previously logged "recipe ingredient" that contains this same "ingredient" with the same base measuring units (metric or imperial)...
     preexisting_ingredient = RecipeIngredient.objects.filter(
         ingredient=ingredient)
     if preexisting_ingredient is not None:
         metric_match = preexisting_ingredient.filter(metric_unit=metric_unit)
         imperial_match = preexisting_ingredient.filter(
             imperial_unit=imperial_unit)
+        # and use that to calculate the amount in grams of this new ingredient, using simple correlation.
         if metric_match is not None:
             # IS THIS WORKING?????
             metric_match = metric_match[0]
@@ -81,13 +83,16 @@ def get_grams_amount(ingredient, item):
         elif imperial_match is not None:
             imperial_match = imperial_match[0]
             grams_amount = imperial_amount / imperial_match.metric_amount * imperial_match.grams_amount
+    # As a last resort call the API to convert it to grams
     else:
         if metric_amount is not None and metric_amount is not 0:
             grams_amount = api_gram_conversion(
                 ingredient.name, metric_amount, metric_unit)
-        else:
+        elif imperial_amount is not None and imperial_amount is not 0:
             grams_amount = api_gram_conversion(
                 ingredient.name, imperial_amount, imperial_unit)
+        else:
+            raise Exception("Seems there are no measurements in this recipe.")
 
     return grams_amount
 
@@ -139,3 +144,45 @@ def get_calories(grams_amount, api_id):
     except:
         error = "Invalid website."
         return JsonResponse({"error": error})
+   
+    
+def get_ingredient(item):
+    # Step 2.1.1:
+    # Look for the ingredients (using api_id)
+    try:
+        ingredient = Ingredient.objects.get(pk=item.id)
+      # If not found, log the ingredient:
+    except:
+        ingredient = Ingredient(
+            name=item.nameClean,
+            api_id=item.id,
+            image=item.image
+        )
+        # Call the spoonacular API to get calories per gram
+        calories_per_gram = get_calories(1, item.id)
+        ingredient.calories_per_gram = calories_per_gram
+        ingredient.save()
+    return ingredient
+
+
+def add_ingredients_to_recipe(ingredient_dictionary, new_recipe, total_calories):
+    # Step 2.1:
+    # Make the ingredient out of the produce:
+    for item in ingredient_dictionary:
+        # Assign the measuring units returned by the spoonacular API
+        new_recipe_ingredient = RecipeIngredient(
+            metric_amount=item.measures.metric.amount,
+            metric_unit=item.measures.metric.unitShort,
+            imperial_amont=item.measures.us.amount,
+            imperial_unit=item.measures.us.unitShort,
+        )
+        # Step 2.1.1:
+        # Get the ingredient.
+        ingredient = get_ingredient(item)
+        new_recipe_ingredient.ingredient = ingredient
+        new_recipe_ingredient.grams_amount = get_grams_amount(
+            ingredient, item)
+        # Send this ingredient's calories to the list to be added later
+        ingredient_calories = ingredient.calories_per_gram * new_recipe_ingredient.grams_amount
+        total_calories.push(ingredient_calories)
+        new_recipe.recipe_ingredients.add(new_recipe_ingredient)

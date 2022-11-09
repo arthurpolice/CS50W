@@ -106,6 +106,7 @@ def log_recipe(dictionary):
     # Return the recipe's ID
     return JsonResponse({"recipe_id": new_recipe.pk})
 
+@csrf_exempt
 def make_custom_recipe(request):
     # Receive through fetch:
     data = json.loads(request.body)
@@ -125,16 +126,41 @@ def make_custom_recipe(request):
 
     
 
-# TODO def save_meal(request):
+def save_meal(request):
+    data = json.loads(request.body)
     # Receive the date and meal type through the fetch request
+    meal_type = data.get('mealType')
+    date = data.get('date')
     # Receive the recipe id and servings through the fetch request
+    recipe_id = data.get('recipeId')
+    servings = data.get('servings')
     # Get or create user's calendar
+    calendar = Calendar.objects.get_or_create(user=request.user)
     # Check calendar for the DailyPlan object corresponding to the date received through fetch
+    try:
+        day = calendar.days.get(date=date)
     # If the object doesn't exist, make a DailyPlan object (date)
+    except:
+        day = DailyPlan(
+            date = date
+        )
+        day.save()
+        calendar.days.add(day)
     # Look for a Meal object within the DailyPlan object, using the meal type as filter. Make a new one if not found. (get_or_create)
+    meal = day.meals.get_or_create(meal_type=meal_type)
     # Get the recipe object using recipe id
+    recipe = Recipe.objects.get(pk=recipe_id)
     # Look for a meal component that already has this recipe. If found, add the servings to the preexisting amount.
     # If not found, make a new Meal Component object (recipe, servings) and add it to the Meal object.
+    meal_component = meal.components.get_or_create(recipe=recipe)
+    if meal_component.servings > 0:
+        meal_component.servings += meal_component.servings + servings
+    else:
+        meal_component.servings = servings
+    meal_component.save()
+    meal.save()
+    day.save()
+         
 
 # TODO def get_daily_plan(request):
     # Receive date through fetch request

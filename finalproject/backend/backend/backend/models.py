@@ -12,6 +12,9 @@ class Ingredient(models.Model):
     api_id = models.IntegerField(unique=True)
     calories_per_gram = models.FloatField()
     image = models.ImageField()
+    
+    def __str__(self):
+        return self.name
 
 
 # RecipeIngredient is specific to a given recipe
@@ -22,6 +25,8 @@ class RecipeIngredient(models.Model):
     imperial_amount = models.FloatField(null=True)
     imperial_unit = models.CharField(null=True, max_length = 10)
     grams_amount = models.FloatField()
+    def __str__(self):
+        return self.ingredient.name    
     
 
 class Recipe(models.Model):
@@ -33,8 +38,18 @@ class Recipe(models.Model):
     recipe_ingredients = models.ManyToManyField(RecipeIngredient, related_name='recipes')
     image = models.CharField(null=True, max_length = 100)
     cuisine = models.CharField(null=True, max_length=20)
+    credit = models.CharField(null=True, blank=True, max_length=100)
+    vegan = models.BooleanField(default=False)
+    vegetarian = models.BooleanField(default=False)
+    ketogenic = models.BooleanField(default=False)
+    gluten_free = models.BooleanField(default=False)
+    dairy_free = models.BooleanField(default=False)
 
-    def get_ingredients(self):
+    def __str__(self):
+        return self.name
+    
+    
+    def list_ingredients(self):
         ingredient_list = {}
         for recipe_ingredient in self.recipe_ingredients:
             ingredient = recipe_ingredient.ingredient

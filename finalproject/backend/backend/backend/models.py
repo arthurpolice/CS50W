@@ -106,7 +106,35 @@ class Calendar(models.Model):
 class Like(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='likes')
     user = models.ManyToManyField(User, related_name='liked_recipes')
+    
+    @classmethod
+    def add_like(cls, recipe, new_like):
+        like_list, created = cls.objects.get_or_create(
+            recipe=recipe
+        )
+        like_list.user.add(new_like)
+
+    @classmethod
+    def remove_like(cls, recipe, new_like):
+        like_list, created = cls.objects.get_or_create(
+            recipe=recipe
+        )
+        like_list.user.remove(new_like)
 
 class Favorite(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorites')
-    user = models.ManyToManyField(User, related_name='favorited_recipes') 
+    recipe = models.ManyToManyField(Recipe, related_name='favorited_recipes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites', null=True)
+    
+    @classmethod
+    def add_favorite(cls, user, new_favorite):
+        favorite_list, created = cls.objects.get_or_create(
+            user=user
+        )
+        favorite_list.recipe.add(new_favorite)
+
+    @classmethod
+    def remove_favorite(cls, user, new_favorite):
+        favorite_list, created = cls.objects.get_or_create(
+            user=user
+        )
+        favorite_list.recipe.remove(new_favorite)

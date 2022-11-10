@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.db import IntegrityError
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient
+from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient, Like, Favorite
 from .util import recipe_url_lookup, get_grams_amount, get_calories, get_ingredient, add_ingredients_to_recipe, get_day
 from django.views.decorators.csrf import csrf_exempt
 
@@ -183,10 +183,25 @@ def remove_from_daily_plan(request):
     # Remove the meal component
     meal.components.remove(meal_component)
 
-# TODO def like_recipe_handler(request):
-    # TODO Make a model for the likes
-    # Route to like and unlike recipes
+def likes_handler(request):
+    data = json.loads(request.body)
+    recipe_id = data.get('recipeId')
+    recipe = Recipe.objects.get(pk=recipe_id)
+    user = request.user
+    try:
+        preexisting_like = recipe.likes.get(user=user)
+        Like.remove_like(recipe, user)
+    except:
+        Like.add_like(recipe, user)
+        
 
-# TODO def favorite_recipe_handler(request):
-    # TODO Make a model for this
-    # Similar to likes, but can be displayed differently?
+def favorites_handler(request):
+    data = json.loads(request.body)
+    recipe_id = data.get('recipeId')
+    recipe = Recipe.objects.get(pk=recipe_id)
+    user = request.user
+    try:
+        preexisting_favorite = user.favorites.get(recipe=recipe)
+        Favorite.remove_favorite(user, recipe)
+    except:
+        Favorite.add_favorite(user, recipe)

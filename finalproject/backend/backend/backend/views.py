@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient
-from .util import recipe_url_lookup, get_grams_amount, get_calories, get_ingredient, add_ingredients_to_recipe
+from .util import recipe_url_lookup, get_grams_amount, get_calories, get_ingredient, add_ingredients_to_recipe, get_day
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -162,24 +162,31 @@ def save_meal(request):
     day.save()
          
 
-# TODO def get_daily_plan(request):
-    # Receive date through fetch request
-    # Get user's daily plan using the date
+def get_daily_plan(request):
+    day = get_day(request)
     # Serialize the day (function in models.py)
+    day_dictionary = DailyPlan.serialize(day)
     # Send the result to the frontend
+    return JsonResponse({"day": day_dictionary})
 
-# TODO def remove_from_daily_plan(request):
-    # Get user's calendar
-    # Get DailyPlan using the date stored in front-end
+def remove_from_daily_plan(request):
+    data = json.loads(request.body)
+    day = get_day(request)
     # Get Meal using the meal_type stored in the front-end
+    meal_type = data.get('mealType')
+    meal = day.meals.get(meal_type=meal_type)
     # Get recipe in the meal using its id
+    recipe_id = data.get('recipeId')
+    recipe = Recipe.objects.get(pk=recipe_id)
     # Get meal component using the recipe
+    meal_component = meal.components.get(recipe=recipe)
     # Remove the meal component
+    meal.components.remove(meal_component)
 
 # TODO def like_recipe_handler(request):
     # TODO Make a model for the likes
     # Route to like and unlike recipes
 
-# TODO def favorite_recipe(request):
+# TODO def favorite_recipe_handler(request):
     # TODO Make a model for this
     # Similar to likes, but can be displayed differently?

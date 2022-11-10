@@ -195,3 +195,12 @@ def add_ingredients_to_recipe(ingredient_dictionary, new_recipe, total_calories)
         new_recipe_ingredient.save()
         print(new_recipe_ingredient)
         new_recipe.recipe_ingredients.add(new_recipe_ingredient)
+
+def get_day(request):
+    # Receive date and user through fetch request
+    data = json.loads(request.body)
+    date = data.get('date')
+    user = request.user
+    calendar = Calendar.objects.get(user=user)
+    # Get user's daily plan using the date
+    day = calendar.days.get(date=date)

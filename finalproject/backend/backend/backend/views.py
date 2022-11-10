@@ -124,9 +124,16 @@ def make_custom_recipe(request):
         log_recipe(dictionary)
     # How to prevent gibberish from calling the API? Maybe lock to ingredients that are in the database already? (would make it easy to retrieve the api_id)
 
-    
+def get_daily_plan(request):
+    day = get_day(request)
+    # Serialize the day (function in models.py)
+    day_dictionary = DailyPlan.serialize(day)
+    # Send the result to the frontend
+    return JsonResponse({"day": day_dictionary})
 
-def save_meal(request):
+
+# Break down this function after testing  
+def add_to_daily_plan(request):
     data = json.loads(request.body)
     # Receive the date and meal type through the fetch request
     meal_type = data.get('mealType')
@@ -160,14 +167,7 @@ def save_meal(request):
     meal_component.save()
     meal.save()
     day.save()
-         
 
-def get_daily_plan(request):
-    day = get_day(request)
-    # Serialize the day (function in models.py)
-    day_dictionary = DailyPlan.serialize(day)
-    # Send the result to the frontend
-    return JsonResponse({"day": day_dictionary})
 
 def remove_from_daily_plan(request):
     data = json.loads(request.body)

@@ -10,8 +10,9 @@ from django.db import IntegrityError
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient, Like, Favorite
-from .util import recipe_url_lookup, get_grams_amount, get_calories, get_ingredient, add_ingredients_to_recipe, get_day
+from .util import recipe_url_lookup, add_ingredients_to_recipe, get_day
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 
 
 def register(request):
@@ -42,8 +43,9 @@ def register(request):
 
 
 # MAKE THIS A STATELESS REST API
+# CSRF PROBLEMS SOLUTION: https://stackoverflow.com/questions/50732815/how-to-use-csrf-token-in-django-restful-api-and-react
 
-@csrf_exempt
+@api_view(['POST'])
 def get_recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
     ingredients = Recipe.list_ingredients()
@@ -53,7 +55,8 @@ def get_recipe(request, id):
     }
     return JsonResponse(recipe_info)
 
-@csrf_exempt
+
+@api_view(['POST'])
 def extract_recipe_from_url(request):
     data = json.loads(request.body)
     # Look for recipe in the database using the URL
@@ -64,17 +67,17 @@ def extract_recipe_from_url(request):
     except:
         recipe_info = recipe_url_lookup(recipe_url)
         # Log the recipe to the database
-        log_recipe(recipe_info)
-        recipe = Recipe.objects.get(url=recipe_url)
+        recipe = log_recipe(recipe_info)
     # Return recipe's ID
     return JsonResponse({"id": recipe.id})
 
 # USE RANDOM RECIPE API REQUEST TO POPULATE THE DATABASE!
 
-@csrf_exempt
+
+@api_view(['POST'])
 def log_recipe(dictionary):
     # Step 1:
-    # Make a recipe object (name, api_id, url, total_servings)
+    # Make a recipe object, minus the ingredients
     new_recipe = Recipe(
         name=dictionary['title'],
         api_id=dictionary['id'],
@@ -82,7 +85,7 @@ def log_recipe(dictionary):
         total_servings=dictionary['servings'],
         image=dictionary['image'],
         cuisine=dictionary['cuisines'],
-        credit = dictionary['creditText'],
+        credit=dictionary['creditText'],
         vegan=dictionary['vegan'],
         vegetarian=dictionary['vegetarian'],
         ketogenic=dictionary['ketogenic'],
@@ -90,23 +93,26 @@ def log_recipe(dictionary):
         dairy_free=dictionary['dairyFree']
     )
     new_recipe.save()
-    # Declare a total calories variable
+    # Total calories variable to be used later
     total_calories = []
     # Step 2:
     # Make the recipe ingredients
     # Loop over all the ingredients present in dictionary['extendedIngredients']:
-    add_ingredients_to_recipe(dictionary['extendedIngredients'], new_recipe, total_calories)
+    add_ingredients_to_recipe(
+        dictionary['extendedIngredients'], new_recipe, total_calories)
     # Step 3:
     # Assign the total calories variable to the total_calories attribute of the recipe
+    # The calories of each ingredient are inserted into the list by the function above
     new_recipe.calories = sum(total_calories)
     if not validators.url(new_recipe.url):
         new_recipe.url = f"/recipe/{new_recipe.pk}"
     new_recipe.save()
     # Save recipe (can i do recipe.pk after saving to get its newly assigned id?)
     # Return the recipe's ID
-    return JsonResponse({"recipe_id": new_recipe.pk})
+    return new_recipe
 
-@csrf_exempt
+
+@api_view(['POST'])
 def make_custom_recipe(request):
     # Receive through fetch:
     data = json.loads(request.body)
@@ -121,9 +127,21 @@ def make_custom_recipe(request):
     # If it's not found
     except:
         # Log the recipe to the database
-        log_recipe(dictionary)
+        recipe = log_recipe(dictionary)
+    return JsonResponse({"id": recipe.pk})
     # How to prevent gibberish from calling the API? Maybe lock to ingredients that are in the database already? (would make it easy to retrieve the api_id)
 
+
+@api_view(['POST'])
+def remove_recipe(request):
+    data = json.loads(request.body)
+    recipe_id = data.get('recipeId')
+    recipe = Recipe.objects.get(pk=recipe_id)
+    if recipe.credit == request.user:
+        recipe.delete()
+
+
+@api_view(['POST'])
 def get_daily_plan(request):
     day = get_day(request)
     # Serialize the day (function in models.py)
@@ -132,7 +150,8 @@ def get_daily_plan(request):
     return JsonResponse({"day": day_dictionary})
 
 
-# Break down this function after testing  
+# Break down this function after testing
+@api_view(['POST'])
 def add_to_daily_plan(request):
     data = json.loads(request.body)
     # Receive the date and meal type through the fetch request
@@ -149,7 +168,7 @@ def add_to_daily_plan(request):
     # If the object doesn't exist, make a DailyPlan object (date)
     except:
         day = DailyPlan(
-            date = date
+            date=date
         )
         day.save()
         calendar.days.add(day)
@@ -169,6 +188,7 @@ def add_to_daily_plan(request):
     day.save()
 
 
+@api_view(['POST'])
 def remove_from_daily_plan(request):
     data = json.loads(request.body)
     day = get_day(request)
@@ -183,6 +203,8 @@ def remove_from_daily_plan(request):
     # Remove the meal component
     meal.components.remove(meal_component)
 
+
+@api_view(['POST'])
 def likes_handler(request):
     data = json.loads(request.body)
     recipe_id = data.get('recipeId')
@@ -193,8 +215,9 @@ def likes_handler(request):
         Like.remove_like(recipe, user)
     except:
         Like.add_like(recipe, user)
-        
 
+
+@api_view(['POST'])
 def favorites_handler(request):
     data = json.loads(request.body)
     recipe_id = data.get('recipeId')

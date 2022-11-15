@@ -51,12 +51,13 @@ class Recipe(models.Model):
     
     def list_ingredients(self):
         ingredient_list = {}
-        for recipe_ingredient in self.recipe_ingredients:
+        ingredients = self.recipe_ingredients.all()
+        for recipe_ingredient in ingredients:
             ingredient = recipe_ingredient.ingredient
             ingredient_list[f'{ingredient.name}'] = {
                 "api_id": ingredient.api_id,
                 "calories_per_gram": ingredient.calories_per_gram,
-                "image": ingredient.image,
+                "image": ingredient.image.path,
                 "metric_amount": recipe_ingredient.metric_amount,
                 "metric_unit": recipe_ingredient.metric_unit,
                 "imperial_amount": recipe_ingredient.imperial_amount,

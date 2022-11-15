@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('get_recipe/<int:id>', views.get_recipe, name="get_recipe"),
+    path('get_all_recipes', views.get_all_recipes, name="get_all_recipes"),
     path('extract_recipe', views.extract_recipe_from_url, name="extract_recipe"),
     path('add/custom_recipe', views.make_custom_recipe, name='make_custom_recipe'),
     path('remove/recipe', views.remove_recipe, name='remove_recipe'),

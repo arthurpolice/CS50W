@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db import IntegrityError
 from django.core.paginator import Paginator
+from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient, Like, Favorite
 from .util import recipe_url_lookup, add_ingredients_to_recipe, get_day
@@ -46,14 +47,30 @@ def register(request):
 # CSRF PROBLEMS SOLUTION: https://stackoverflow.com/questions/50732815/how-to-use-csrf-token-in-django-restful-api-and-react
 
 @api_view(['POST'])
+def get_all_recipes(request):
+    recipes = Recipe.objects.all()
+    recipes = recipes.order_by('name')
+    recipe_list = []
+    for recipe in recipes:
+        recipe_list += [{ recipe.pk: recipe.name }]
+    return JsonResponse({'list': recipe_list})
+
+@api_view(['POST'])
 def get_recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
-    ingredients = Recipe.list_ingredients()
+    recipe_dict = model_to_dict(recipe)
+    ingredients = Recipe.list_ingredients(recipe)
+    for ingredient in ingredients:
+        print(ingredient)
+        for key in ingredient:
+            print(key)
+
+    recipe_dict.pop('recipe_ingredients')
     recipe_info = {
-        "recipe": recipe,
+        "recipe": recipe_dict,
         "ingredients": ingredients
     }
-    return JsonResponse(recipe_info)
+    return JsonResponse({"info": recipe_info})
 
 
 @api_view(['POST'])

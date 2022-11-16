@@ -72,10 +72,12 @@ def get_grams_amount(ingredient, item):
     preexisting_ingredient = RecipeIngredient.objects.filter(
         ingredient=ingredient)
     if len(preexisting_ingredient) > 0:
-        print('preexisting entered')
+        print(f'preexisting entered {preexisting_ingredient}')
         metric_match = preexisting_ingredient.filter(metric_unit=metric_unit)
         imperial_match = preexisting_ingredient.filter(
             imperial_unit=imperial_unit)
+        print(metric_match)
+        print(imperial_match)
         # and use that to calculate the amount in grams of this new ingredient, using simple correlation.
         if len(metric_match) > 0:
             print('metric entered')
@@ -85,21 +87,29 @@ def get_grams_amount(ingredient, item):
             print('imperial entered')
             imperial_match = imperial_match[0]
             grams_amount = imperial_amount / imperial_match.metric_amount * imperial_match.grams_amount
+        else:
+           grams_amount = convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit)
     # As a last resort call the API to convert it to grams
     else:
-        print('else entered')
-        if metric_amount != None and metric_amount != 0:
-            print('else metric entered')
-            grams_amount = api_gram_conversion(
-                ingredient.name, metric_amount, metric_unit)
-        elif imperial_amount != None and imperial_amount != 0:
-            print('else imperial metric entered')
-            grams_amount = api_gram_conversion(
-                ingredient.name, imperial_amount, imperial_unit)
-        else:
-            raise Exception("Seems there are no measurements in this recipe.")
+        grams_amount = convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit)
 
     return grams_amount
+
+def convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit):
+    print('else entered')
+    if metric_amount != None and metric_amount != 0:
+        print('else metric entered')
+        grams_amount = api_gram_conversion(
+            ingredient.name, metric_amount, metric_unit)
+        return grams_amount
+    elif imperial_amount != None and imperial_amount != 0:
+        print('else imperial metric entered')
+        grams_amount = api_gram_conversion(
+            ingredient.name, imperial_amount, imperial_unit)
+        return grams_amount
+    else:
+        raise Exception("Seems there are no measurements in this recipe.")
+    
 
 
 def api_gram_conversion(name, amount, unit):
@@ -204,3 +214,26 @@ def get_day(request):
     calendar = Calendar.objects.get(user=user)
     # Get user's daily plan using the date
     day = calendar.days.get(date=date)
+    
+
+def dictionary_sanitary_check(dictionary):
+    try:
+        dictionary['ketogenic']
+    except:
+        dictionary['ketogenic'] = False
+    try:
+        dictionary['glutenFree']
+    except:
+        dictionary['glutenFree'] = False
+    try:
+        dictionary['vegan']
+    except:
+        dictionary['vegan'] = False
+    try:
+        dictionary['vegetarian']
+    except:
+        dictionary['vegetarian'] = False
+    try:
+        dictionary['dairyFree']
+    except:
+        dictionary['dairyFree'] = False

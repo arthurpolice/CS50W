@@ -11,7 +11,7 @@ class Ingredient(models.Model):
     name = models.CharField(max_length = 100)
     api_id = models.IntegerField(unique=True)
     calories_per_gram = models.FloatField()
-    image = models.ImageField()
+    image = models.CharField(null=True, max_length=200)
     
     def __str__(self):
         return self.name
@@ -46,24 +46,26 @@ class Recipe(models.Model):
     dairy_free = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} ID: {self.pk}' 
     
     
     def list_ingredients(self):
-        ingredient_list = {}
+        ingredient_list = []
         ingredients = self.recipe_ingredients.all()
         for recipe_ingredient in ingredients:
             ingredient = recipe_ingredient.ingredient
-            ingredient_list[f'{ingredient.name}'] = {
+            print(ingredient.image)
+            ingredient_list += [{
+                "name": ingredient.name,
                 "api_id": ingredient.api_id,
                 "calories_per_gram": ingredient.calories_per_gram,
-                "image": ingredient.image.path,
+                "image": ingredient.image,
                 "metric_amount": recipe_ingredient.metric_amount,
                 "metric_unit": recipe_ingredient.metric_unit,
                 "imperial_amount": recipe_ingredient.imperial_amount,
                 "imperial_unit": recipe_ingredient.imperial_unit,
                 "grams_amount": recipe_ingredient.grams_amount
-            }
+            }]
         return ingredient_list
             
 

@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient, Like, Favorite
-from .util import recipe_url_lookup, add_ingredients_to_recipe, get_day
+from .util import dictionary_sanitary_check, recipe_url_lookup, add_ingredients_to_recipe, get_day
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 
@@ -60,10 +60,6 @@ def get_recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
     recipe_dict = model_to_dict(recipe)
     ingredients = Recipe.list_ingredients(recipe)
-    for ingredient in ingredients:
-        print(ingredient)
-        for key in ingredient:
-            print(key)
 
     recipe_dict.pop('recipe_ingredients')
     recipe_info = {
@@ -72,8 +68,7 @@ def get_recipe(request, id):
     }
     return JsonResponse({"info": recipe_info})
 
-
-@api_view(['POST'])
+@csrf_exempt
 def extract_recipe_from_url(request):
     data = json.loads(request.body)
     # Look for recipe in the database using the URL
@@ -91,9 +86,9 @@ def extract_recipe_from_url(request):
 # USE RANDOM RECIPE API REQUEST TO POPULATE THE DATABASE!
 
 
-@api_view(['POST'])
 def log_recipe(dictionary):
     # Step 1:
+    dictionary_sanitary_check(dictionary)
     # Make a recipe object, minus the ingredients
     new_recipe = Recipe(
         name=dictionary['title'],
@@ -102,7 +97,7 @@ def log_recipe(dictionary):
         total_servings=dictionary['servings'],
         image=dictionary['image'],
         cuisine=dictionary['cuisines'],
-        credit=dictionary['creditText'],
+        credit=dictionary['creditsText'],
         vegan=dictionary['vegan'],
         vegetarian=dictionary['vegetarian'],
         ketogenic=dictionary['ketogenic'],

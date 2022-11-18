@@ -1,3 +1,40 @@
 .hidden {
   display: none;
 }
+
+.background {
+  width: 100vw;
+}
+
+.parallax {
+  min-height: 1000px;
+  width: 100vw;
+}
+
+.paper {
+  position: absolute;
+  max-width: 85vw;
+  z-index: 2000;
+  margin-top: 100vh;
+  border-radius: 30px;
+}
+
+.smallpaper {
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  border-top-right-radius: 30px;
+  border-top-left-radius: 30px;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.summary {
+  display: flex;
+  justify-content:space-evenly;   
+}

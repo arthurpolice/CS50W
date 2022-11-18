@@ -1,11 +1,6 @@
 import Image from 'next/image';
 import styles from './ingredient.module.css'
 
-
-function loader({ ingredient }) {
-
-}
-
 export default function Ingredient({ ingredient }) {
   if (ingredient.metric_amount > 1) {
     ingredient.metric_amount = Math.round(ingredient.metric_amount * 10) / 10

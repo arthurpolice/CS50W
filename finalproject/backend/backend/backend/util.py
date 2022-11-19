@@ -143,24 +143,26 @@ def get_calories(grams_amount, api_id):
     try:
         response_parse = response.json()
         for item in response_parse['nutrition']['nutrients']:
-            print('entered for loop')
             if item['name'] == "Calories":
                 calories_amount = item['amount']
                 return calories_amount
-            else:
-                calories_amount = 0
-                return calories_amount
+            calories_amount = 0
+            return calories_amount
     #If, for some reason, the API doesn't get a valid read on the ingredients, and thus can't get their calories (bad data), we return an error message.
     except:
-        error = "Invalid website."
-        return JsonResponse({"error": error})
+        calories_amount = 0
+        return calories_amount
    
     
 def get_ingredient(item):
     # Step 2.1.1:
     # Look for the ingredients (using api_id)
     try:
-        ingredient = Ingredient.objects.get(api_id=item['id'])
+        # A better solution for this?
+        if item['name'] == 'vegetable oil':
+            item['nameClean'] = 'cooking oil'
+            item['id'] = 4582
+        ingredient = Ingredient.objects.get(api_id=item['id'], name=item['nameClean'])
       # If not found, log the ingredient:
     except:
         ingredient = Ingredient(

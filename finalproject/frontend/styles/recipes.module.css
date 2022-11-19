@@ -4,19 +4,21 @@
 
 .background {
   width: 100vw;
+  filter:blur(2px)
 }
 
 .parallax {
   min-height: 1000px;
-  width: 100vw;
+  width: 100%;
 }
 
 .paper {
   position: absolute;
   max-width: 85vw;
   z-index: 2000;
-  margin-top: 100vh;
+  margin-top: 150vh;
   border-radius: 30px;
+  min-width: 570px;
 }
 
 .smallpaper {
@@ -37,4 +39,31 @@
 .summary {
   display: flex;
   justify-content:space-evenly;   
+}
+
+.form {
+  margin-top: 5vh;  
+  width: 100%;
+}
+
+.buttons {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.ingredientssection {
+  padding-left: 30px;
+}
+
+.title {
+  text-align: center;
+}
+
+.sourceurl {
+  color:rgb(28, 168, 122);
+}
+
+.sourceurl:hover {
+  color: aquamarine;
 }

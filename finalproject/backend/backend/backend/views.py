@@ -73,15 +73,18 @@ def extract_recipe_from_url(request):
     data = json.loads(request.body)
     # Look for recipe in the database using the URL
     recipe_url = data.get('url')
-    try:
-        recipe = Recipe.objects.get(url=recipe_url)
-    # If it's not found, call the spoonacular API
-    except:
-        recipe_info = recipe_url_lookup(recipe_url)
-        # Log the recipe to the database
-        recipe = log_recipe(recipe_info)
-    # Return recipe's ID
-    return JsonResponse({"id": recipe.id})
+    if validators.url(recipe_url) == True:
+        try:
+            recipe = Recipe.objects.get(url=recipe_url)
+        # If it's not found, call the spoonacular API
+        except:
+            recipe_info = recipe_url_lookup(recipe_url)
+            # Log the recipe to the database
+            recipe = log_recipe(recipe_info)
+        # Return recipe's ID
+        return JsonResponse({"id": recipe.id})
+    else:
+        return JsonResponse({"error": "Invalid URL!"})
 
 # USE RANDOM RECIPE API REQUEST TO POPULATE THE DATABASE!
 

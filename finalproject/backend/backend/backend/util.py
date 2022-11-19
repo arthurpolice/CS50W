@@ -72,19 +72,14 @@ def get_grams_amount(ingredient, item):
     preexisting_ingredient = RecipeIngredient.objects.filter(
         ingredient=ingredient)
     if len(preexisting_ingredient) > 0:
-        print(f'preexisting entered {preexisting_ingredient}')
         metric_match = preexisting_ingredient.filter(metric_unit=metric_unit)
         imperial_match = preexisting_ingredient.filter(
             imperial_unit=imperial_unit)
-        print(metric_match)
-        print(imperial_match)
         # and use that to calculate the amount in grams of this new ingredient, using simple correlation.
         if len(metric_match) > 0:
-            print('metric entered')
             metric_match = metric_match[0]
             grams_amount = ((metric_amount) / (metric_match.metric_amount)) * (metric_match.grams_amount)
         elif len(imperial_match) > 0:
-            print('imperial entered')
             imperial_match = imperial_match[0]
             grams_amount = imperial_amount / imperial_match.metric_amount * imperial_match.grams_amount
         else:
@@ -96,14 +91,11 @@ def get_grams_amount(ingredient, item):
     return grams_amount
 
 def convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit):
-    print('else entered')
     if metric_amount != None and metric_amount != 0:
-        print('else metric entered')
         grams_amount = api_gram_conversion(
             ingredient.name, metric_amount, metric_unit)
         return grams_amount
     elif imperial_amount != None and imperial_amount != 0:
-        print('else imperial metric entered')
         grams_amount = api_gram_conversion(
             ingredient.name, imperial_amount, imperial_unit)
         return grams_amount
@@ -151,11 +143,13 @@ def get_calories(grams_amount, api_id):
     try:
         response_parse = response.json()
         for item in response_parse['nutrition']['nutrients']:
+            print('entered for loop')
             if item['name'] == "Calories":
                 calories_amount = item['amount']
                 return calories_amount
             else:
-                pass
+                calories_amount = 0
+                return calories_amount
     #If, for some reason, the API doesn't get a valid read on the ingredients, and thus can't get their calories (bad data), we return an error message.
     except:
         error = "Invalid website."
@@ -184,7 +178,6 @@ def get_ingredient(item):
 def add_ingredients_to_recipe(ingredient_dictionary, new_recipe, total_calories):
     # Step 2.1:
     # Make the ingredient out of the produce:
-    print(ingredient_dictionary)
     for item in ingredient_dictionary:
         # Assign the measuring units returned by the spoonacular API
         new_recipe_ingredient = RecipeIngredient(
@@ -203,7 +196,6 @@ def add_ingredients_to_recipe(ingredient_dictionary, new_recipe, total_calories)
         ingredient_calories = ingredient.calories_per_gram * new_recipe_ingredient.grams_amount
         total_calories.append(ingredient_calories)
         new_recipe_ingredient.save()
-        print(new_recipe_ingredient)
         new_recipe.recipe_ingredients.add(new_recipe_ingredient)
 
 def get_day(request):
@@ -214,6 +206,7 @@ def get_day(request):
     calendar = Calendar.objects.get(user=user)
     # Get user's daily plan using the date
     day = calendar.days.get(date=date)
+    return day
     
 
 def dictionary_sanitary_check(dictionary):

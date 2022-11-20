@@ -146,8 +146,8 @@ def get_calories(grams_amount, api_id):
             if item['name'] == "Calories":
                 calories_amount = item['amount']
                 return calories_amount
-            calories_amount = 0
-            return calories_amount
+        calories_amount = 0
+        return calories_amount
     #If, for some reason, the API doesn't get a valid read on the ingredients, and thus can't get their calories (bad data), we return an error message.
     except:
         calories_amount = 0
@@ -162,9 +162,13 @@ def get_ingredient(item):
         if item['name'] == 'vegetable oil':
             item['nameClean'] = 'cooking oil'
             item['id'] = 4582
+        elif item['nameClean'] == None:
+            item['nameClean'] = 'Error'
+            item['id'] = -1
         ingredient = Ingredient.objects.get(api_id=item['id'], name=item['nameClean'])
       # If not found, log the ingredient:
     except:
+        print(item['nameClean'])
         ingredient = Ingredient(
             name=item['nameClean'],
             api_id=item['id'],

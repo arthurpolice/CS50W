@@ -1,7 +1,5 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import { getAllRecipeIds, getRecipeData } from '../../lib/recipes'
-import Date from '../../components/date';
 import Ingredients from '../../components/ingredients';
 import styles from '../../styles/recipes.module.css';
 import { Parallax, Background } from 'react-parallax';
@@ -11,7 +9,6 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import React, { useState } from 'react';
 
 

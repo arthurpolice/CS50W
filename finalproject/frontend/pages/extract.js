@@ -12,6 +12,17 @@ export default function ExtractPage() {
   const router = useRouter()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
+
+  async function handleLoading(url, router) {
+    setLoading(true)
+    try {
+      sendUrl(url, router)
+    }
+    catch {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className={styles.main}>
       <FormControl className={styles.form}>
@@ -27,8 +38,7 @@ export default function ExtractPage() {
         loadingPosition='start'
         variant='text'
         onClick={() => {
-          sendUrl(url, router)
-          setLoading(true)
+          handleLoading(url, router)
         }}
         startIcon={<DiningOutlinedIcon />}
       >

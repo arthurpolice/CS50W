@@ -52,7 +52,10 @@ def get_all_recipes(request):
     recipes = recipes.order_by('name')
     recipe_list = []
     for recipe in recipes:
-        recipe_list += [{ recipe.pk: recipe.name }]
+        recipe_dict = model_to_dict(recipe)
+        # Pop recipe_ingredients field, because you can't serialize models as json
+        recipe_dict.pop('recipe_ingredients')
+        recipe_list += [recipe_dict]
     return JsonResponse({'list': recipe_list})
 
 @api_view(['POST'])
@@ -60,7 +63,7 @@ def get_recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
     recipe_dict = model_to_dict(recipe)
     ingredients = Recipe.list_ingredients(recipe)
-
+    # Pop recipe_ingredients field, because you can't serialize models as json
     recipe_dict.pop('recipe_ingredients')
     recipe_info = {
         "recipe": recipe_dict,

@@ -1,7 +1,8 @@
 import { getRecipeCatalog } from '../lib/catalog'
-import CatalogItem from '../components/catalog_item';
 import Catalog from '../components/catalog';
 import styles from '../styles/catalog.module.css'
+import { Grid, TextField } from '@mui/material';
+import { useState } from 'react';
 
 export async function getStaticProps() {
   const recipeCatalog = await getRecipeCatalog();
@@ -15,9 +16,24 @@ export async function getStaticProps() {
 }
 
 export default function CatalogPage({ recipeCatalog }) {
+  const [searchField, setSearchField] = useState('')
+  const filteredRecipes = recipeCatalog.list.filter(entry => {
+    return entry.name.toLowerCase().includes(searchField)
+  })
   return (
-    <div className={styles.catalog}>
-      <Catalog recipeCatalog={recipeCatalog}/>
+    <>
+    <div className={styles.searchDiv}>
+      <TextField
+        className={styles.searchBox} 
+        variant='standard'
+        type='search' 
+        label='Search Catalog' 
+        onChange={(event) => setSearchField(event.target.value) }
+      />
     </div>
+    <Grid container className={styles.catalog}>
+      <Catalog recipeCatalog={filteredRecipes}/>
+    </Grid>
+    </>
   )
 }

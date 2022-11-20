@@ -7,7 +7,7 @@ export async function getAllRecipeIds() {
   return json_recipes.list.map((recipe) => {
     return {
       params: {
-        id: Object.entries(recipe)[0][0],
+        id: `${recipe.id}`,
       },
     }
   })

@@ -3,7 +3,8 @@
 }
 
 .background {
-  width: 100vw;
+  width: 100vw !important;
+  max-width: 100vw !important;
   filter:blur(2px)
 }
 

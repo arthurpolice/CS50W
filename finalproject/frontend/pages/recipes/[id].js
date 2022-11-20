@@ -15,6 +15,7 @@ import React, { useState } from 'react';
 
 export async function getStaticPaths() {
   const paths = await getAllRecipeIds();
+  console.log(paths)
   return {
     paths,
     fallback: true,
@@ -23,7 +24,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const recipeData = await getRecipeData(params.id);
-
+  
   return {
     props: {
       recipeData,

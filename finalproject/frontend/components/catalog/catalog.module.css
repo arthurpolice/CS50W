@@ -1,0 +1,38 @@
+.catalogitem {
+  display: flex;
+  justify-content: center;
+  margin: 2rem;
+}
+
+.card {
+  border-radius: 10px;
+  min-width: 345px;
+  min-height: 388px;
+  cursor: pointer;  
+}
+
+.title {
+  text-align: center;
+}
+
+.info {
+  display: flex;
+  justify-content: space-around;
+}
+
+.restrictions {
+  margin-top: auto;
+  padding-right: 5px;
+  display: flex;
+  justify-content: right;
+}
+
+.source {
+  margin-top: revert;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -28,16 +28,18 @@ export default function Ingredient({ ingredient, measurement }) {
 
   return (
     <div className={styles.row}>
-      <div className={styles.ingredientimagecontainer}>
-        <Image 
-          src={`https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}`}
-          alt={ingredient.name}
-          layout='fill'
-          className={styles.ingredientimage}
-          sizes='10vw'
-        />
+      <div className={styles.ingredientPresentation}>
+        <div className={styles.ingredientimagecontainer}>
+         <Image 
+           src={`https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}`}
+           alt={ingredient.name}
+           layout='fill'
+           className={styles.ingredientimage}
+           sizes='10vw'
+         />
+        </div>
+        <span><h5 className={styles.content}>{ingredient.name.toUpperCase()}</h5></span>
       </div>
-        <span className={styles.column}><h5 className={styles.content}>{ingredient.name.toUpperCase()}</h5></span>
         <span className={styles.column}><p className={styles.content}>{amount} {unit}</p></span>
         <span className={styles.column}><p className={styles.content}>{Math.round(ingredient.grams_amount * ingredient.calories_per_gram)} kcal</p></span>
     </div>

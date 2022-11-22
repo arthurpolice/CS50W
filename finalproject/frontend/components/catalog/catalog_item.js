@@ -5,8 +5,8 @@ import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
-import { Grid, Item } from '@mui/material'
-import styles from '../styles/catalog.module.css'
+import { Grid } from '@mui/material'
+import styles from './catalog.module.css'
 import 'tachyons'
 import { useRouter } from 'next/router'
 
@@ -47,6 +47,7 @@ export default function CatalogItem({ recipe }) {
                         <Image
                           src={'/images/no-meat.png'}
                           alt='vegetarian'
+                          title='Vegetarian'
                           height={24}
                           width={24}
                         />
@@ -59,6 +60,7 @@ export default function CatalogItem({ recipe }) {
                       <FontAwesomeIcon
                         icon='fa-sharp fa-solid fa-seedling'
                         alt='vegan'
+                        title='Vegan'
                       />
                     ) : (
                       <></>
@@ -69,6 +71,7 @@ export default function CatalogItem({ recipe }) {
                       <Image
                         src={'/images/dairy-free.png'}
                         alt='dairy free'
+                        title='Dairy Free'
                         height={24}
                         width={24}
                       />

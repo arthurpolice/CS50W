@@ -1,5 +1,5 @@
 import Link from "next/link"
-import styles from '../styles/recipes.module.css';
+import styles from './summary.module.css';
 
 export default function Summary({ recipe }) {
   return (

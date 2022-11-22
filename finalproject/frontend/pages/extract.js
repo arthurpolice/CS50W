@@ -6,7 +6,7 @@ import { sendUrl } from '../lib/extractor';
 import styles from '../styles/extract.module.css'
 import LoadingButton from '@mui/lab/LoadingButton';
 import DiningOutlinedIcon from '@mui/icons-material/DiningOutlined';
-
+import Navbar from '../components/navbar/navbar';
 
 export default function ExtractPage() {
   const router = useRouter()
@@ -24,28 +24,31 @@ export default function ExtractPage() {
   }
 
   return (
-    <div className={styles.main}>
-      <FormControl className={styles.form}>
-      <TextField 
-        id='url-extractor'
-        label="Your recipe's URL"
-        variant='standard'
-        className={styles.urlextractor}
-        onChange={(event) => setUrl(event.target.value)}
-        />
-      <LoadingButton
-        loading={loading}
-        loadingPosition='start'
-        variant='text'
-        onClick={() => {
-          handleLoading(url, router)
-        }}
-        startIcon={<DiningOutlinedIcon />}
-      >
-          Send
-      </LoadingButton>
-      </FormControl>
-    </div>
+    <>
+      <Navbar />
+      <div className={styles.main}>
+        <FormControl className={styles.form}>
+        <TextField 
+          id='url-extractor'
+          label="Your recipe's URL"
+          variant='standard'
+          className={styles.urlextractor}
+          onChange={(event) => setUrl(event.target.value)}
+          />
+        <LoadingButton
+          loading={loading}
+          loadingPosition='start'
+          variant='text'
+          onClick={() => {
+            handleLoading(url, router)
+          }}
+          startIcon={<DiningOutlinedIcon />}
+        >
+            Send
+        </LoadingButton>
+        </FormControl>
+      </div>
+    </>
   )
 }
 

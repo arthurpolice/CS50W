@@ -1,8 +1,10 @@
 import { getRecipeCatalog } from '../lib/catalog'
-import Catalog from '../components/catalog';
+import Catalog from '../components/catalog/catalog';
 import styles from '../styles/catalog.module.css'
-import { Grid, TextField } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useState } from 'react';
+import Navbar from '../components/navbar/navbar';
+import SearchBox from '../components/searchbox/searchbox';
 
 export async function getStaticProps() {
   const recipeCatalog = await getRecipeCatalog();
@@ -22,15 +24,8 @@ export default function CatalogPage({ recipeCatalog }) {
   })
   return (
     <>
-    <div className={styles.searchDiv}>
-      <TextField
-        className={styles.searchBox} 
-        variant='standard'
-        type='search' 
-        label='Search Catalog' 
-        onChange={(event) => setSearchField(event.target.value) }
-      />
-    </div>
+    <Navbar/>
+    <SearchBox setSearchField={setSearchField} />
     <Grid container className={styles.catalog}>
       <Catalog recipeCatalog={filteredRecipes}/>
     </Grid>

@@ -1,0 +1,44 @@
+.ingredientimagecontainer {
+  height: 64px;
+  width: 64px;
+  position: relative;
+  border-radius: 100%;
+  flex-shrink: 0;
+  background-color: white;
+}
+
+.row {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.ingredientPresentation {
+  display: flex;
+  width: 15vw;
+  padding-right: 5vw;
+}
+
+@media screen and (max-width: 840px) {
+  .row {
+    justify-content: space-between;
+  }
+}
+
+.ingredientimage {
+  border-radius: 100%;
+  object-fit: contain;
+}
+
+.hidden {
+  display: none;
+}
+
+.column {
+  width: 10vw;
+}
+
+.content {
+  text-align: center;
+}

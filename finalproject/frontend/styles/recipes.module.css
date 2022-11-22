@@ -1,5 +1,11 @@
+
 .hidden {
   display: none;
+}
+
+.custombg {
+  height: 100vh;
+  width: 100vw;
 }
 
 .background {
@@ -15,22 +21,31 @@
 
 .paper {
   position: absolute;
-  max-width: 85vw;
+  max-width: 95vw;
   z-index: 2000;
-  margin-top: 150vh;
-  border-radius: 30px;
-  min-width: 570px;
+  border-radius: 5px;
+  width: 95vw;
+  background-color: rgba(255, 255, 255, 0.9);
+
 }
+
+@media screen and (min-width: 840px) {
+  .paper {
+    width: 50vw;
+  }
+}
+
 
 .smallpaper {
   display: flex;
   flex-direction: column;
   min-height: 150px;
-  border-top-right-radius: 30px;
-  border-top-left-radius: 30px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
 }
 
 .main {
+  margin-top: 5vh;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -67,4 +82,11 @@
 
 .sourceurl:hover {
   color: aquamarine;
+}
+
+.recipeContainer {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  bottom: 66%;
 }

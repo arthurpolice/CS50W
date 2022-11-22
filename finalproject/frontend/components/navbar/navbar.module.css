@@ -1,0 +1,23 @@
+.navbar {
+  background-color: rgb(201, 248, 248);
+  z-index: 9999;
+  height: 7vh;
+}
+
+.links {
+  height: 100%;
+  width: 50vw;
+  justify-content: space-between;
+}
+
+.link {
+  display: flex;
+  color: rgb(105, 101, 101);
+  height: 100%;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+.link:hover {
+  backdrop-filter: brightness(115%);
+}

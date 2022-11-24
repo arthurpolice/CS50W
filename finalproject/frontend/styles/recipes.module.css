@@ -35,15 +35,6 @@
   }
 }
 
-
-.smallpaper {
-  display: flex;
-  flex-direction: column;
-  min-height: 150px;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-}
-
 .main {
   margin-top: 5vh;
   display: flex;

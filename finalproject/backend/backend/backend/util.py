@@ -168,7 +168,6 @@ def get_ingredient(item):
         ingredient = Ingredient.objects.get(api_id=item['id'], name=item['nameClean'])
       # If not found, log the ingredient:
     except:
-        print(item['nameClean'])
         ingredient = Ingredient(
             name=item['nameClean'],
             api_id=item['id'],

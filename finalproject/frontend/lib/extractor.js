@@ -11,6 +11,6 @@ export async function sendUrl(url, router) {
     router.push(`/recipes/${id}`)
   }
   else {
-    
+    router.push('/extract')
   }
 }

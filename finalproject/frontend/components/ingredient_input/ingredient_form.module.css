@@ -1,0 +1,14 @@
+.row {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.ingredient {
+  width: 40vw;
+}
+
+.unit {
+  width: 10vw;
+}

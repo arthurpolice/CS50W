@@ -7,6 +7,7 @@ import styles from '../styles/extract.module.css'
 import LoadingButton from '@mui/lab/LoadingButton';
 import DiningOutlinedIcon from '@mui/icons-material/DiningOutlined';
 import Navbar from '../components/navbar/navbar';
+import Head from 'next/head';
 
 export default function ExtractPage() {
   const router = useRouter()
@@ -25,10 +26,18 @@ export default function ExtractPage() {
 
   return (
     <>
+      <Head>
+        <title>Extract Recipes</title>
+        <meta name="description" content="recipe extractor" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+      </Head>
       <Navbar />
       <div className={styles.main}>
         <FormControl className={styles.form}>
         <TextField 
+          error
+          helperText='Invalid URL.'
           id='url-extractor'
           label="Your recipe's URL"
           variant='standard'

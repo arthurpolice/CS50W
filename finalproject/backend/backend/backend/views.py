@@ -246,3 +246,23 @@ def favorites_handler(request):
         Favorite.remove_favorite(user, recipe)
     except:
         Favorite.add_favorite(user, recipe)
+
+@api_view(['POST'])
+def get_all_ingredients(request):
+    ingredients = Ingredient.objects.all()
+    ingredient_list = []
+    for ingredient in ingredients:
+        dict = model_to_dict(ingredient)
+        ingredient_list += [dict]
+    return JsonResponse({"list": ingredient_list})
+
+@api_view(['POST'])
+def get_all_measures(request):
+    units = []
+    recipe_ingredients = RecipeIngredient.objects.all().values('metric_unit', 'imperial_unit')
+    for item in recipe_ingredients:
+        if item['metric_unit'].upper() not in units:
+            units += [item['metric_unit'].upper()]
+        if item['imperial_unit'].upper() not in units:
+            units += [item['imperial_unit'].upper()]
+    return JsonResponse({"list": units})

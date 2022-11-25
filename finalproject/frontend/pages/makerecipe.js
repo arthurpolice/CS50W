@@ -6,6 +6,7 @@ import Navbar from '../components/navbar/navbar'
 import Header from '../components/ingredient_input/header';
 import { Button } from '@mui/material';
 import styles from '../styles/makerecipe.module.css'
+import { useRouter } from 'next/router'
 
 export async function getStaticProps() {
   const ingredientList = await getAllIngredients()
@@ -20,6 +21,7 @@ export async function getStaticProps() {
 }
 
 export default function CustomRecipePage({ ingredientList, measuresList }) {
+  const route = useRouter()
   const recipeProp = makeRecipeObject()
   const [ingredientNumber, setIngredientNumber] = useState(1)
   const [recipe, setRecipe] = useState(recipeProp)
@@ -37,6 +39,17 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
       [name]: value
     }))
   }
+
+  const handleClick = num => {
+    setIngredientNumber(ingredientNumber + num)
+    if (num === 1) {
+      recipe['extendedIngredients'].push({})
+    }
+    else if (num === -1) {
+      recipe['extendedIngredients'].pop
+    }
+  }
+
   // Checkbox names must match the key names in recipeProp
   const checkboxChange = event => {
     const {name, checked} = event.target
@@ -45,14 +58,6 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
       [name]: checked
     }))
   }
-  useEffect(() => {
-    if (recipe['extendedIngredients'].length < ingredientNumber) {
-      recipe['extendedIngredients'].push('')
-    }
-    else if (recipe['extendedIngredients'].length > ingredientNumber){
-      recipe['extendedIngredients'].pop()
-    } 
-  }, [recipe, ingredientNumber])
   return (
     <>
       <Head>
@@ -76,16 +81,16 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
         <Button 
           variant="outlined"
           color='error'
-          onClick={() => setIngredientNumber(ingredientNumber - 1)}>-</Button>
+          onClick={() => handleClick(-1)}>-</Button>
         <Button 
           variant="outlined"
-          onClick={() => setIngredientNumber(ingredientNumber + 1)}>+</Button>
+          onClick={() => handleClick(1)}>+</Button>
       </div>
       <div className={styles.submitButtonDiv}>
         <Button
           variant='outlined'
           color='success'
-          onClick={() => logRecipe(recipe)}>
+          onClick={() => logRecipe(recipe, route)}>
             Submit
           </Button>
       </div>

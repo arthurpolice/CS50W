@@ -263,8 +263,10 @@ def get_all_measures(request):
     units = []
     recipe_ingredients = RecipeIngredient.objects.all().values('metric_unit', 'imperial_unit')
     for item in recipe_ingredients:
-        if item['metric_unit'].upper() not in units:
-            units += [item['metric_unit'].upper()]
-        if item['imperial_unit'].upper() not in units:
-            units += [item['imperial_unit'].upper()]
+        if item['metric_unit'] != None:
+            if item['metric_unit'].lower() not in units:
+                units += [item['metric_unit'].lower()]
+        if item['imperial_unit'] != None:
+            if item['imperial_unit'].lower() not in units:
+                units += [item['imperial_unit'].lower()]
     return JsonResponse({"list": units})

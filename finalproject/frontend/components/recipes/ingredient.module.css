@@ -16,7 +16,7 @@
 
 .ingredientPresentation {
   display: flex;
-  width: 15vw;
+  width: 20vw;
   padding-right: 5vw;
 }
 
@@ -40,5 +40,6 @@
 }
 
 .content {
-  text-align: center;
+  text-align: left;
+  margin-left: 2vw;
 }

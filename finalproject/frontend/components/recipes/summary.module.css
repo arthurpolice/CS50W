@@ -5,3 +5,17 @@
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
 }
+
+.sourceurl {
+  color:rgb(28, 168, 122);
+}
+
+.sourceurl:hover {
+  color: aquamarine;
+}
+
+@media screen and (max-width: 1000px) {
+  .info {
+    padding: 0.5rem 2rem;
+  }
+}

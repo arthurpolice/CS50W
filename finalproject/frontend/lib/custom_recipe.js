@@ -35,7 +35,7 @@ export function makeRecipeObject() {
 
 // Data sender
 
-export async function logRecipe(recipe) {
+export async function logRecipe(recipe, router) {
   console.log(recipe)
   const response = await fetch('http://127.0.0.1:8000/log_custom', {
     method: 'POST',
@@ -43,6 +43,8 @@ export async function logRecipe(recipe) {
       recipe
     })
   })
-  const response_json = response.json()
-  return response_json
+  const response_json = await response.json()
+  const id = response_json['id']
+  console.log['id']
+  router.push(`recipes/${id}`)
 }

@@ -3,21 +3,23 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSeedling } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import { Grid } from '@mui/material'
 import styles from './catalog.module.css'
 import 'tachyons'
-import { useRouter } from 'next/router'
+import Link from 'next/link'
 
-
+library.add(faSeedling);
 
 
 export default function CatalogItem({ recipe }) {
-  const router = useRouter()
   return (
       <Grid className={styles.catalogitem}>
-          <Card className={`${styles.card} ${'grow'}` } sx={{ maxWidth: 345 }} onClick={() => router.push(`recipes/${recipe.id}`)}>
+        <Link href={`/recipes/${recipe.id}`}>
+          <Card className={`${styles.card} ${'grow'}` } sx={{ maxWidth: 345 }}>
             <CardMedia
               component='img'
               alt={recipe.name}
@@ -42,7 +44,7 @@ export default function CatalogItem({ recipe }) {
                   <Typography variant='body2' color='text.secondary' className={styles.source}>By {recipe.credit}</Typography>
                 </div>
                 <div className={styles.restrictions}>
-                  <span>
+                  <span className={styles.restriction}>
                     {recipe.vegetarian ? (
                         <Image
                           src={'/images/no-meat.png'}
@@ -55,10 +57,11 @@ export default function CatalogItem({ recipe }) {
                       <></>
                     )}
                   </span>
-                  <span>
+                  <span className={styles.restriction}>
                     {recipe.vegan ? (
                       <FontAwesomeIcon
-                        icon='fa-sharp fa-solid fa-seedling'
+                        icon='seedling'
+                        color='green'
                         alt='vegan'
                         title='Vegan'
                       />
@@ -66,7 +69,7 @@ export default function CatalogItem({ recipe }) {
                       <></>
                     )}
                   </span>
-                  <span>
+                  <span className={styles.restriction}>
                     {recipe.dairy_free ? (
                       <Image
                         src={'/images/dairy-free.png'}
@@ -83,6 +86,7 @@ export default function CatalogItem({ recipe }) {
               </div>
             </CardContent>
           </Card>
+        </Link>
       </Grid>
   )
 }

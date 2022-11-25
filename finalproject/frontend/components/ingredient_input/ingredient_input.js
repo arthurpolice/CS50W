@@ -59,6 +59,7 @@ export default function IngredientInput({ ingredientList, measuresList, recipe, 
     </div>
     <Autocomplete
       {...ingredientProps}
+      required
       clearOnEscape
       name='info'
       className={styles.ingredient}
@@ -69,13 +70,15 @@ export default function IngredientInput({ ingredientList, measuresList, recipe, 
     )}
     />
     <TextField 
+      required
       variant='standard' 
       label='Amount'
       name='amount'
-      onChange={(event) => {setAmount(event.target.value)}}
+      onChange={(event) => {setAmount(parseFloat(event.target.value))}}
       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
     <Autocomplete
       {...measurementProps}
+      required
       clearOnEscape
       name='unit'
       className={styles.unit}

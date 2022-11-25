@@ -153,9 +153,10 @@ def get_calories(grams_amount, api_id):
         calories_amount = 0
         return calories_amount
    
-    
+   
+# THIS BREAKS IF THE SAME INGREDIENT GETS REQUESTED FOR THE FIRST TIME, AT THE SAME TIME, ON TWO DIFFERENT RECIPES
+# HOW TO FIX? (THE TRY FAILS ON BOTH, THEN ONE OF THEM LOGS IT THROUGH EXCEPT, AND THE OTHER RECIPE'S EXCEPT FAILS THE UNIQUE CONSTRAINT)
 def get_ingredient(item):
-    print(item)
     # Step 2.1.1:
     # Look for the ingredients (using api_id)
     try:
@@ -167,6 +168,7 @@ def get_ingredient(item):
             item['nameClean'] = 'Error'
             item['id'] = -1
         print(item['id'], item['nameClean'])
+        # POSSIBLE SOLUTION: CHANGE THIS TO FILTER AND RETURN THE FIRST QUERY RESULT?
         ingredient = Ingredient.objects.get(api_id=item['id'], name=item['nameClean'])
       # If not found, log the ingredient:
     except:

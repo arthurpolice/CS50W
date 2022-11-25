@@ -29,12 +29,6 @@
 
 }
 
-@media screen and (min-width: 840px) {
-  .paper {
-    width: 50vw;
-  }
-}
-
 .main {
   margin-top: 5vh;
   display: flex;
@@ -45,6 +39,7 @@
 
 .summary {
   display: flex;
+  flex-direction: column;
   justify-content:space-evenly;   
 }
 
@@ -65,14 +60,9 @@
 
 .title {
   text-align: center;
-}
-
-.sourceurl {
-  color:rgb(28, 168, 122);
-}
-
-.sourceurl:hover {
-  color: aquamarine;
+  margin-top: 0;
+  padding-top: 5vh;
+  padding-bottom: 5vh;
 }
 
 .recipeContainer {
@@ -80,4 +70,14 @@
   display: flex;
   justify-content: center;
   bottom: 66%;
+}
+
+@media screen and (min-width: 1000px) {
+  .paper {
+    width: 50vw;
+  }
+  .summary {
+    flex-direction: row;
+    padding-bottom: 3vh;
+  }
 }

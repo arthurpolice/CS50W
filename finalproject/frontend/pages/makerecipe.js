@@ -39,7 +39,6 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
   }
   // Checkbox names must match the key names in recipeProp
   const checkboxChange = event => {
-    // Checked attribute returns true or false
     const {name, checked} = event.target
     setRecipe(prevState => ({
       ...prevState,

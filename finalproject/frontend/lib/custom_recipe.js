@@ -18,9 +18,31 @@ export async function getAllMeasures() {
 
 export function makeRecipeObject() {
   const object = {
-    name: '',
+    title: '',
     image: '',
-    extendedIngredients: []
+    sourceUrl: '',
+    id: -1,
+    cuisines: [''],
+    extendedIngredients: [],
+    vegan: false,
+    vegetarian: false,
+    dairyFree: false,
+    glutenFree: false,
+    ketogenic: false
   }
   return object
+}
+
+// Data sender
+
+export async function logRecipe(recipe) {
+  console.log(recipe)
+  const response = await fetch('http://127.0.0.1:8000/log_custom', {
+    method: 'POST',
+    body: JSON.stringify({
+      recipe
+    })
+  })
+  const response_json = response.json()
+  return response_json
 }

@@ -3,7 +3,13 @@
 }
 
 .control {
-  margin: 10vh 0;
+  margin: 5vh 0;
   display: flex;
   justify-content: center;
+}
+
+.submitButtonDiv {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5vh;
 }

@@ -135,7 +135,9 @@ def make_custom_recipe(request):
     # Receive through fetch:
     data = json.loads(request.body)
     dictionary = data.get('recipe')
-    dictionary['creditText'] = request.user.username
+    # FIX THIS SHIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT
+    # request.user.username when there are users
+    dictionary['creditsText'] = 'briko'
     recipe_url = dictionary['sourceUrl']
     # Look for recipe in the database using the URL
     try:

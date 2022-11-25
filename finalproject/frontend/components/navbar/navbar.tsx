@@ -30,7 +30,7 @@ export default function Navbar( props ) {
             <Link href={'/'}><Image src={'/images/icon.png'} alt='logo' width={48} height={48}/></Link>
             <Link href={'/extract'} className={styles.link}>Recipe Extractor</Link>
             <Link href={'/catalog'} className={styles.link}>Recipe Catalog</Link>
-            <Link href={'/custom'} className={styles.link}>Make a Recipe</Link>
+            <Link href={'/makerecipe'} className={styles.link}>Make a Recipe</Link>
             <Link href={'/calendar'} className={styles.link}>Calendar</Link>
           </Toolbar>
         </AppBar>

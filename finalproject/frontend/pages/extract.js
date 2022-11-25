@@ -36,8 +36,6 @@ export default function ExtractPage() {
       <div className={styles.main}>
         <FormControl className={styles.form}>
         <TextField 
-          error
-          helperText='Invalid URL.'
           id='url-extractor'
           label="Your recipe's URL"
           variant='standard'

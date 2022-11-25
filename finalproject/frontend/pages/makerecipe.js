@@ -1,9 +1,10 @@
 import Head from 'next/head';
-import { useState } from 'react';
-import { getAllIngredients, getAllMeasures, makeRecipeObject } from '../lib/custom_recipe'
+import { useEffect, useState } from 'react';
+import { getAllIngredients, getAllMeasures, makeRecipeObject, logRecipe } from '../lib/custom_recipe'
 import IngredientForm from '../components/ingredient_input/ingredient_form'
 import Navbar from '../components/navbar/navbar'
-import { Button, TextField } from '@mui/material';
+import Header from '../components/ingredient_input/header';
+import { Button } from '@mui/material';
 import styles from '../styles/makerecipe.module.css'
 
 export async function getStaticProps() {
@@ -20,15 +21,39 @@ export async function getStaticProps() {
 
 export default function CustomRecipePage({ ingredientList, measuresList }) {
   const recipeProp = makeRecipeObject()
-  const [ingredientNumber, setIngredientNumber] = useState(4)
+  const [ingredientNumber, setIngredientNumber] = useState(1)
   const [recipe, setRecipe] = useState(recipeProp)
+  const [measuringSystem, setMeasuringSystem] = useState('metric')
+
   const fieldChange = event => {
-    const {name, value} = event.target
+    let {name, value} = event.target
+    if (name === 'servings') {
+      if (Number.isInteger(value) === false) {
+        value = 1
+      }
+    }
     setRecipe(prevState => ({
       ...prevState,
       [name]: value
     }))
   }
+  // Checkbox names must match the key names in recipeProp
+  const checkboxChange = event => {
+    // Checked attribute returns true or false
+    const {name, checked} = event.target
+    setRecipe(prevState => ({
+      ...prevState,
+      [name]: checked
+    }))
+  }
+  useEffect(() => {
+    if (recipe['extendedIngredients'].length < ingredientNumber) {
+      recipe['extendedIngredients'].push('')
+    }
+    else if (recipe['extendedIngredients'].length > ingredientNumber){
+      recipe['extendedIngredients'].pop()
+    } 
+  }, [recipe, ingredientNumber])
   return (
     <>
       <Head>
@@ -39,20 +64,31 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
       </Head>
       <Navbar />
       <div className={styles.form}>
-        <TextField
-          name='name'
-          variant='standard' 
-          label='Recipe Name'
-          onChange={fieldChange}/>
-        <IngredientForm ingredientList={ ingredientList } ingredientNumber={ ingredientNumber } measuresList={ measuresList } setRecipe={setRecipe} />
+        <Header fieldChange={fieldChange} setMeasuringSystem={setMeasuringSystem} checkboxChange={checkboxChange}/>
+        <IngredientForm 
+          ingredientList={ ingredientList } 
+          ingredientNumber={ ingredientNumber } 
+          measuresList={ measuresList } 
+          setRecipe={setRecipe} 
+          recipe={recipe}
+          measuringSystem={ measuringSystem }/>
       </div>      
       <div className={styles.control}>
         <Button 
           variant="outlined"
-          onClick={() => setIngredientNumber(ingredientNumber + 1)}>+</Button>
+          color='error'
+          onClick={() => setIngredientNumber(ingredientNumber - 1)}>-</Button>
         <Button 
           variant="outlined"
-          onClick={() => setIngredientNumber(ingredientNumber - 1)}>-</Button>
+          onClick={() => setIngredientNumber(ingredientNumber + 1)}>+</Button>
+      </div>
+      <div className={styles.submitButtonDiv}>
+        <Button
+          variant='outlined'
+          color='success'
+          onClick={() => logRecipe(recipe)}>
+            Submit
+          </Button>
       </div>
     </>
   )

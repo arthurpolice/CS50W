@@ -155,6 +155,7 @@ def get_calories(grams_amount, api_id):
    
     
 def get_ingredient(item):
+    print(item)
     # Step 2.1.1:
     # Look for the ingredients (using api_id)
     try:
@@ -165,6 +166,7 @@ def get_ingredient(item):
         elif item['nameClean'] == None:
             item['nameClean'] = 'Error'
             item['id'] = -1
+        print(item['id'], item['nameClean'])
         ingredient = Ingredient.objects.get(api_id=item['id'], name=item['nameClean'])
       # If not found, log the ingredient:
     except:

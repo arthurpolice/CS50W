@@ -15,5 +15,6 @@ urlpatterns = [
     path('favorites_handler', views.favorites_handler, name='favorites_handler'),
     path('likes_handler', views.likes_handler, name='likes_handler'),
     path('get_all_ingredients', views.get_all_ingredients, name='get_all_ingredients'),
-    path('get_all_measures', views.get_all_measures, name='get_all_measures')
+    path('get_all_measures', views.get_all_measures, name='get_all_measures'),
+    path('log_custom', views.make_custom_recipe, name='make_custom_recipe')
 ]

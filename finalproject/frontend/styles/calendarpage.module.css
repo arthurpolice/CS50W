@@ -1,0 +1,37 @@
+.calendarDiv {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.paper {
+  display: flex;
+  width: 70vw;
+  height: 70vh;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.infoDisplay {
+  width: 30vw;
+  background-color: #2fec78;
+  height: 100%;
+  border-top-left-radius: 5px;
+}
+
+@media screen and (max-width: 1050px) {
+  .paper {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+  }
+  .infoDisplay {
+    width: 100%;
+  }
+  .calendarDiv {
+    margin-top: 15vh;
+  }
+}
+

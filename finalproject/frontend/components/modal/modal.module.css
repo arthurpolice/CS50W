@@ -1,0 +1,17 @@
+.boxDiv {
+  display: flex;
+  flex-direction: column;
+}
+
+.mealFields {
+  margin-bottom: 1rem;
+}
+
+.servings {
+  width: 7rem;
+}
+
+.buttonDiv {
+  display: flex;
+  justify-content: center;
+}

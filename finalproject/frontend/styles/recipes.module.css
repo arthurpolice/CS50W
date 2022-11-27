@@ -22,7 +22,7 @@
 .paper {
   position: absolute;
   max-width: 95vw;
-  z-index: 2000;
+  z-index: 800;
   border-radius: 5px;
   width: 95vw;
   background-color: rgba(255, 255, 255, 0.9);
@@ -70,6 +70,39 @@
   display: flex;
   justify-content: center;
   bottom: 66%;
+}
+
+.floatingButtons {
+  display: flex;
+  justify-content: right;
+  padding-top: 1rem;
+}
+
+.fabAdd {
+  margin-right: 1vw;
+  z-index: 900;
+}
+
+.fabHeart {
+  margin-right: 1vw;
+  z-index: 900;
+  background-color: rgb(255, 255, 255);
+}
+
+.fabStar {
+  margin-right: 1vw;
+  z-index: 900;
+  background-color: rgb(255, 255, 255);
+}
+
+.heartIcon {
+  font-size: 1.5rem;
+  color: rgb(173, 19, 19);
+}
+
+.starIcon {
+  font-size: 1.5rem;
+  color: rgb(255, 255, 0);
 }
 
 @media screen and (min-width: 1000px) {

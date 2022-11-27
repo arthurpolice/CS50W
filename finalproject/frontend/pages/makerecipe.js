@@ -21,6 +21,11 @@ export async function getStaticProps() {
 }
 
 export default function CustomRecipePage({ ingredientList, measuresList }) {
+  
+  function isNumeric(value) {
+    return /^\d+$/.test(value);
+  }
+
   const route = useRouter()
   const recipeProp = makeRecipeObject()
   const [ingredientNumber, setIngredientNumber] = useState(1)
@@ -30,13 +35,14 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
   const fieldChange = event => {
     let {name, value} = event.target
     if (name === 'servings') {
-      if (Number.isInteger(value) === false) {
+      if (isNumeric(value) === false) {
         value = 1
       }
+      console.log(value)
     }
     setRecipe(prevState => ({
       ...prevState,
-      [name]: value
+      [name]: Math.round(parseInt(value))
     }))
   }
 

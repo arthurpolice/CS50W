@@ -8,7 +8,7 @@ import MiniCalendar from './minicalendar';
 import styles from './modal.module.css';
 import { InputLabel } from '@mui/material';
 
-export default function BasicModal( { open, handleClose } ) {
+export default function BasicModal( { open, handleClose, id } ) {
   
   function isNumeric(value) {
     return /^\d+$/.test(value);

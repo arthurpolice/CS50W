@@ -1,8 +1,14 @@
 import json
 import validators
-import requests
+from rest_framework.response import Response
+from knox.models import AuthToken
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from .serializers import UserSerializer, RegisterSerializer
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.views import LoginView as KnoxLoginView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.urls import reverse
@@ -14,37 +20,76 @@ from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingr
 from .util import dictionary_sanitary_check, recipe_url_lookup, add_ingredients_to_recipe, get_day
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
+from .serializers import ChangePasswordSerializer
+from rest_framework.permissions import IsAuthenticated
 
-
-def register(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
-
-        # Ensure password matches confirmation
-        password = request.POST["password"]
-        confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            return render(request, "network/register.html", {
-                "message": "Passwords must match."
-            })
-
-        # Attempt to create new user
-        try:
-            user = User.objects.create_user(username, email, password)
-            user.save()
-        except IntegrityError:
-            return render(request, "network/register.html", {
-                "message": "Username already taken."
-            })
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "network/register.html")
 
 
 # MAKE THIS A STATELESS REST API
 # CSRF PROBLEMS SOLUTION: https://stackoverflow.com/questions/50732815/how-to-use-csrf-token-in-django-restful-api-and-react
+
+class LoginAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super(LoginAPI, self).post(request, format=None)
+
+def logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse("index"))
+
+
+# Register API
+class RegisterAPI(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({
+        "user": UserSerializer(user, context=self.get_serializer_context()).data,
+        "token": AuthToken.objects.create(user)[1]
+        })
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    An endpoint for changing password.
+    """
+    serializer_class = ChangePasswordSerializer
+    model = User
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            # Check old password
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            # set_password also hashes the password that the user will get
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            response = {
+            'status': 'success',
+            'code': status.HTTP_200_OK,
+            'message': 'Password updated successfully',
+            'data': []
+            }
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def get_all_recipes(request):

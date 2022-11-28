@@ -52,7 +52,7 @@ export default function Recipe({ recipeData }) {
         <title>{recipeData.recipe.name}</title>
       </Head>
       <Navbar />
-      <BasicModal open={open} handleClose={handleClose} />
+      <BasicModal open={open} handleClose={handleClose} id={recipeData.recipe.id}/>
       <div className={styles.main}>
         <Parallax className={styles.parallax} strength={300}>
           <Background className={styles.custombg}>

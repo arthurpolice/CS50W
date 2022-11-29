@@ -1,6 +1,10 @@
 export async function getAllIngredients() {
   const response = await fetch('http://127.0.0.1:8000/get_all_ingredients', {
-    method: 'POST'
+    method: 'POST',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
   })
   const ingredients_object = await response.json()
   const ingredients = ingredients_object.list
@@ -9,7 +13,11 @@ export async function getAllIngredients() {
 
 export async function getAllMeasures() {
   const response = await fetch('http://127.0.0.1:8000/get_all_measures', {
-    method: 'POST'
+    method: 'POST',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
   })
   const measures_object = await response.json()
   const measures = measures_object.list
@@ -36,9 +44,12 @@ export function makeRecipeObject() {
 // Data sender
 
 export async function logRecipe(recipe, router) {
-  console.log(recipe)
   const response = await fetch('http://127.0.0.1:8000/log_custom', {
     method: 'POST',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       recipe
     })

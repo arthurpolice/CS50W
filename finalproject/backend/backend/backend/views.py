@@ -9,11 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from django.urls import reverse
-from django.db import IntegrityError
-from django.core.paginator import Paginator
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient, Like, Favorite
@@ -194,7 +190,6 @@ def make_custom_recipe(request):
         # Log the recipe to the database
         recipe = log_recipe(dictionary)
     return JsonResponse({"id": recipe.pk})
-    # How to prevent gibberish from calling the API? Maybe lock to ingredients that are in the database already? (would make it easy to retrieve the api_id)
 
 
 @api_view(['POST'])

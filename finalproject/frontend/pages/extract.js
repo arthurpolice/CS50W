@@ -8,8 +8,11 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import DiningOutlinedIcon from '@mui/icons-material/DiningOutlined';
 import Navbar from '../components/navbar/navbar';
 import Head from 'next/head';
+import { useTokenStore } from '../lib/store';
+import Login from '../components/login/login';
 
 export default function ExtractPage() {
+  const token = useTokenStore(state => state.token)
   const router = useRouter()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,13 +20,15 @@ export default function ExtractPage() {
   async function handleLoading(url, router) {
     setLoading(true)
     try {
-      sendUrl(url, router)
+      sendUrl(url, router, token)
     }
     catch {
       setLoading(false)
     }
   }
-
+  if (!token || token === '') {
+    return <Login/>
+  }
   return (
     <>
       <Head>

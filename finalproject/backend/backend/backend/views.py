@@ -15,9 +15,9 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Calendar, DailyPlan, Meal, User, MealComponent, Recipe, Ingredient, RecipeIngredient, Like, Favorite
 from .util import dictionary_sanitary_check, recipe_url_lookup, add_ingredients_to_recipe, get_day
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import ChangePasswordSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 
@@ -88,6 +88,7 @@ class ChangePasswordView(generics.UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def get_all_recipes(request):
     recipes = Recipe.objects.all()
     recipes = recipes.order_by('name')
@@ -100,6 +101,7 @@ def get_all_recipes(request):
     return JsonResponse({'list': recipe_list})
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def get_recipe(request, id):
     recipe = Recipe.objects.get(pk=id)
     recipe_dict = model_to_dict(recipe)
@@ -112,7 +114,7 @@ def get_recipe(request, id):
     }
     return JsonResponse({"info": recipe_info})
 
-@csrf_exempt
+@api_view(['POST'])
 def extract_recipe_from_url(request):
     data = json.loads(request.body)
     # Look for recipe in the database using the URL
@@ -290,6 +292,7 @@ def favorites_handler(request):
         Favorite.add_favorite(user, recipe)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def get_all_ingredients(request):
     ingredients = Ingredient.objects.all()
     ingredient_list = []
@@ -299,6 +302,7 @@ def get_all_ingredients(request):
     return JsonResponse({"list": ingredient_list})
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def get_all_measures(request):
     units = []
     recipe_ingredients = RecipeIngredient.objects.all().values('metric_unit', 'imperial_unit')

@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export const tokenStore = create(
+export const useTokenStore = create(
   persist(
     (set) => ({
       token: '',
@@ -13,4 +13,3 @@ export const tokenStore = create(
     }
   )
 )
-

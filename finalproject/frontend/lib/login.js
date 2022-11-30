@@ -10,6 +10,7 @@ export async function login(username, password) {
   		password
   	})
   })
-  login.json()
-  return login
+  const response = await login.json()
+  const token = response.token
+  return token
 }

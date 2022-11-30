@@ -7,6 +7,8 @@ import Header from '../components/ingredient_input/header';
 import { Button } from '@mui/material';
 import styles from '../styles/makerecipe.module.css'
 import { useRouter } from 'next/router'
+import Login from '../components/login/login';
+import { useTokenStore } from '../lib/store';
 
 export async function getStaticProps() {
   const ingredientList = await getAllIngredients()
@@ -21,16 +23,16 @@ export async function getStaticProps() {
 }
 
 export default function CustomRecipePage({ ingredientList, measuresList }) {
-  
-  function isNumeric(value) {
-    return /^\d+$/.test(value);
-  }
-
+  const token = useTokenStore(state => state.token)
   const route = useRouter()
   const recipeProp = makeRecipeObject()
   const [ingredientNumber, setIngredientNumber] = useState(1)
   const [recipe, setRecipe] = useState(recipeProp)
   const [measuringSystem, setMeasuringSystem] = useState('metric')
+
+  const isNumeric = value => {
+    return /^\d+$/.test(value);
+  }
 
   const fieldChange = event => {
     let {name, value} = event.target
@@ -63,6 +65,9 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
       ...prevState,
       [name]: checked
     }))
+  }
+  if (!token) {
+    return <Login/>
   }
   return (
     <>

@@ -43,12 +43,13 @@ export function makeRecipeObject() {
 
 // Data sender
 
-export async function logRecipe(recipe, router) {
+export async function logRecipe(recipe, router, token) {
   const response = await fetch('http://127.0.0.1:8000/log_custom', {
     method: 'POST',
     headers: {
       "Accept": "application/json",
       "Content-Type": "application/json",
+      "Authorization": `Token ${token}`
     },
     body: JSON.stringify({
       recipe

@@ -34,10 +34,6 @@ class LoginAPI(KnoxLoginView):
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
 
-def logout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse("index"))
-
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):
@@ -314,3 +310,7 @@ def get_all_measures(request):
             if item['imperial_unit'].lower() not in units:
                 units += [item['imperial_unit'].lower()]
     return JsonResponse({"list": units})
+
+@api_view(['POST'])
+def check_token(request):
+    return JsonResponse({"Token": True})

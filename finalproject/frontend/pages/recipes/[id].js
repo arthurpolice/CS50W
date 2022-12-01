@@ -16,7 +16,7 @@ import Navbar from '../../components/navbar/navbar'
 import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import BasicModal from '../../components/modal/modal.tsx'
+import MealModal from '../../components/meal_modal/meal_modal.tsx'
 
 library.add(faHeart, faStar)
 
@@ -52,7 +52,7 @@ export default function Recipe({ recipeData }) {
         <title>{recipeData.recipe.name}</title>
       </Head>
       <Navbar />
-      <BasicModal open={open} handleClose={handleClose} id={recipeData.recipe.id}/>
+      <MealModal open={open} handleClose={handleClose} id={recipeData.recipe.id}/>
       <div className={styles.main}>
         <Parallax className={styles.parallax} strength={300}>
           <Background className={styles.custombg}>
@@ -70,14 +70,14 @@ export default function Recipe({ recipeData }) {
             <Paper className={styles.smallpaper} elevation={5}>
               <div className={styles.floatingButtons}>
                 <Fab className={styles.fabHeart} title='Like' aria-label='like'>
-                  <FontAwesomeIcon className={styles.heartIcon} icon='heart' />
+                  <FontAwesomeIcon className={styles.heartIcon} icon={faHeart} />
                 </Fab>
                 <Fab
                   className={styles.fabStar}
                   title='Favorite'
                   aria-label='favorite'
                 >
-                  <FontAwesomeIcon className={styles.starIcon} icon='star' />
+                  <FontAwesomeIcon className={styles.starIcon} icon={faStar} />
                 </Fab>
                 <Fab
                   className={styles.fabAdd}

@@ -1,4 +1,4 @@
-export async function sendUrl(url, router, token) {
+export async function sendUrl(url, route, token, setErrorMessage, setLoading) {
   const sender = await fetch('http://127.0.0.1:8000/extract_recipe', {
     method: 'POST',
     headers: {
@@ -14,9 +14,10 @@ export async function sendUrl(url, router, token) {
   console.log(response)
   if ('id' in response) {
     const id = response.id
-    router.push(`/recipes/${id}`)
+    route.push(`/recipes/${id}`)
   }
   else {
-    router.push('/extract')
+    setErrorMessage('Invalid URL!')
+    setLoading(false)
   }
 }

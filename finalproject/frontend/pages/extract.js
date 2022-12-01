@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router'
 import { FormControl } from '@mui/material';
 import { sendUrl } from '../lib/extractor';
@@ -8,27 +8,34 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import DiningOutlinedIcon from '@mui/icons-material/DiningOutlined';
 import Navbar from '../components/navbar/navbar';
 import Head from 'next/head';
-import { useTokenStore } from '../lib/store';
-import Login from '../components/login/login';
+import { useTokenStore, checkToken } from '../lib/store';
+import LoginModal from '../components/login_modal/login_modal';
 
 export default function ExtractPage() {
   const token = useTokenStore(state => state.token)
-  const router = useRouter()
+  const changeToken = useTokenStore(state => state.addToken)
+  const route = useRouter()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
-  async function handleLoading(url, router) {
+  async function handleLoading(url, route) {
     setLoading(true)
-    try {
-      sendUrl(url, router, token)
-    }
-    catch {
-      setLoading(false)
-    }
+    sendUrl(url, route, token, setErrorMessage, setLoading)
   }
-  if (!token || token === '') {
-    return <Login/>
-  }
+  
+  useEffect(()=> {
+    if (!token || token === '') {
+      handleOpen()
+    }
+    else {
+      checkToken(token, changeToken)
+    }
+  }, [changeToken, token])
+
   return (
     <>
       <Head>
@@ -38,12 +45,14 @@ export default function ExtractPage() {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <Navbar />
+      <LoginModal open={open} handleClose={handleClose} onClose={() => route.back()}/>
       <div className={styles.main}>
         <FormControl className={styles.form}>
         <TextField 
           id='url-extractor'
           label="Your recipe's URL"
           variant='standard'
+          helperText={errorMessage}
           className={styles.urlextractor}
           onChange={(event) => setUrl(event.target.value)}
           />
@@ -52,7 +61,7 @@ export default function ExtractPage() {
           loadingPosition='start'
           variant='text'
           onClick={() => {
-            handleLoading(url, router)
+            handleLoading(url, route)
           }}
           startIcon={<DiningOutlinedIcon />}
         >

@@ -7,8 +7,8 @@ import Header from '../components/ingredient_input/header';
 import { Button } from '@mui/material';
 import styles from '../styles/makerecipe.module.css'
 import { useRouter } from 'next/router'
-import Login from '../components/login/login';
 import { useTokenStore } from '../lib/store';
+import LoginModal from '../components/login_modal/login_modal';
 
 export async function getStaticProps() {
   const ingredientList = await getAllIngredients()
@@ -24,11 +24,16 @@ export async function getStaticProps() {
 
 export default function CustomRecipePage({ ingredientList, measuresList }) {
   const token = useTokenStore(state => state.token)
+  const changeToken = useTokenStore(state => state.addToken)
   const route = useRouter()
   const recipeProp = makeRecipeObject()
   const [ingredientNumber, setIngredientNumber] = useState(1)
   const [recipe, setRecipe] = useState(recipeProp)
   const [measuringSystem, setMeasuringSystem] = useState('metric')
+  const [open, setOpen] = useState(false)
+  
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
   const isNumeric = value => {
     return /^\d+$/.test(value);
@@ -66,9 +71,16 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
       [name]: checked
     }))
   }
-  if (!token) {
-    return <Login/>
-  }
+  
+  useEffect(()=> {
+    if (!token || token === '') {
+      handleOpen()
+    }
+    else {
+      checkToken(token, changeToken)
+    }
+  }, [changeToken, token])
+
   return (
     <>
       <Head>
@@ -78,6 +90,7 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <Navbar />
+      <LoginModal open={open} handleClose={handleClose} onClose={() => route.back()}/>
       <div className={styles.form}>
         <Header fieldChange={fieldChange} setMeasuringSystem={setMeasuringSystem} checkboxChange={checkboxChange}/>
         <IngredientForm 
@@ -101,7 +114,7 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
         <Button
           variant='outlined'
           color='success'
-          onClick={() => logRecipe(recipe, route)}>
+          onClick={() => logRecipe(recipe, route, token)}>
             Submit
           </Button>
       </div>

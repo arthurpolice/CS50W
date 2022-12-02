@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { getAllRecipeIds, getRecipeData } from '../../lib/recipes'
+import { getAllRecipeIds, getRecipeData, deleteRecipe } from '../../lib/recipes'
 import Ingredients from '../../components/recipes/ingredients'
 import styles from '../../styles/recipes.module.css'
 import { Parallax, Background } from 'react-parallax'
@@ -10,15 +10,17 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormControl from '@mui/material/FormControl'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Navbar from '../../components/navbar/navbar'
-import { faHeart, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faHeart, faStar, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import MealModal from '../../components/meal_modal/meal_modal.tsx'
+import { useTokenStore } from '../../lib/store'
+import { useRouter } from 'next/router'
 
-library.add(faHeart, faStar)
+library.add(faHeart, faStar, faTrashCan)
 
 export async function getStaticPaths() {
   const paths = await getAllRecipeIds()
@@ -39,13 +41,27 @@ export async function getStaticProps({ params }) {
 }
 
 export default function Recipe({ recipeData }) {
+  const route = useRouter()
+  const token = useTokenStore(state => state.token)
+  const changeToken = useTokenStore(state => state.addToken)
+  const username = useTokenStore(state => state.username)
+
+
   const [measurement, setMeasurement] = useState('grams')
   const handleChange = (event) => {
     setMeasurement(event.target.value)
   }
+
   const [open, setOpen] = React.useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  const [disabled, setDisabled] = useState(true)
+  useEffect(() => {
+    if (username === recipeData.recipe.credit) {
+      setDisabled(false)
+    }
+  }, [username, recipeData])
   return (
     <>
       <Head>
@@ -91,6 +107,17 @@ export default function Recipe({ recipeData }) {
               <h1 className={styles.title}>{recipeData.recipe.name}</h1>
               <div className={styles.summary}>
                 <Summary recipe={recipeData.recipe} />
+              </div>
+              <div className={styles.floatingButtons}>
+                <Fab 
+                  className={styles.fabDelete}
+                  title='Delete'
+                  aria-label='delete'
+                  color='error'
+                  disabled={disabled}
+                  onClick={() => deleteRecipe(recipeData.recipe.id, token, route)}>
+                    <FontAwesomeIcon className={styles.trashIcon} icon={faTrashCan}/>
+                </Fab>
               </div>
             </Paper>
             <article>

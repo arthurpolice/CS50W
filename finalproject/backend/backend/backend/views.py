@@ -191,10 +191,12 @@ def make_custom_recipe(request):
 @api_view(['POST'])
 def remove_recipe(request):
     data = json.loads(request.body)
-    recipe_id = data.get('recipeId')
+    recipe_id = data.get('id')
     recipe = Recipe.objects.get(pk=recipe_id)
-    if recipe.credit == request.user:
+    # Not a very good approach
+    if recipe.credit == request.user.username:
         recipe.delete()
+    return JsonResponse({"message": f"Recipe {recipe_id} deleted."})
 
 
 @api_view(['POST'])

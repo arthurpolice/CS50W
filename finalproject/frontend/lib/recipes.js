@@ -21,3 +21,20 @@ export async function getRecipeData(id) {
   const recipe =  json_recipe_info.info
   return recipe
 }
+
+export async function deleteRecipe(id, token, route) {
+  const sender = await fetch('http://127.0.0.1:8000/remove_recipe', {
+    method: 'POST',
+    headers: {
+      'Accept': "application/json",
+      'Content-Type': "application/json",
+      'Authorization': `Token ${token}`
+    },
+    body: JSON.stringify({
+      id
+    })
+  })
+  const response = sender.json()
+  console.log(response)
+  route.push('/catalog')
+}

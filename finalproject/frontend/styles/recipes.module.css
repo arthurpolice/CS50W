@@ -95,6 +95,11 @@
   background-color: rgb(255, 255, 255);
 }
 
+.fabDelete {
+  margin-right: 1vw;
+  margin-bottom: 1vh;
+}
+
 .heartIcon {
   font-size: 1.5rem;
   color: rgb(173, 19, 19);
@@ -103,6 +108,10 @@
 .starIcon {
   font-size: 1.5rem;
   color: rgb(255, 255, 0);
+}
+
+.trashIcon {
+  font-size: 1.5rem;
 }
 
 @media screen and (min-width: 1000px) {

@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { login } from '../../lib/login';
 import { useTokenStore } from "../../lib/store"
 import styles from './modal.module.css'
-import AccountCircle from '@mui/icons-material/AccountCircle';
+
 
 export default function Login({ handleClose }) {
   const addToken = useTokenStore(state => state.addToken)
@@ -20,10 +20,10 @@ export default function Login({ handleClose }) {
   return(
     <form className={styles.form}>
       <div className={styles.row}>
-        <TextField label='Username' variant='standard' ref={usernameRef}/>
+        <TextField label='Username' variant='standard' inputRef={usernameRef}/>
       </div>
       <div className={styles.row}>
-        <TextField label='Password' variant='standard' type='password' ref={passwordRef}/>
+        <TextField label='Password' variant='standard' type='password' inputRef={passwordRef}/>
       </div>
       <div>
         <Button onClick={(event) => handleSubmit(event, usernameRef.current.value, passwordRef.current.value)}>

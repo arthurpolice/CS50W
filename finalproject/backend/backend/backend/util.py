@@ -76,14 +76,17 @@ def get_grams_amount(ingredient, item):
         imperial_match = preexisting_ingredient.filter(
             imperial_unit=imperial_unit)
         # and use that to calculate the amount in grams of this new ingredient, using simple correlation.
-        if len(metric_match) > 0:
-            metric_match = metric_match[0]
-            grams_amount = ((metric_amount) / (metric_match.metric_amount)) * (metric_match.grams_amount)
-        elif len(imperial_match) > 0:
-            imperial_match = imperial_match[0]
-            grams_amount = imperial_amount / imperial_match.metric_amount * imperial_match.grams_amount
-        else:
-           grams_amount = convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit)
+        try:
+            if len(metric_match) > 0:
+                metric_match = metric_match[0]
+                grams_amount = (metric_amount / metric_match.metric_amount) * metric_match.grams_amount
+            elif len(imperial_match) > 0:
+                imperial_match = imperial_match[0]
+                grams_amount = (imperial_amount / imperial_match.imperial_amount) * imperial_match.grams_amount
+            else:
+               grams_amount = convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit)
+        except:
+            grams_amount = convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit)
     # As a last resort call the API to convert it to grams
     else:
         grams_amount = convert(ingredient, imperial_amount, metric_amount, imperial_unit, metric_unit)

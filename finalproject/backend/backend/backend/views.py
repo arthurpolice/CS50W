@@ -162,7 +162,7 @@ def log_recipe(dictionary):
     # The calories of each ingredient are inserted into the list by the function above
     new_recipe.calories = sum(total_calories)
     if not validators.url(new_recipe.url):
-        new_recipe.url = f"/recipe/{new_recipe.pk}"
+        new_recipe.url = f"/recipes/{new_recipe.pk}"
     new_recipe.save()
     # Save recipe (can i do recipe.pk after saving to get its newly assigned id?)
     # Return the recipe's ID
@@ -174,9 +174,7 @@ def make_custom_recipe(request):
     # Receive through fetch:
     data = json.loads(request.body)
     dictionary = data.get('recipe')
-    # FIX THIS SHIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT
-    # request.user.username when there are users
-    dictionary['creditsText'] = 'briko'
+    dictionary['creditsText'] = request.user.username
     recipe_url = dictionary['sourceUrl']
     # Look for recipe in the database using the URL
     try:
@@ -310,7 +308,3 @@ def get_all_measures(request):
             if item['imperial_unit'].lower() not in units:
                 units += [item['imperial_unit'].lower()]
     return JsonResponse({"list": units})
-
-@api_view(['POST'])
-def check_token(request):
-    return JsonResponse({"Token": True})

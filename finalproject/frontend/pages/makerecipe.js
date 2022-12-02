@@ -41,16 +41,20 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
 
   const fieldChange = event => {
     let {name, value} = event.target
+    console.log(name)
     if (name === 'servings') {
       if (isNumeric(value) === false) {
         value = 1
       }
-      console.log(value)
+      else {
+        Math.round(parseInt(value))
+      }
     }
     setRecipe(prevState => ({
       ...prevState,
-      [name]: Math.round(parseInt(value))
+      [name]: value
     }))
+    console.log(recipe)
   }
 
   const handleClick = num => {

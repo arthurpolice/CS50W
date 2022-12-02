@@ -74,6 +74,7 @@ export default function IngredientInput({ ingredientList, measuresList, recipe, 
       variant='standard' 
       label='Amount'
       name='amount'
+      className={styles.amount}
       onChange={(event) => {setAmount(parseFloat(event.target.value))}}
       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
     <Autocomplete

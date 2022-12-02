@@ -36,16 +36,17 @@ export default function Header({ fieldChange, setMeasuringSystem, checkboxChange
           onChange={fieldChange}
           />
       </div>
-      <FormControl>
+      <FormControl className={styles.form}>
         <FormLabel>Measuring System</FormLabel>
         <RadioGroup
           name='measuringsys'
-          defaultValue='metric'>
+          defaultValue='metric'
+          className={styles.buttons}>
             <FormControlLabel value='metric' control={<Radio />} label='Metric'onChange={(event => setMeasuringSystem(event.target.value))}/>
             <FormControlLabel value='us' control={<Radio />} label='Imperial (US)' onChange={(event => setMeasuringSystem(event.target.value))}/>
         </RadioGroup>
       </FormControl>
-      <FormGroup>
+      <FormGroup className={styles.buttons}>
         <FormControlLabel control={<Checkbox />} name='vegetarian' label="Vegetarian" onChange={checkboxChange}/>
         <FormControlLabel control={<Checkbox />} name='vegan' label="Vegan" onChange={checkboxChange}/>
         <FormControlLabel control={<Checkbox />} name='dairyFree' label="Dairy Free" onChange={checkboxChange}/>

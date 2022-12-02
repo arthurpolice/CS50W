@@ -22,7 +22,7 @@ export default function CatalogItem({ recipe }) {
             component='img'
             alt={recipe.name}
             height={250}
-            image={recipe.image}
+            image={recipe.image?recipe.image:'/images/healthy-food-icon.png'}
           />
           <CardContent className={styles.content}>
             <Typography className={styles.title} variant='h6' component='div'>

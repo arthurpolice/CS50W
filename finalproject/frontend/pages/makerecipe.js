@@ -30,10 +30,10 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
   const [ingredientNumber, setIngredientNumber] = useState(1)
   const [recipe, setRecipe] = useState(recipeProp)
   const [measuringSystem, setMeasuringSystem] = useState('metric')
-  const [open, setOpen] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
   
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const handleOpen = () => setOpenModal(true)
+  const handleClose = () => setOpenModal(false)
 
   const isNumeric = value => {
     return /^\d+$/.test(value);
@@ -71,15 +71,13 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
       [name]: checked
     }))
   }
+
   
   useEffect(()=> {
     if (!token || token === '') {
       handleOpen()
     }
-    else {
-      checkToken(token, changeToken)
-    }
-  }, [changeToken, token])
+  }, [token])
 
   return (
     <>
@@ -90,7 +88,7 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <Navbar />
-      <LoginModal open={open} handleClose={handleClose} onClose={() => route.back()}/>
+      <LoginModal open={openModal} handleClose={handleClose}/>
       <div className={styles.form}>
         <Header fieldChange={fieldChange} setMeasuringSystem={setMeasuringSystem} checkboxChange={checkboxChange}/>
         <IngredientForm 
@@ -114,7 +112,7 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
         <Button
           variant='outlined'
           color='success'
-          onClick={() => logRecipe(recipe, route, token)}>
+          onClick={() => logRecipe(recipe, route, token, changeToken, handleOpen)}>
             Submit
           </Button>
       </div>

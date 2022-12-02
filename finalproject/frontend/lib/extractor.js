@@ -1,4 +1,4 @@
-export async function sendUrl(url, route, token, setErrorMessage, setLoading) {
+export async function sendUrl(url, route, token, changeToken, setErrorMessage, setLoading, handleOpen) {
   const sender = await fetch('http://127.0.0.1:8000/extract_recipe', {
     method: 'POST',
     headers: {
@@ -12,7 +12,14 @@ export async function sendUrl(url, route, token, setErrorMessage, setLoading) {
   })
   const response = await sender.json()
   console.log(response)
-  if ('id' in response) {
+  if ('detail' in response) {
+    if (response.detail === 'Invalid token.' || response.detail === "Invalid token header. No credentials provided.") {
+      setLoading(false)
+      changeToken('')
+      handleOpen()
+    }
+  }
+  else if ('id' in response) {
     const id = response.id
     route.push(`/recipes/${id}`)
   }

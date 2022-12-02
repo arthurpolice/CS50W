@@ -17,24 +17,21 @@ export default function ExtractPage() {
   const route = useRouter()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const handleOpen = () => setOpenModal(true)
+  const handleClose = () => setOpenModal(false)
 
   async function handleLoading(url, route) {
     setLoading(true)
-    sendUrl(url, route, token, setErrorMessage, setLoading)
+    sendUrl(url, route, token, changeToken, setErrorMessage, setLoading, handleOpen)
   }
   
   useEffect(()=> {
     if (!token || token === '') {
       handleOpen()
     }
-    else {
-      checkToken(token, changeToken)
-    }
-  }, [changeToken, token])
+  }, [token])
 
   return (
     <>
@@ -45,7 +42,7 @@ export default function ExtractPage() {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <Navbar />
-      <LoginModal open={open} handleClose={handleClose} onClose={() => route.back()}/>
+      <LoginModal open={openModal} handleClose={handleClose}/>
       <div className={styles.main}>
         <FormControl className={styles.form}>
         <TextField 

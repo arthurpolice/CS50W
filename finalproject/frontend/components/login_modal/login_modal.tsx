@@ -7,7 +7,7 @@ import { Typography } from '@mui/material';
 import styles from './modal.module.css'
 import Image from 'next/image';
 
-export default function LoginModal( { open, handleClose, onClose } ) {
+export default function LoginModal( { open, handleClose } ) {
 
   const [style, setStyle] = useState({})
 
@@ -30,7 +30,7 @@ export default function LoginModal( { open, handleClose, onClose } ) {
   return (
       <Modal
         open={open}
-        onClose={onClose}
+        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

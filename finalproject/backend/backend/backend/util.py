@@ -214,6 +214,7 @@ def get_day(request):
     # Receive date and user through fetch request
     data = json.loads(request.body)
     date = data.get('date')
+    date = date[:10]
     user = request.user
     calendar = Calendar.objects.get(user=user)
     # Get user's daily plan using the date

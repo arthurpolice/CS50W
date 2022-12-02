@@ -87,9 +87,9 @@ class DailyPlan(models.Model):
     def serialize(self):
         day = {}
         day['date'] = self.date
-        for object in self.meals:
+        for object in self.meals.all():
             meal = {}
-            for component in object.components:
+            for component in object.components.all():
                 recipe = component.recipe
                 meal[f'{recipe.name}'] = {
                     'recipe_id': recipe.pk,

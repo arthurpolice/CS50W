@@ -201,7 +201,10 @@ def remove_recipe(request):
 
 @api_view(['POST'])
 def get_daily_plan(request):
-    day = get_day(request)
+    try:
+        day = get_day(request)
+    except:
+        return JsonResponse({"message": "This daily plan doesn't exist yet."})
     # Serialize the day (function in models.py)
     day_dictionary = DailyPlan.serialize(day)
     # Send the result to the frontend

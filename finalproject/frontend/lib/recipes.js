@@ -22,7 +22,7 @@ export async function getRecipeData(id) {
   return recipe
 }
 
-export async function deleteRecipe(id, token, route) {
+export async function deleteRecipe(recipeId, token, route) {
   const sender = await fetch('http://127.0.0.1:8000/remove_recipe', {
     method: 'POST',
     headers: {
@@ -31,10 +31,30 @@ export async function deleteRecipe(id, token, route) {
       'Authorization': `Token ${token}`
     },
     body: JSON.stringify({
-      id
+      recipeId
     })
   })
   const response = sender.json()
   console.log(response)
   route.push('/catalog')
+}
+
+export async function addMeal(recipeId, mealType, date, servings, token, route) {
+  const sender = await fetch('http://127.0.0.1:8000/daily_plan/add', {
+    method: 'POST',
+    headers: {
+      'Accept': "application/json",
+      'Content-Type': "application/json",
+      'Authorization': `Token ${token}`
+    },
+    body: JSON.stringify({
+      recipeId,
+      mealType,
+      date,
+      servings
+    })
+  })
+  const response = sender.json()
+  console.log(response)
+  route.push('/calendar')
 }

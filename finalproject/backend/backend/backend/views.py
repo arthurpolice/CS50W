@@ -191,7 +191,7 @@ def make_custom_recipe(request):
 @api_view(['POST'])
 def remove_recipe(request):
     data = json.loads(request.body)
-    recipe_id = data.get('id')
+    recipe_id = data.get('recipeId')
     recipe = Recipe.objects.get(pk=recipe_id)
     # Not a very good approach
     if recipe.credit == request.user.username:
@@ -215,11 +215,12 @@ def add_to_daily_plan(request):
     # Receive the date and meal type through the fetch request
     meal_type = data.get('mealType')
     date = data.get('date')
+    date = date[:10]
     # Receive the recipe id and servings through the fetch request
     recipe_id = data.get('recipeId')
     servings = data.get('servings')
     # Get or create user's calendar
-    calendar = Calendar.objects.get_or_create(user=request.user)
+    calendar, created = Calendar.objects.get_or_create(user=request.user)
     # Check calendar for the DailyPlan object corresponding to the date received through fetch
     try:
         day = calendar.days.get(date=date)
@@ -231,19 +232,24 @@ def add_to_daily_plan(request):
         day.save()
         calendar.days.add(day)
     # Look for a Meal object within the DailyPlan object, using the meal type as filter. Make a new one if not found. (get_or_create)
-    meal = day.meals.get_or_create(meal_type=meal_type)
+    meal, created = day.meals.get_or_create(meal_type=meal_type)
     # Get the recipe object using recipe id
     recipe = Recipe.objects.get(pk=recipe_id)
     # Look for a meal component that already has this recipe. If found, add the servings to the preexisting amount.
     # If not found, make a new Meal Component object (recipe, servings) and add it to the Meal object.
-    meal_component = meal.components.get_or_create(recipe=recipe)
-    if meal_component.servings > 0:
+    try:
+        meal_component = meal.components.get(recipe=recipe)
         meal_component.servings += meal_component.servings + servings
-    else:
-        meal_component.servings = servings
-    meal_component.save()
+    except:
+        meal_component = MealComponent(
+            recipe=recipe,
+            servings=servings
+        )
+        meal_component.save()
+        meal.components.add(meal_component)
     meal.save()
     day.save()
+    return JsonResponse({"message": "Meal added."})
 
 
 @api_view(['POST'])

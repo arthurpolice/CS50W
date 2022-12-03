@@ -2,6 +2,7 @@ import { dayFetcher } from "../../lib/calendar"
 import { useEffect, useState } from "react"
 import { Typography } from "@mui/material";
 import Meal from "./meal";
+import styles from './calendar.module.css'
 
 export default function Meals({ token, date }) {
   const [data, setData] = useState({})
@@ -10,24 +11,21 @@ export default function Meals({ token, date }) {
   useEffect(() =>{
     dayFetcher(token, date, setData)
   }, [token, date])
-  useEffect(() => {
-    console.log(data)
-  }, [data])
   return (
     <>
-      <Typography>{date.toLocaleDateString('en-GB', options)}</Typography>
-      <Typography>{data.totalCalories?Math.round(data.totalCalories):'Day not yet registered.'}</Typography>
-      <div>
-        <span>{data.bf?'Breakfast:':null}</span><Meal data={data.bf}/>
+      <Typography color={'white'} variant='h5' className={styles.date}>{date.toLocaleDateString('en-GB', options)}</Typography>
+      <Typography color={'white'} variant='h6' className={styles.calories}>{data.totalCalories? `Calories: ${Math.round(data.totalCalories)}`:'Day not yet registered.'}{data.totalCalories&&data.targetCalories?`/${data.targetCalories}`:null}</Typography>
+      <div className={styles.mealRow}>
+        <span className={styles.mealName}>{data.bf?'Breakfast:':null}</span><Meal data={data.bf}/>
       </div>
-      <div>
-        <span>{data.lun?'Lunch:':null}</span><Meal data={data.lun}/>
+      <div className={styles.mealRow}>
+        <span className={styles.mealName}>{data.lun?'Lunch:':null}</span><Meal data={data.lun}/>
       </div>
-      <div>
-        <span>{data.din?'Dinner:':null}</span><Meal data={data.din}/>
+      <div className={styles.mealRow}>
+        <span className={styles.mealName}>{data.din?'Dinner:':null}</span><Meal data={data.din}/>
       </div>
-      <div>
-        <span>{data.extra?'Extra:':null}</span><Meal data={data.extra}/>
+      <div className={styles.mealRow}>
+        <span className={styles.mealName}>{data.extra?'Extra:':null}</span><Meal data={data.extra}/>
       </div>
     </>
   )

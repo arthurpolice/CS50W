@@ -85,6 +85,9 @@ class DailyPlan(models.Model):
     meals = models.ManyToManyField(Meal, related_name='day')
     
     def serialize(self):
+        calendar = self.parent_calendar.get()
+        user = calendar.user
+        target_calories = user.recommended_calories
         day = {}
         day['date'] = self.date
         day_calories = 0
@@ -104,6 +107,7 @@ class DailyPlan(models.Model):
             day[f'{object.meal_type}'] = meal
             day_calories += calories
         day['totalCalories'] = day_calories
+        day['targetCalories'] = target_calories
         return day
 
 class Calendar(models.Model):

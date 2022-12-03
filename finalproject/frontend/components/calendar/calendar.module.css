@@ -1,0 +1,18 @@
+.date {
+  text-align: center;
+  margin-top: 4vh;
+}
+
+.calories {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.mealRow {
+  margin: 2rem 0;
+}
+
+.mealName {
+  color: white;
+  font-size: 1.2rem;
+}

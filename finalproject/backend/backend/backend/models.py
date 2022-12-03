@@ -87,17 +87,23 @@ class DailyPlan(models.Model):
     def serialize(self):
         day = {}
         day['date'] = self.date
+        day_calories = 0
         for object in self.meals.all():
-            meal = {}
+            meal = []
             for component in object.components.all():
                 recipe = component.recipe
-                meal[f'{recipe.name}'] = {
+                calories = component.servings * (recipe.calories/recipe.total_servings)
+                meal.append({
+                    'name': recipe.name,
                     'recipe_id': recipe.pk,
                     'servings': component.servings,
-                    'calories': component.servings * (recipe.calories/recipe.total_servings)
-                    
-                }
+                    'calories': calories,
+                    'source': recipe.url,
+                    'meal': object.meal_type
+                })
             day[f'{object.meal_type}'] = meal
+            day_calories += calories
+        day['totalCalories'] = day_calories
         return day
 
 class Calendar(models.Model):

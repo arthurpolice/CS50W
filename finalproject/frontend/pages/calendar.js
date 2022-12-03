@@ -21,10 +21,6 @@ export default function CalendarPage() {
       <div className={styles.calendarDiv}>
         <Paper elevation={3} className={styles.paper}>
           <div className={styles.infoDisplay}>
-            <p className='text-center'>
-              <span className='bold'>Selected Date:</span>{' '}
-              {date.toDateString()}
-            </p>
             <Meals date={date} token={token} />
           </div>
           <Calendar onChange={setDate} value={date} />

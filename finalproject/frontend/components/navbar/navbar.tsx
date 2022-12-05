@@ -10,6 +10,7 @@ import styles from './navbar.module.css'
 import LogButton from './log_button';
 import LoginModal from '../login_modal/login_modal';
 import { useTokenStore } from '../../lib/store';
+import RecipesButton from './recipes_button'
 
 
 function HideOnScroll(props) {
@@ -44,15 +45,13 @@ export default function Navbar( props ) {
         <AppBar className={styles.navbar}>
           <Toolbar className={styles.links}>
             <Link href={'/'}><Image src={'/images/icon.png'} alt='logo' width={48} height={48}/></Link>
-            <Link href={'/extract'} className={styles.link}>Recipe Extractor</Link>
-            <Link href={'/catalog'} className={styles.link}>Recipe Catalog</Link>
-            <Link href={'/makerecipe'} className={styles.link}>Make a Recipe</Link>
+            <RecipesButton />
             <Link href={'/calendar'} className={styles.link}>Calendar</Link>
             <LogButton token={token} label={label} handleOpen={handleOpen} />
           </Toolbar>
         </AppBar>
       </HideOnScroll>
-      <LoginModal open={open} handleClose={handleClose} onClose={handleClose}/>
+      <LoginModal open={open} handleClose={handleClose}/>
     </React.Fragment>
   )
 }

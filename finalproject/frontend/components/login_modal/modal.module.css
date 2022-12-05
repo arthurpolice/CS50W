@@ -22,3 +22,8 @@
   align-items: center;
   margin-bottom: 2rem;
 }
+
+.register {
+  color: #1976d2;
+  text-decoration: underline;
+}

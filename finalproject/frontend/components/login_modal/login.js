@@ -1,4 +1,5 @@
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
+import Link from 'next/link';
 import React, { useRef, useState } from 'react';
 import { login } from '../../lib/login';
 import { useTokenStore } from "../../lib/store"
@@ -38,6 +39,7 @@ export default function Login({ handleClose }) {
           Log In
         </Button>
       </div>
+      <Typography variant='body2'>Or register <Link className={styles.register} href={'/register'}>here.</Link></Typography>
     </form>
   )
 }

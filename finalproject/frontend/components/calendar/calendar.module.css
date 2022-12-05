@@ -27,3 +27,15 @@
   color: rgb(78, 231, 137);
   font-weight: 700;
 }
+
+.menuItem {
+  color: rgb(105, 101, 101);
+  text-align: center;
+  text-decoration: none;
+  margin: 0.2rem 0;
+}
+
+.deleteButton {
+  display: flex;
+  justify-content: center;
+}

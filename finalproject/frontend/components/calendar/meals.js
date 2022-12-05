@@ -15,6 +15,8 @@ export default function Meals({ token, date }) {
     <>
       <Typography color={'white'} variant='h5' className={styles.date}>{date.toLocaleDateString('en-GB', options)}</Typography>
       <Typography color={'white'} variant='h6' className={styles.calories}>{data.totalCalories? `Calories: ${Math.round(data.totalCalories)}`:'Day not yet registered.'}{data.totalCalories&&data.targetCalories?`/${data.targetCalories}`:null}</Typography>
+      <br />
+      <Typography color={'white'} variant='h6' className={styles.calories}>{data.totalCalories?null:'Please add a meal from a recipe page.'}</Typography>
       <div className={styles.mealRow}>
         <span className={styles.mealName}>{data.bf?'Breakfast:':null}</span><br/><Meal data={data.bf}/>
       </div>

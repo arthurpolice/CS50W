@@ -3,6 +3,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import styles from './navbar.module.css'
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default function RecipesButton() {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -13,6 +16,7 @@ export default function RecipesButton() {
     setAnchorEl(null)
   }
   const open = Boolean(anchorEl);
+  library.add(faCaretDown)
   return (
     <>
       <Typography
@@ -20,6 +24,7 @@ export default function RecipesButton() {
         className={styles.link}
       >
         Recipes
+        <FontAwesomeIcon className={styles.caret} icon={faCaretDown}/>
       </Typography>
       <Menu
         open={open}

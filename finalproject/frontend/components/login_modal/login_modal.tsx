@@ -23,7 +23,8 @@ export default function LoginModal( { open, handleClose } ) {
       border: '0px solid #000',
       boxShadow: 24,
       borderRadius: 1,
-      p: 4
+      p: 4,
+      outline: 'none'
     })
   )}, [])
 

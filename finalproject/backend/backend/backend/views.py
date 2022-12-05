@@ -35,8 +35,8 @@ class LoginAPI(KnoxLoginView):
         return super(LoginAPI, self).post(request, format=None)
 
 
-# Register API
 class RegisterAPI(generics.GenericAPIView):
+    permission_classes = [AllowAny]
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):

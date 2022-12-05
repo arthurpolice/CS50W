@@ -11,7 +11,7 @@ import { useTokenStore } from '../../lib/store'
 
 export default function MealModalContent({ id }) {
   const [meal, setMeal] = useState('')
-  const [day, setDay] = useState({})
+  const [day, setDay] = useState(null)
   const [servings, setServings] = useState(1)
   const [error, setError] = useState('')
   const route = useRouter()
@@ -26,6 +26,7 @@ export default function MealModalContent({ id }) {
   const submitMeal = () => {
     if (day) {
       addMeal(id, meal, day['_d'], servings, token, route)
+      console.log(day)
     }
     else {
       setError('Invalid date.')

@@ -10,9 +10,20 @@
 
 .mealRow {
   margin: 2rem 0;
+  display: grid;
 }
 
 .mealName {
   color: white;
   font-size: 1.2rem;
+}
+
+.recipe {
+  border-radius: 100px;
+  padding: 0.1rem 0.5rem;
+  margin: 0.1rem 0.5rem;
+  background-color: rgb(255, 255, 255);
+  width:max-content;
+  color: rgb(78, 231, 137);
+  font-weight: 700;
 }

@@ -93,19 +93,21 @@ class DailyPlan(models.Model):
         day_calories = 0
         for object in self.meals.all():
             meal = []
+            meal_calories = 0
             for component in object.components.all():
                 recipe = component.recipe
-                calories = component.servings * (recipe.calories/recipe.total_servings)
+                component_calories = component.servings * (recipe.calories/recipe.total_servings)
+                meal_calories += component_calories
                 meal.append({
                     'name': recipe.name,
                     'recipe_id': recipe.pk,
                     'servings': component.servings,
-                    'calories': calories,
+                    'calories': component_calories,
                     'source': recipe.url,
                     'meal': object.meal_type
                 })
             day[f'{object.meal_type}'] = meal
-            day_calories += calories
+            day_calories += meal_calories
         day['totalCalories'] = day_calories
         day['targetCalories'] = target_calories
         return day

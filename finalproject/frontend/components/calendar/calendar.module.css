@@ -24,8 +24,9 @@
   margin: 0.1rem 0.5rem;
   background-color: rgb(255, 255, 255);
   width:max-content;
-  color: rgb(78, 231, 137);
+  color: #2acc68;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .menuItem {

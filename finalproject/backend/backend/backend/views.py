@@ -269,6 +269,7 @@ def remove_from_daily_plan(request):
     meal_component = meal.components.get(recipe=recipe)
     # Remove the meal component
     meal.components.remove(meal_component)
+    return JsonResponse({"message": "Recipe removed from meal."})
 
 
 @api_view(['POST'])

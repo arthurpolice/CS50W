@@ -2,7 +2,7 @@ import { Link } from "@mui/material";
 import { useTokenStore } from "../../lib/store";
 import { logout } from "../../lib/logout";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import styles from './navbar.module.css'
 
 export default function LogButton ({ token, handleOpen, label }) {
   const router = useRouter()
@@ -17,6 +17,6 @@ export default function LogButton ({ token, handleOpen, label }) {
     }
   }
   return (
-    <Link variant='contained' onClick={() => handleLogin(label)}>{label}</Link>
+    <Link className={styles.logButton} variant='contained' onClick={() => handleLogin(label)}>{label}</Link>
   )
 }

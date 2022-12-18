@@ -1,15 +1,14 @@
-import { Button, TextField, Typography } from '@mui/material';
-import Link from 'next/link';
-import React, { useRef, useState } from 'react';
-import { login } from '../../lib/login';
-import { useTokenStore } from "../../lib/store"
+import { Button, TextField } from '@mui/material'
+import { useRef, useState } from 'react'
+import { login } from '../../lib/login'
+import { setCookie } from 'nookies'
+import Link from 'next/link'
 import styles from './modal.module.css'
-
+import { useRouter } from 'next/router'
 
 export default function Login({ handleClose }) {
+  const route = useRouter()
   const [error, setError] = useState(false)
-  const addToken = useTokenStore(state => state.addToken)
-  const addUsername = useTokenStore(state => state.addUsername)
   const usernameRef = useRef()
   const passwordRef = useRef()
 
@@ -17,29 +16,56 @@ export default function Login({ handleClose }) {
     event.preventDefault()
     const token = await login(username, password)
     if (token) {
-      addToken(token)
-      addUsername(username)
+      setCookie(null, 'token', token, {
+        maxAge: 8 * 60 * 60,
+      })
+      setCookie(null, 'username', username, {
+        maxAge: 8 * 60 * 60,
+      })
       handleClose()
-    }
-    else {
+      route.reload()
+    } else {
       setError(true)
     }
   }
 
-  return(
+  return (
     <form className={styles.form}>
       <div className={styles.row}>
-        <TextField error={error} label='Username' variant='standard' inputRef={usernameRef}/>
+        <TextField
+          error={error}
+          label='Username'
+          variant='standard'
+          inputRef={usernameRef}
+        />
       </div>
       <div className={styles.row}>
-        <TextField error={error} label='Password' variant='standard' type='password' inputRef={passwordRef}/>
+        <TextField
+          error={error}
+          label='Password'
+          variant='standard'
+          type='password'
+          inputRef={passwordRef}
+        />
       </div>
       <div>
-        <Button onClick={(event) => handleSubmit(event, usernameRef.current.value, passwordRef.current.value)}>
+        <Button
+          onClick={(event) =>
+            handleSubmit(
+              event,
+              usernameRef.current.value,
+              passwordRef.current.value
+            )
+          }
+        >
           Log In
         </Button>
       </div>
-      <Typography variant='body2'>Or register <Link className={styles.register} href={'/register'}>here.</Link></Typography>
+      <div>
+        <Link className={styles.register} href={'/register'}>
+          Or register here.
+        </Link>
+      </div>
     </form>
   )
 }

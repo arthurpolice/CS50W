@@ -1,0 +1,11 @@
+.likeSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 3rem;
+  max-width: 15%;
+}
+
+.likesAmount {
+  margin-left: -0.5rem;
+}

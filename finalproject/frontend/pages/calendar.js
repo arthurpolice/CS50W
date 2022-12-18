@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Calendar from 'react-calendar';
 import Paper from '@mui/material/Paper';
 import styles from '../styles/calendarpage.module.css'
 import Navbar from '../components/navbar/navbar';
 import Head from 'next/head';
-import { useTokenStore } from '../lib/store'
 import Meals from '../components/calendar/meals';
+import { parseCookies } from 'nookies'
 
 
 export default function CalendarPage() {
   const [date, setDate] = useState(new Date());
-  const token = useTokenStore(state => state.token)
+  const cookies = parseCookies()
+  const token = cookies.token
 
   return (
     <div className='app'>

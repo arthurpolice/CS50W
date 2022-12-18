@@ -9,7 +9,7 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import styles from './navbar.module.css'
 
-export default function RecipesButton() {
+export default function PlanButton() {
   const route = useRouter()
   const [anchorEl, setAnchorEl] = useState(null)
   const handlePopOpen = (event) => {
@@ -23,7 +23,7 @@ export default function RecipesButton() {
   return (
     <>
       <Typography onClick={handlePopOpen} className={styles.link}>
-        Recipes
+        Your Plan
         <FontAwesomeIcon className={styles.caret} icon={faCaretDown} />
       </Typography>
       <Menu
@@ -40,19 +40,14 @@ export default function RecipesButton() {
         onClose={handlePopClose}
         disableRestoreFocus
       >
-        <MenuItem onClick={() => route.push('/catalog')}>
-          <Link href={'/catalog'} className={styles.menuItem}>
-            Recipe Catalog
+        <MenuItem onClick={() => route.push('/calendar')}>
+          <Link href={'/calendar'} className={styles.menuItem}>
+            Calendar
           </Link>
         </MenuItem>
-        <MenuItem onClick={() => route.push('/extract')}>
-          <Link href={'/extract'} className={styles.menuItem}>
-            Recipe Extractor
-          </Link>
-        </MenuItem>
-        <MenuItem onClick={() => route.push('/makerecipe')}>
-          <Link href={'/makerecipe'} className={styles.menuItem}>
-            Make a Recipe
+        <MenuItem onClick={() => route.push('/calculator')}>
+          <Link href={'/calculator'} className={styles.menuItem}>
+            Calories Calculator
           </Link>
         </MenuItem>
       </Menu>

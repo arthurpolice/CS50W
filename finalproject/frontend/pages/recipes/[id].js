@@ -17,8 +17,8 @@ import { faHeart, faStar, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import MealModal from '../../components/meal_modal/meal_modal.tsx'
-import { useTokenStore } from '../../lib/store'
 import { useRouter } from 'next/router'
+import { parseCookies } from 'nookies'
 
 library.add(faHeart, faStar, faTrashCan)
 
@@ -42,9 +42,9 @@ export async function getStaticProps({ params }) {
 
 export default function Recipe({ recipeData }) {
   const route = useRouter()
-  const token = useTokenStore(state => state.token)
-  const changeToken = useTokenStore(state => state.addToken)
-  const username = useTokenStore(state => state.username)
+  const cookies = parseCookies()
+  const token = cookies.token
+  const username = cookies.username
 
 
   const [measurement, setMeasurement] = useState('grams')

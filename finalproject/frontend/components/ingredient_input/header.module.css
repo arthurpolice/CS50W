@@ -20,8 +20,8 @@
   width: 10vw;
 }
 
-@media screen and (max-width: 750px) {  
-  .header{
+@media screen and (max-width: 750px) {
+  .header {
     flex-direction: column;
   }
   .recipeName {

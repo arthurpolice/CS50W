@@ -3,16 +3,14 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
 import { register } from '../../lib/register';
-import { useTokenStore } from "../../lib/store"
 import styles from './register.module.css'
+import { setCookie } from 'nookies';
 
 
 export default function RegisterForm() {
   const route = useRouter()
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
-  const addToken = useTokenStore(state => state.addToken)
-  const addUsername = useTokenStore(state => state.addUsername)
   const usernameRef = useRef()
   const passwordRef = useRef()
   const emailRef = useRef()
@@ -23,8 +21,12 @@ export default function RegisterForm() {
     if (password === confirmation) {
       const token = await register(username, email, password)
       if (token) {
-        addToken(token)
-        addUsername(username)
+        setCookie(null, 'token', token, {
+          maxAge: 11 * 60 * 60
+        })
+        setCookie(null, 'username', username, {
+          maxAge: 11 * 60 * 60
+        })
         route.back()
       }
       else {
@@ -57,10 +59,10 @@ export default function RegisterForm() {
       </div>
       <div>
         <Button onClick={(event) => handleSubmit(event, usernameRef.current.value, emailRef.current.value, passwordRef.current.value, confirmationRef.current.value)}>
-          Log In
+          Register
         </Button>
       </div>
-      <Typography variant='h6' color={'red'}>{errorMessage}</Typography>
+      <Typography variant='body2' color={'red'}>{errorMessage}</Typography>
     </form>
   )
 }

@@ -29,9 +29,9 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = ['211e-179-221-126-209.sa.ngrok.io', '127.0.0.1']
+ALLOWED_HOSTS = ['http://riko2.pythonanywhere.com/']
 
-CSRF_TRUSTED_ORIGINS = ['https://211e-179-221-126-209.sa.ngrok.io']
+CSRF_TRUSTED_ORIGINS = ['http://riko2.pythonanywhere.com/']
 # Application definition
 
 INSTALLED_APPS = [

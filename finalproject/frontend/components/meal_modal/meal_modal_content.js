@@ -1,13 +1,14 @@
 import * as React from 'react'
 import Typography from '@mui/material/Typography'
-import { Select, MenuItem, TextField, Button } from '@mui/material'
+import { Select, MenuItem, Button, FormControl } from '@mui/material'
 import MiniCalendar from './minicalendar'
 import styles from './modal.module.css'
 import { InputLabel } from '@mui/material'
 import { useState } from 'react'
 import { addMeal } from '../../lib/recipes'
 import { useRouter } from 'next/router'
-import { useTokenStore } from '../../lib/store'
+import { parseCookies } from 'nookies'
+import NumberSelect from '../number_select/number_select'
 
 export default function MealModalContent({ id }) {
   const [meal, setMeal] = useState('')
@@ -15,30 +16,19 @@ export default function MealModalContent({ id }) {
   const [servings, setServings] = useState(1)
   const [error, setError] = useState('')
   const route = useRouter()
-  const token = useTokenStore(state => state.token)
-
-  const handleServingsChange = event => {
-    if (isNumeric(event.target.value) === true) {
-      setServings(Math.round(parseInt(event.target.value)))
-    }
-  }
+  const cookies = parseCookies()
+  const token = cookies.token
 
   const submitMeal = () => {
     if (day) {
       addMeal(id, meal, day['_d'], servings, token, route)
-      console.log(day)
-    }
-    else {
+    } else {
       setError('Invalid date.')
     }
   }
-
-  function isNumeric(value) {
-    return /^\d+$/.test(value);
-  }
   React.useEffect(() => {
-    console.log(day)
-  }, [day])
+    console.log(servings)
+  }, [servings])
 
   return (
     <>
@@ -47,30 +37,38 @@ export default function MealModalContent({ id }) {
           When will you eat this?
         </Typography>
         <MiniCalendar day={day} setDay={setDay} />
-        <InputLabel id='demo-simple-select-label'>Meal</InputLabel>
-        <Select
-          required
-          className={styles.mealFields}
-          value={meal}
-          onChange={(event) => setMeal(event.target.value)}
-        >
-          <MenuItem value={'bf'}>Breakfast</MenuItem>
-          <MenuItem value={'lun'}>Lunch</MenuItem>
-          <MenuItem value={'din'}>Dinner</MenuItem>
-          <MenuItem value={'extra'}>Extra</MenuItem>
-        </Select>
-        <InputLabel>Servings</InputLabel>
-        <TextField
-          required
-          className={styles.servings}
-          defaultValue={servings}
-          onChange={(event) => handleServingsChange(event)}
-        />
+        <div className={styles.row}>
+          <FormControl required className={styles.formControl}>
+            <Select
+              displayEmpty
+              variant='standard'
+              required
+              value={meal}
+              onChange={(event) => setMeal(event.target.value)}
+            >
+              <MenuItem className={styles.placeholder} disabled value=""> Meal </MenuItem>
+              <MenuItem value={'bf'}>Breakfast</MenuItem>
+              <MenuItem value={'lun'}>Lunch</MenuItem>
+              <MenuItem value={'din'}>Dinner</MenuItem>
+              <MenuItem value={'extra'}>Extra</MenuItem>
+            </Select>
+          </FormControl>
+          <NumberSelect
+            required
+            className={styles.servings}
+            num={200}
+            decimalSlots={0}
+            variableName={Object.keys({ servings })}
+            setVariable={setServings}
+          />
+        </div>
       </div>
       <div className={styles.buttonDiv}>
         <Button onClick={submitMeal}>Add</Button>
       </div>
-      <Typography color={'red'} variant='body2' component='p'>{error}</Typography>
+      <Typography color={'red'} variant='body2' component='p'>
+        {error}
+      </Typography>
     </>
   )
 }

@@ -7,10 +7,10 @@ import Header from '../components/ingredient_input/header';
 import { Button } from '@mui/material';
 import styles from '../styles/makerecipe.module.css'
 import { useRouter } from 'next/router'
-import { useTokenStore } from '../lib/store';
 import LoginModal from '../components/login_modal/login_modal';
+import { parseCookies, destroyCookie } from 'nookies'
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const ingredientList = await getAllIngredients()
   const measuresList = await getAllMeasures()
   return {
@@ -18,13 +18,12 @@ export async function getStaticProps() {
       ingredientList,
       measuresList,
     },
-    revalidate: 60,
   };
 }
 
 export default function CustomRecipePage({ ingredientList, measuresList }) {
-  const token = useTokenStore(state => state.token)
-  const changeToken = useTokenStore(state => state.addToken)
+  const cookies = parseCookies()
+  const token = cookies.token
   const route = useRouter()
   const recipeProp = makeRecipeObject()
   const [ingredientNumber, setIngredientNumber] = useState(1)
@@ -116,7 +115,7 @@ export default function CustomRecipePage({ ingredientList, measuresList }) {
         <Button
           variant='outlined'
           color='success'
-          onClick={() => logRecipe(recipe, route, token, changeToken, handleOpen)}>
+          onClick={() => logRecipe(recipe, route, token, destroyCookie, handleOpen)}>
             Submit
           </Button>
       </div>

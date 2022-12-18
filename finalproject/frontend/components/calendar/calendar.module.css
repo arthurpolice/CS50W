@@ -30,10 +30,14 @@
 }
 
 .menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: rgb(105, 101, 101);
-  text-align: center;
   text-decoration: none;
   margin: 0.2rem 0;
+  height: 3rem;
+  width: 9rem;
 }
 
 .deleteButton {

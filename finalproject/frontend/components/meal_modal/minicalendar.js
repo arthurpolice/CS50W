@@ -1,8 +1,7 @@
-import * as React from 'react'
-import TextField from '@mui/material/TextField'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import TextField from '@mui/material/TextField'
 import styles from './modal.module.css'
 
 export default function MiniCalendar({ day, setDay }) {
@@ -15,7 +14,7 @@ export default function MiniCalendar({ day, setDay }) {
           setDay(newValue)
         }}
         renderInput={(params) => <TextField {...params} />}
-        inputFormat="DD/MM/yyyy"
+        inputFormat='DD/MM/yyyy'
       />
     </LocalizationProvider>
   )

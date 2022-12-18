@@ -43,7 +43,7 @@ export function makeRecipeObject() {
 
 // Data sender
 
-export async function logRecipe(recipe, router, token, changeToken, handleOpen) {
+export async function logRecipe(recipe, router, token, destroyCookie, handleOpen) {
   const response = await fetch('http://127.0.0.1:8000/log_custom', {
     method: 'POST',
     headers: {
@@ -59,7 +59,8 @@ export async function logRecipe(recipe, router, token, changeToken, handleOpen) 
   console.log(response_json)
   if ('detail' in response_json) {
     if (response_json.detail === 'Invalid token.' || response_json.detail === "Invalid token header. No credentials provided.") {
-      changeToken('')
+      destroyCookie(null, 'token')
+      destroyCookie(null, 'username')
       handleOpen()
     }
   }

@@ -1,6 +1,7 @@
 import Recipe from './recipe'
 
 export default function Meal({ data, date, mealType, setTotalCalories }) {
+  // If there is data, loop through it, else return an empty span
   return data ? (
     data.map((recipe) => {
       return (

@@ -25,5 +25,8 @@
 
 .register {
   color: #1976d2;
+}
+
+.register:hover {
   text-decoration: underline;
 }
